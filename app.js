@@ -157,14 +157,20 @@ function saveOrders(orders) {
 
 // ===== CLOUD SYNC (JSONBin.io) =====
 function getCloudConfig() {
+  const cfg = window.PROFAB_CONFIG || {};
   return {
-    key: localStorage.getItem('profab_cloud_key') || '',
-    bin: localStorage.getItem('profab_cloud_bin') || ''
+    key: cfg.cloudKey || localStorage.getItem('profab_cloud_key') || '',
+    bin: cfg.cloudBin || localStorage.getItem('profab_cloud_bin') || ''
   };
 }
 function saveCloudConfig(key, bin) {
   localStorage.setItem('profab_cloud_key', key.trim());
   localStorage.setItem('profab_cloud_bin', bin.trim());
+  // Also update the in-memory config so it takes effect immediately
+  if (window.PROFAB_CONFIG) {
+    window.PROFAB_CONFIG.cloudKey = key.trim();
+    window.PROFAB_CONFIG.cloudBin = bin.trim();
+  }
 }
 
 let _pushTimer = null;
@@ -241,7 +247,7 @@ async function saveCloudSettings() {
   const ok = await cloudPull();
   if (ok) {
     updateSyncBadge();
-    renderOrders?.();
+    if (typeof window['renderOrders'] === 'function') window['renderOrders']();
     showToast('Cloud sync enabled ✓');
   } else {
     setSyncStatus('Connection failed — check key & bin ID.', 'err');
@@ -268,12 +274,19 @@ function setSyncStatus(msg, type) {
 
 function updateSyncBadge() {
   const { key, bin } = getCloudConfig();
+  const active = !!(key && bin);
   const badge = document.getElementById('syncBadge');
-  if (badge) badge.style.display = key && bin ? 'inline-block' : 'none';
+  if (badge) badge.style.display = active ? 'inline-block' : 'none';
   const keyEl = document.getElementById('cloudKeyInput');
   const binEl = document.getElementById('cloudBinInput');
   if (keyEl) keyEl.value = key;
   if (binEl) binEl.value = bin;
+  // Show hint if credentials are in config.js (not just localStorage)
+  const fromConfig = !!(window.PROFAB_CONFIG?.cloudKey && window.PROFAB_CONFIG?.cloudBin);
+  const hint = document.getElementById('configHint');
+  const steps = document.getElementById('configSteps');
+  if (hint)  hint.style.display  = fromConfig ? 'block' : 'none';
+  if (steps) steps.style.display = fromConfig ? 'none'  : 'block';
 }
 function getCart() {
   return JSON.parse(localStorage.getItem('profab_cart') || '[]');
@@ -443,6 +456,7 @@ function renderProducts() {
     const imgHtml = p.image
       ? `<img src="${p.image}" class="product-img" alt="${p.name}" />`
       : `<div class="product-img-placeholder">${p.emoji || '📦'}</div>`;
+    const merits = Math.round(p.price * 100).toLocaleString();
     return `
       <div class="product-card" onclick="openModal('${p.id}')">
         ${imgHtml}
@@ -451,7 +465,10 @@ function renderProducts() {
           <div class="product-name">${p.name}</div>
           <div class="product-desc">${p.description}</div>
           <div class="product-footer">
-            <div class="product-price">$${Number(p.price).toFixed(2)}</div>
+            <div class="product-price">
+              $${Number(p.price).toFixed(2)}
+              <span class="price-merits">${merits} merits</span>
+            </div>
             <button class="add-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">+ Add</button>
           </div>
         </div>
@@ -473,7 +490,10 @@ function openModal(productId) {
     <div class="modal-category">${p.category}</div>
     <div class="modal-name">${p.name}</div>
     <div class="modal-desc">${p.description}</div>
-    <div class="modal-price">$${Number(p.price).toFixed(2)}</div>
+    <div class="modal-price">
+      $${Number(p.price).toFixed(2)}
+      <span class="modal-price-merits">${Math.round(p.price * 100).toLocaleString()} merits</span>
+    </div>
     <div class="modal-meta">
       ${p.material ? `<span class="meta-tag">🧱 ${p.material}</span>` : ''}
       ${p.printTime ? `<span class="meta-tag">⏱️ ${p.printTime}</span>` : ''}
@@ -499,8 +519,24 @@ function closeModal() {
 // ===== CHECKOUT =====
 function checkout() {
   if (getCart().length === 0) return;
-  toggleCart(); // close cart
+  toggleCart();
   buildOrderSummary();
+  // Pre-fill form from saved profile
+  const session = getUserSession();
+  if (session) {
+    const user = getUsers().find(u => u.id === session.id);
+    const pro = user?.profile || {};
+    const form = document.getElementById('orderForm');
+    const nameParts = session.name.split(' ');
+    form.firstName.value = pro.firstName || nameParts[0] || '';
+    form.lastName.value  = pro.lastName  || nameParts.slice(1).join(' ') || '';
+    form.email.value     = pro.email     || session.email || '';
+    form.phone.value     = pro.phone     || '';
+    form.address.value   = pro.address   || '';
+    form.city.value      = pro.city      || '';
+    form.state.value     = pro.state     || '';
+    form.zip.value       = pro.zip       || '';
+  }
   document.getElementById('orderModal').classList.add('open');
   document.getElementById('orderOverlay').classList.add('open');
 }
@@ -572,6 +608,21 @@ function submitOrder(e) {
   const orders = getOrders();
   orders.unshift(order);
   saveOrders(orders);
+  // Save shipping info to user profile for next time
+  const session = getUserSession();
+  if (session) {
+    const users = getUsers();
+    const user = users.find(u => u.id === session.id);
+    if (user) {
+      user.profile = {
+        firstName: data.firstName, lastName: data.lastName,
+        email: data.email, phone: data.phone || '',
+        address: data.address, city: data.city, state: data.state, zip: data.zip
+      };
+      saveUsers(users);
+    }
+  }
+
   saveCart([]);
   updateCartUI();
 

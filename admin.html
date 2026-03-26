@@ -193,7 +193,18 @@
 
       <div class="pwd-section" style="margin-top:20px;">
         <h3>Cloud Sync <span class="sync-badge" id="syncBadge" style="display:none;">● Live</span></h3>
-        <p>Sync orders and products across devices using <strong>JSONBin.io</strong> (free). <a href="https://jsonbin.io" target="_blank" rel="noopener">Create a free account →</a></p>
+        <p>Sync orders and products across <strong>every device automatically</strong> using JSONBin.io (free). <a href="https://jsonbin.io" target="_blank" rel="noopener">Create a free account →</a></p>
+        <div class="config-hint" id="configHint" style="display:none;">
+          ✅ Credentials are hardcoded in <strong>config.js</strong> — all devices sync automatically.
+        </div>
+        <div class="config-steps" id="configSteps">
+          <strong>One-time setup:</strong>
+          <ol style="margin:8px 0 0 18px;font-size:13px;line-height:2;">
+            <li>Get your <strong>Master API Key</strong> from <a href="https://jsonbin.io" target="_blank">jsonbin.io → Account → API Keys</a></li>
+            <li>Paste it below and click <strong>"+ Create New Bin"</strong></li>
+            <li>Copy both values into <strong>config.js</strong> in your project folder</li>
+          </ol>
+        </div>
         <div style="display:flex;flex-direction:column;gap:14px;max-width:480px;margin-top:16px;">
           <div class="form-group">
             <label>Master API Key</label>
@@ -216,6 +227,7 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
   <script src="app.js"></script>
   <script>
     // ===== PASSWORD AUTH =====

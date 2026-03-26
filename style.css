@@ -929,6 +929,24 @@ a:hover { color: var(--accent2); }
 }
 .sync-ok  { color: var(--green) !important; }
 .sync-err { color: var(--accent3) !important; display: block !important; }
+.config-hint {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(76,175,130,0.1);
+  border: 1px solid rgba(76,175,130,0.3);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--green);
+}
+.config-steps {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: rgba(124,106,247,0.08);
+  border: 1px solid rgba(124,106,247,0.2);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text2);
+}
 
 /* ===== USER NAV ===== */
 .nav-user { display: flex; align-items: center; gap: 8px; }
