@@ -24,7 +24,7 @@
         <div class="login-error" id="loginError">Incorrect password. Try again.</div>
         <button type="submit" class="btn-primary">Unlock →</button>
       </form>
-      <div class="login-footer">Default password: <strong>profab3d</strong></div>
+      <div class="login-footer" id="loginFooter"></div>
     </div>
   </div>
 
@@ -241,35 +241,132 @@
   <script src="config.js"></script>
   <script src="app.js"></script>
   <script>
-    // ===== PASSWORD AUTH =====
-    const DEFAULT_PWD = 'profab3d';
+    // Migrate away from old insecure btoa hash (no salt key means old format)
+    (function migrateOldHash() {
+      if (localStorage.getItem('profab_admin_pwd') && !localStorage.getItem('profab_admin_salt')) {
+        localStorage.removeItem('profab_admin_pwd');
+      }
+    })();
 
-    function getStoredHash() {
-      return localStorage.getItem('profab_admin_pwd') || btoa(DEFAULT_PWD);
+    // ===== SECURE PASSWORD AUTH =====
+    const LOCKOUT_LIMIT    = 5;
+    const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
+    function getAdminSalt() {
+      let salt = localStorage.getItem('profab_admin_salt');
+      if (!salt) {
+        salt = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map(b => b.toString(16).padStart(2, '0')).join('');
+        localStorage.setItem('profab_admin_salt', salt);
+      }
+      return salt;
     }
 
-    function hashPwd(pwd) {
-      return btoa(pwd); // simple obfuscation for local-only use
+    async function adminHash(pwd) {
+      const salt = getAdminSalt();
+      const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + pwd));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    function isAuthenticated() {
-      return sessionStorage.getItem('profab_admin_auth') === 'true';
+    function getStoredHash()  { return localStorage.getItem('profab_admin_pwd') || null; }
+    function isAuthenticated() { return sessionStorage.getItem('profab_admin_auth') === 'true'; }
+
+    // ---- Rate limiting ----
+    function getAttempts() {
+      return JSON.parse(localStorage.getItem('profab_login_attempts') || '{"count":0,"last":0}');
+    }
+    function recordFail() {
+      const a = getAttempts();
+      a.count++;
+      a.last = Date.now();
+      localStorage.setItem('profab_login_attempts', JSON.stringify(a));
+      return a.count;
+    }
+    function clearAttempts() { localStorage.removeItem('profab_login_attempts'); }
+    function isLockedOut() {
+      const a = getAttempts();
+      if (a.count >= LOCKOUT_LIMIT) {
+        if (Date.now() - a.last < LOCKOUT_DURATION) return true;
+        clearAttempts();
+      }
+      return false;
+    }
+    function lockoutRemaining() {
+      const a = getAttempts();
+      return Math.ceil((LOCKOUT_DURATION - (Date.now() - a.last)) / 60000);
     }
 
-    function tryLogin(e) {
+    // ---- First-run setup ----
+    function showSetupMode() {
+      document.getElementById('loginGate').innerHTML = `
+        <div class="login-box">
+          <div class="login-logo"><img src="Pro-Fab 3d logo.jpg" alt="Pro-Fab 3D" class="logo-img logo-img--login" /></div>
+          <h2>Set Up Admin Access</h2>
+          <p>No password has been set yet. Create one to secure your admin panel.</p>
+          <form onsubmit="setupPassword(event)">
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" id="setupPwd" placeholder="Min 8 characters" minlength="8" required autocomplete="new-password" />
+            </div>
+            <div class="form-group">
+              <label>Confirm Password</label>
+              <input type="password" id="setupPwd2" placeholder="Repeat password" required autocomplete="new-password" />
+            </div>
+            <div class="login-error" id="setupError"></div>
+            <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:8px;">Create Password →</button>
+          </form>
+        </div>`;
+    }
+
+    async function setupPassword(e) {
       e.preventDefault();
-      const input = document.getElementById('loginInput').value;
+      const pwd  = document.getElementById('setupPwd').value;
+      const pwd2 = document.getElementById('setupPwd2').value;
+      const err  = document.getElementById('setupError');
+      if (pwd !== pwd2) {
+        err.textContent = 'Passwords do not match.'; err.classList.add('visible'); return;
+      }
+      if (pwd.length < 8) {
+        err.textContent = 'Password must be at least 8 characters.'; err.classList.add('visible'); return;
+      }
+      localStorage.setItem('profab_admin_pwd', await adminHash(pwd));
+      sessionStorage.setItem('profab_admin_auth', 'true');
+      document.getElementById('loginGate').style.display = 'none';
+      document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
+      initAdmin();
+      showToast('Admin password set ✓');
+    }
+
+    // ---- Login ----
+    async function tryLogin(e) {
+      e.preventDefault();
       const err = document.getElementById('loginError');
-      if (hashPwd(input) === getStoredHash()) {
+
+      if (isLockedOut()) {
+        err.textContent = `Too many attempts. Try again in ${lockoutRemaining()} min.`;
+        err.classList.add('visible');
+        return;
+      }
+
+      const input = document.getElementById('loginInput').value;
+      const hash  = await adminHash(input);
+
+      if (hash === getStoredHash()) {
+        clearAttempts();
         sessionStorage.setItem('profab_admin_auth', 'true');
         document.getElementById('loginGate').style.display = 'none';
         document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
         initAdmin();
       } else {
+        const count = recordFail();
+        const left  = LOCKOUT_LIMIT - count;
+        err.textContent = left > 0
+          ? `Incorrect password. ${left} attempt${left === 1 ? '' : 's'} remaining.`
+          : `Too many attempts. Locked for ${lockoutRemaining()} min.`;
         err.classList.add('visible');
         document.getElementById('loginInput').value = '';
         document.getElementById('loginInput').focus();
-        setTimeout(() => err.classList.remove('visible'), 3000);
+        setTimeout(() => err.classList.remove('visible'), 4000);
       }
     }
 
@@ -278,24 +375,28 @@
       location.reload();
     }
 
-    function changePassword(e) {
+    async function changePassword(e) {
       e.preventDefault();
-      const cur = document.getElementById('currentPwd').value;
-      const nw = document.getElementById('newPwd').value;
+      const cur     = document.getElementById('currentPwd').value;
+      const nw      = document.getElementById('newPwd').value;
       const confirm = document.getElementById('confirmPwd').value;
-      const err = document.getElementById('pwdError');
+      const err     = document.getElementById('pwdError');
 
-      if (hashPwd(cur) !== getStoredHash()) {
+      if (await adminHash(cur) !== getStoredHash()) {
         err.textContent = 'Current password is incorrect.';
-        err.classList.add('visible');
-        return;
+        err.classList.add('visible'); return;
+      }
+      if (nw.length < 8) {
+        err.textContent = 'New password must be at least 8 characters.';
+        err.classList.add('visible'); return;
       }
       if (nw !== confirm) {
         err.textContent = 'New passwords do not match.';
-        err.classList.add('visible');
-        return;
+        err.classList.add('visible'); return;
       }
-      localStorage.setItem('profab_admin_pwd', hashPwd(nw));
+      // Rotate salt on password change for extra security
+      localStorage.removeItem('profab_admin_salt');
+      localStorage.setItem('profab_admin_pwd', await adminHash(nw));
       err.classList.remove('visible');
       e.target.reset();
       showToast('Password updated ✓');
@@ -504,6 +605,13 @@
         document.getElementById('loginGate').style.display = 'none';
         document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
         initAdmin();
+      } else if (!getStoredHash()) {
+        // No password set — first run or old insecure hash was cleared
+        showSetupMode();
+      } else if (isLockedOut()) {
+        const err = document.getElementById('loginError');
+        err.textContent = `Too many failed attempts. Try again in ${lockoutRemaining()} min.`;
+        err.classList.add('visible');
       } else {
         document.getElementById('loginInput').focus();
       }
