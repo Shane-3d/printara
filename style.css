@@ -64,6 +64,8 @@ a:hover { color: var(--accent2); }
 }
 .logo-icon { color: var(--accent); font-size: 22px; }
 .logo-accent { color: var(--accent); }
+.logo-img { height: 44px; width: auto; object-fit: contain; }
+.logo-img--login { height: 80px; }
 .nav { display: flex; gap: 8px; margin-left: auto; }
 .nav-link {
   padding: 6px 14px;
