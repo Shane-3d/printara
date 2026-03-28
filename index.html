@@ -192,6 +192,19 @@
         <textarea name="description" rows="6" required placeholder="e.g. A wall-mounted bracket for a 15cm wide remote control, angled at 30°. Needs two screw holes for mounting. Black PLA preferred..."></textarea>
       </div>
       <div class="form-group">
+        <label>Reference Photo <span style="font-weight:400;opacity:.6;">(optional)</span></label>
+        <div class="photo-upload-area" id="photoUploadArea" onclick="document.getElementById('customPhotoInput').click()">
+          <div class="photo-upload-placeholder" id="photoPlaceholder">
+            <div class="photo-upload-icon">📷</div>
+            <div class="photo-upload-text">Tap to take a photo or upload one</div>
+            <div class="photo-upload-sub">Helps us understand exactly what you need</div>
+          </div>
+          <img id="customPhotoPreview" class="photo-preview-img" style="display:none;" alt="Reference photo" />
+          <button type="button" class="photo-remove-btn" id="photoRemoveBtn" style="display:none;" onclick="removeCustomPhoto(event)">✕ Remove</button>
+        </div>
+        <input type="file" id="customPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleCustomPhoto(event)" />
+      </div>
+      <div class="form-group">
         <label>Payment Preference *</label>
         <div class="payment-options">
           <label class="payment-option">

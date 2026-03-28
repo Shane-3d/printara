@@ -713,6 +713,35 @@ function closeCustomOrder() {
   document.getElementById('customOverlay')?.classList.remove('open');
 }
 
+let _customPhotoData = null;
+
+function handleCustomPhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    _customPhotoData = ev.target.result;
+    const preview = document.getElementById('customPhotoPreview');
+    const placeholder = document.getElementById('photoPlaceholder');
+    const removeBtn = document.getElementById('photoRemoveBtn');
+    preview.src = _customPhotoData;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+    removeBtn.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeCustomPhoto(e) {
+  e.stopPropagation();
+  _customPhotoData = null;
+  document.getElementById('customPhotoInput').value = '';
+  document.getElementById('customPhotoPreview').style.display = 'none';
+  document.getElementById('customPhotoPreview').src = '';
+  document.getElementById('photoPlaceholder').style.display = 'block';
+  document.getElementById('photoRemoveBtn').style.display = 'none';
+}
+
 function submitCustomOrder(e) {
   e.preventDefault();
   const form = e.target;
@@ -735,7 +764,8 @@ function submitCustomOrder(e) {
     },
     userId: session.id,
     description: data.description,
-    paymentMethod: data.paymentMethod || 'cash'
+    paymentMethod: data.paymentMethod || 'cash',
+    photo: _customPhotoData || null
   };
 
   const orders = getOrders();
@@ -744,6 +774,7 @@ function submitCustomOrder(e) {
 
   closeCustomOrder();
   form.reset();
+  removeCustomPhoto({ stopPropagation: () => {} });
   document.getElementById('successMsg').textContent =
     `Custom request ${request.id} submitted! We'll review your description and reach out to ${request.customer.email} with a quote.`;
   document.getElementById('successModal').classList.add('open');

@@ -573,7 +573,7 @@
       list.innerHTML = reqs.map(r => {
         const date = new Date(r.date).toLocaleString();
         const isMerits = r.paymentMethod === 'merits';
-        const statusClass = r.status === 'Complete' ? 'status--complete' : 'status--new';
+        const statusClass = r.status === 'Complete' ? 'status--complete' : r.status === 'Rejected' ? 'status--rejected' : 'status--new';
         return `
           <div class="custom-request-card">
             <div class="order-card-header">
@@ -589,10 +589,14 @@
               ${r.customer.email}${r.customer.phone ? ' · ' + r.customer.phone : ''}
             </div>
             <div class="custom-description">${r.description}</div>
+            ${r.photo ? `<img src="${r.photo}" class="custom-request-photo" alt="Reference photo" />` : ''}
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-              ${r.status !== 'Complete'
-                ? `<button class="complete-btn" onclick="completeCustom('${r.id}')">✓ Mark Complete</button>`
-                : '<span class="order-complete-label">✓ Completed</span>'}
+              ${r.status === 'Complete'
+                ? '<span class="order-complete-label">✓ Completed</span>'
+                : r.status === 'Rejected'
+                  ? '<span style="font-size:12px;font-weight:600;color:#ef5350;padding:6px 0;">✕ Rejected</span>'
+                  : `<button class="complete-btn" onclick="completeCustom('${r.id}')">✓ Mark Complete</button>
+                     <button class="reject-btn" onclick="rejectCustom('${r.id}')">✕ Reject</button>`}
             </div>
           </div>`;
       }).join('');
@@ -637,6 +641,13 @@
       const orders = getOrders();
       const r = orders.find(o => o.id === id);
       if (r) { r.status = 'Complete'; saveOrders(orders); renderCustom(); showToast('Marked complete ✓'); }
+    }
+
+    function rejectCustom(id) {
+      if (!confirm('Reject this custom request?')) return;
+      const orders = getOrders();
+      const r = orders.find(o => o.id === id);
+      if (r) { r.status = 'Rejected'; saveOrders(orders); renderCustom(); showToast('Request rejected.'); }
     }
 
     // ===== PRODUCTS =====

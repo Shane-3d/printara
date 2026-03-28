@@ -967,6 +967,43 @@ a:hover { color: var(--accent2); }
 .custom-modal-icon { font-size: 40px; margin-bottom: 8px; }
 .modal-sub { color: var(--text2); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
 
+/* Photo upload */
+.photo-upload-area {
+  border: 2px dashed rgba(124,106,247,0.35);
+  border-radius: var(--radius);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, background .2s;
+  background: rgba(124,106,247,0.04);
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-upload-area:hover { border-color: var(--accent); background: rgba(124,106,247,0.08); }
+.photo-upload-placeholder { text-align: center; padding: 20px 16px; pointer-events: none; }
+.photo-upload-icon { font-size: 28px; margin-bottom: 6px; }
+.photo-upload-text { font-size: 14px; font-weight: 600; color: var(--text1); margin-bottom: 3px; }
+.photo-upload-sub { font-size: 12px; color: var(--text3); }
+.photo-preview-img { width: 100%; max-height: 260px; object-fit: contain; display: block; border-radius: calc(var(--radius) - 2px); }
+.photo-remove-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.photo-remove-btn:hover { background: rgba(239,83,80,0.85); }
+
+/* Custom request photo in admin */
+.custom-request-photo { width: 100%; max-height: 220px; object-fit: contain; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.07); }
+
 /* ===== CUSTOM REQUEST CARDS (admin) ===== */
 .custom-request-card {
   background: var(--surface);
@@ -1234,6 +1271,11 @@ a:hover { color: var(--accent2); }
   color: var(--green);
   border: 1px solid rgba(76,175,130,0.3);
 }
+.status--rejected {
+  background: rgba(239,83,80,0.15);
+  color: #ef5350;
+  border: 1px solid rgba(239,83,80,0.3);
+}
 
 /* Admin complete button */
 .complete-btn {
@@ -1248,6 +1290,18 @@ a:hover { color: var(--accent2); }
   transition: all .2s;
 }
 .complete-btn:hover { background: rgba(76,175,130,0.3); }
+.reject-btn {
+  background: rgba(239,83,80,0.12);
+  color: #ef5350;
+  border: 1px solid rgba(239,83,80,0.3);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.reject-btn:hover { background: rgba(239,83,80,0.25); }
 .order-complete-label {
   font-size: 12px;
   font-weight: 600;
