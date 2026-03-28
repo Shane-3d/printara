@@ -830,6 +830,139 @@ a:hover { color: var(--accent2); }
 }
 .logout-btn:hover { background: var(--accent3); color: #fff; }
 
+/* ===== NOTIFICATIONS ===== */
+.notif-bell-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 4px 6px;
+  line-height: 1;
+  display: none; /* shown via JS when logged in */
+}
+.notif-badge {
+  position: absolute;
+  top: -2px; right: -4px;
+  background: #ef5350;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+}
+.modal--notif { max-width: 460px; padding: 28px 28px 24px; max-height: 80vh; overflow-y: auto; }
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.notif--complete .notif-icon { background: rgba(76,175,130,0.18); color: var(--green); }
+.notif--rejected .notif-icon { background: rgba(239,83,80,0.15); color: #ef5350; }
+.notif--read { opacity: 0.55; }
+.notif-body { flex: 1; }
+.notif-msg { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.45; }
+.notif-date { font-size: 12px; color: var(--text3); margin-top: 3px; }
+
+/* ===== SIDEBAR (desktop only) ===== */
+.sidebar {
+  display: none; /* hidden by default; shown via media query below */
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+    width: 220px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 90;
+    padding: 16px 0 32px;
+  }
+
+  .sidebar-group { margin-bottom: 2px; }
+
+  .sidebar-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 14px 18px 5px;
+  }
+
+  .sidebar-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 18px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    text-decoration: none;
+    line-height: 1.3;
+    transition: color .15s, background .15s;
+    border-radius: 0;
+  }
+  .sidebar-item:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .sidebar-item.active { color: var(--accent); background: rgba(124,106,247,0.1); font-weight: 600; }
+  .sidebar-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .sidebar-item-icon { font-size: 15px; flex-shrink: 0; }
+
+  .sidebar-bottom {
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  /* ── Admin layout with sidebar ── */
+  .admin-tabs { display: none; }
+  .admin-wrap { margin-left: 220px; max-width: 1100px; }
+
+  /* ── Shop layout with sidebar ── */
+  .page-content { margin-left: 220px; }
+}
+
 /* ===== RESPONSIVE ===== */
 
 /* --- Tablet (≤900px) --- */

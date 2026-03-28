@@ -33,12 +33,49 @@
           <button class="nav-logout-btn" onclick="logoutUser()" title="Log out">↩</button>
         </div>
       </div>
+      <button class="notif-bell-btn" id="notifBellBtn" onclick="openNotifications()" title="Notifications" style="display:none;">
+        🔔<span class="notif-badge" id="notifBadge" style="display:none;"></span>
+      </button>
       <button class="cart-btn" id="cartBtn" onclick="toggleCart()">
         <span class="cart-icon">🛒</span>
         <span class="cart-count" id="cartCount">0</span>
       </button>
     </div>
   </header>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar shop-sidebar" id="shopSidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Shop</div>
+      <a href="#products" class="sidebar-item active">
+        <span class="sidebar-item-icon">🛍️</span> Products
+      </a>
+      <a href="#" class="sidebar-item" onclick="openCustomOrder(); return false;">
+        <span class="sidebar-item-icon">✏️</span> Custom Request
+      </a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Links</div>
+      <a href="admin.html" class="sidebar-item">
+        <span class="sidebar-item-icon">⚙️</span> Admin Panel
+      </a>
+    </div>
+    <div class="sidebar-bottom" id="sidebarAccount">
+      <button class="sidebar-item" id="sidebarLoginBtn" onclick="openAuth('login')">
+        <span class="sidebar-item-icon">👤</span> Login / Sign Up
+      </button>
+      <div id="sidebarUserSection" style="display:none;">
+        <button class="sidebar-item" onclick="openMyOrders()">
+          <span class="sidebar-item-icon">👤</span> <span id="sidebarUserName"></span>
+        </button>
+        <button class="sidebar-item" onclick="logoutUser()">
+          <span class="sidebar-item-icon">↩</span> Log Out
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="page-content">
 
   <!-- HERO -->
   <section class="hero">
@@ -113,6 +150,8 @@
       </div>
     </div>
   </footer>
+
+  </main><!-- /page-content -->
 
   <!-- CART DRAWER -->
   <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
@@ -285,6 +324,14 @@
     <button class="close-btn modal-close" onclick="closeMyOrders()">✕</button>
     <h2 class="modal-title">My Orders</h2>
     <div id="myOrdersList"></div>
+  </div>
+
+  <!-- NOTIFICATIONS MODAL -->
+  <div class="modal-overlay" id="notifOverlay" onclick="closeNotifications()"></div>
+  <div class="modal modal--notif" id="notifModal">
+    <button class="close-btn modal-close" onclick="closeNotifications()">✕</button>
+    <h2 class="modal-title">Notifications</h2>
+    <div id="notifList"></div>
   </div>
 
   <script src="config.js"></script>

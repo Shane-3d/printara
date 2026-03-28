@@ -47,6 +47,57 @@
     </div>
   </header>
 
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar admin-content" id="adminSidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Products</div>
+      <button class="sidebar-item active" id="sbi-add" onclick="switchTab('add')">
+        <span class="sidebar-item-icon">📦</span> Add Product
+      </button>
+      <button class="sidebar-item" id="sbi-manage" onclick="switchTab('manage')">
+        <span class="sidebar-item-icon">🗂️</span> Manage Products
+      </button>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Orders</div>
+      <button class="sidebar-item" id="sbi-orders" onclick="switchTab('orders')">
+        <span class="sidebar-item-icon">🛒</span> Orders
+      </button>
+      <button class="sidebar-item" id="sbi-custom" onclick="switchTab('custom')">
+        <span class="sidebar-item-icon">✏️</span> Custom Requests
+      </button>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">People</div>
+      <button class="sidebar-item" id="sbi-users" onclick="switchTab('users')">
+        <span class="sidebar-item-icon">👥</span> Accounts
+      </button>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Finance</div>
+      <button class="sidebar-item" id="sbi-sales" onclick="switchTab('sales')">
+        <span class="sidebar-item-icon">🏷️</span> Sales
+      </button>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Time</div>
+      <button class="sidebar-item" id="sbi-clockin" onclick="switchTab('clockin')">
+        <span class="sidebar-item-icon">⏱️</span> Hours
+      </button>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">System</div>
+      <button class="sidebar-item" id="sbi-settings" onclick="switchTab('settings')">
+        <span class="sidebar-item-icon">⚙️</span> Settings
+      </button>
+    </div>
+    <div class="sidebar-bottom">
+      <a href="index.html" class="sidebar-item">
+        <span class="sidebar-item-icon">←</span> Back to Shop
+      </a>
+    </div>
+  </aside>
+
   <!-- ===== ADMIN CONTENT ===== -->
   <div class="admin-wrap admin-content" id="adminContent">
     <div class="admin-header">
@@ -495,6 +546,9 @@
         const tabs = ['add', 'manage', 'orders', 'custom', 'users', 'sales', 'clockin', 'settings'];
         b.classList.toggle('active', tabs[i] === tab);
       });
+      document.querySelectorAll('[id^="sbi-"]').forEach(el => {
+        el.classList.toggle('active', el.id === 'sbi-' + tab);
+      });
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       document.getElementById('tab-' + tab).classList.add('active');
       if (tab === 'manage') renderManage();
@@ -640,14 +694,26 @@
     function completeCustom(id) {
       const orders = getOrders();
       const r = orders.find(o => o.id === id);
-      if (r) { r.status = 'Complete'; saveOrders(orders); renderCustom(); showToast('Marked complete ✓'); }
+      if (r) {
+        r.status = 'Complete';
+        saveOrders(orders);
+        addNotification(r.userId, 'custom_complete', r.id, `Your custom request ${r.id} is complete! We'll be in touch. ✓`);
+        renderCustom();
+        showToast('Marked complete ✓');
+      }
     }
 
     function rejectCustom(id) {
       if (!confirm('Reject this custom request?')) return;
       const orders = getOrders();
       const r = orders.find(o => o.id === id);
-      if (r) { r.status = 'Rejected'; saveOrders(orders); renderCustom(); showToast('Request rejected.'); }
+      if (r) {
+        r.status = 'Rejected';
+        saveOrders(orders);
+        addNotification(r.userId, 'custom_rejected', r.id, `Your custom request ${r.id} was not accepted. Contact us for more info.`);
+        renderCustom();
+        showToast('Request rejected.');
+      }
     }
 
     // ===== PRODUCTS =====
@@ -767,6 +833,7 @@
       if (o) {
         o.status = 'Complete';
         saveOrders(orders);
+        addNotification(o.userId, 'order_complete', o.id, `Your order ${o.id} is ready! 🎉`);
         renderOrders();
         showToast('Order marked as complete ✓');
       }

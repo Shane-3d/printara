@@ -95,6 +95,14 @@ function updateUserNav() {
     loginBtn.style.display = 'flex';
     userBtn.style.display = 'none';
   }
+  updateNotifBadge();
+  // Sync sidebar account section
+  const sidebarLogin = document.getElementById('sidebarLoginBtn');
+  const sidebarUser  = document.getElementById('sidebarUserSection');
+  const sidebarName  = document.getElementById('sidebarUserName');
+  if (sidebarLogin) sidebarLogin.style.display = session ? 'none' : 'flex';
+  if (sidebarUser)  sidebarUser.style.display  = session ? 'block' : 'none';
+  if (sidebarName && session) sidebarName.textContent = session.name;
 }
 
 function openAuth(tab = 'login') {
@@ -138,7 +146,7 @@ function renderMyOrders() {
     const date = new Date(o.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const isMerits = o.paymentMethod === 'merits';
     const totalDisplay = isMerits ? `${(o.meritsTotal || Math.round(o.total * 100)).toLocaleString()} merits` : `$${Number(o.total).toFixed(2)}`;
-    const statusClass = o.status === 'Complete' ? 'status--complete' : 'status--new';
+    const statusClass = o.status === 'Complete' ? 'status--complete' : o.status === 'Rejected' ? 'status--rejected' : 'status--new';
     const itemSummary = o.items.map(i => `${i.name} ×${i.qty}`).join(', ');
     return `
       <div class="my-order-card">
@@ -151,6 +159,81 @@ function renderMyOrders() {
         <div class="my-order-footer">
           <span class="my-order-total">${totalDisplay}</span>
           <span class="my-order-pay">${isMerits ? '⭐ Merits' : '💵 Cash'}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ===== NOTIFICATIONS =====
+function getNotifications() {
+  return JSON.parse(localStorage.getItem('profab_notifications') || '[]');
+}
+function saveNotifications(n) {
+  localStorage.setItem('profab_notifications', JSON.stringify(n));
+  cloudPush();
+}
+function addNotification(userId, type, orderId, message) {
+  if (!userId) return;
+  const notifs = getNotifications();
+  notifs.unshift({ id: 'notif-' + Date.now().toString(36), userId, type, orderId, message, date: new Date().toISOString(), read: false });
+  saveNotifications(notifs);
+}
+function updateNotifBadge() {
+  const session = getUserSession();
+  const bell = document.getElementById('notifBellBtn');
+  const badge = document.getElementById('notifBadge');
+  if (!bell) return;
+  if (!session) { bell.style.display = 'none'; return; }
+  const count = getNotifications().filter(n => n.userId === session.id && !n.read).length;
+  bell.style.display = 'inline-flex';
+  if (badge) {
+    badge.textContent = count > 0 ? count : '';
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  }
+}
+function openNotifications() {
+  const session = getUserSession();
+  if (!session) { openAuth('login'); return; }
+  renderNotifications();
+  document.getElementById('notifModal').classList.add('open');
+  document.getElementById('notifOverlay').classList.add('open');
+  // Pull latest from cloud then re-render
+  cloudPull().then(() => {
+    renderNotifications();
+    markAllNotifsRead(session.id);
+  });
+}
+function closeNotifications() {
+  document.getElementById('notifModal')?.classList.remove('open');
+  document.getElementById('notifOverlay')?.classList.remove('open');
+  updateNotifBadge();
+}
+function markAllNotifsRead(userId) {
+  const notifs = getNotifications();
+  let changed = false;
+  notifs.forEach(n => { if (n.userId === userId && !n.read) { n.read = true; changed = true; } });
+  if (changed) saveNotifications(notifs);
+}
+function renderNotifications() {
+  const session = getUserSession();
+  const el = document.getElementById('notifList');
+  if (!el || !session) return;
+  const notifs = getNotifications().filter(n => n.userId === session.id);
+  if (notifs.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text3);">No notifications yet.</div>';
+    return;
+  }
+  el.innerHTML = notifs.map(n => {
+    const date = new Date(n.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const isRejected = n.type === 'custom_rejected';
+    const icon = isRejected ? '✕' : '✓';
+    const colorClass = isRejected ? 'notif--rejected' : 'notif--complete';
+    return `
+      <div class="notif-item ${colorClass}${n.read ? ' notif--read' : ''}">
+        <div class="notif-icon">${icon}</div>
+        <div class="notif-body">
+          <div class="notif-msg">${n.message}</div>
+          <div class="notif-date">${date}</div>
         </div>
       </div>`;
   }).join('');
@@ -206,7 +289,8 @@ function cloudPush() {
           products: getProducts(),
           users: getUsers(),
           ci_sessions: JSON.parse(localStorage.getItem('profab_ci_sessions') || '[]'),
-          ci_active: JSON.parse(localStorage.getItem('profab_ci_active') || 'null')
+          ci_active: JSON.parse(localStorage.getItem('profab_ci_active') || 'null'),
+          notifications: getNotifications()
         })
       });
       setSyncStatus('Synced ✓', 'ok');
@@ -233,6 +317,7 @@ async function cloudPull() {
       if (record.ci_active) localStorage.setItem('profab_ci_active', JSON.stringify(record.ci_active));
       else localStorage.removeItem('profab_ci_active');
     }
+    if (record.notifications) localStorage.setItem('profab_notifications', JSON.stringify(record.notifications));
     setSyncStatus('Synced ✓', 'ok');
     return true;
   } catch {
@@ -259,7 +344,8 @@ async function createNewBin() {
           products: getProducts(),
           users: getUsers(),
           ci_sessions: JSON.parse(localStorage.getItem('profab_ci_sessions') || '[]'),
-          ci_active: JSON.parse(localStorage.getItem('profab_ci_active') || 'null')
+          ci_active: JSON.parse(localStorage.getItem('profab_ci_active') || 'null'),
+          notifications: getNotifications()
         })
     });
     if (!res.ok) { setSyncStatus('Invalid API key.', 'err'); return; }
