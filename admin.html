@@ -44,6 +44,7 @@
         <a href="index.html" class="nav-link">← Shop</a>
       </nav>
       <span style="margin-left:auto; background:rgba(124,106,247,0.15); border:1px solid rgba(124,106,247,0.4); color:var(--accent); padding:5px 14px; border-radius:20px; font-size:13px; font-weight:600;">Admin</span>
+      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
     </div>
   </header>
 
@@ -98,6 +99,36 @@
     </div>
   </aside>
 
+  <!-- ===== MOBILE BOTTOM NAV ===== -->
+  <nav class="admin-bottom-nav admin-content" id="adminBottomNav">
+    <button class="admin-bottom-nav-item active" id="mni-add" onclick="switchTab('add')">
+      <span class="admin-bottom-nav-icon">➕</span>Add
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-manage" onclick="switchTab('manage')">
+      <span class="admin-bottom-nav-icon">🗂️</span>Products
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-orders" onclick="switchTab('orders')">
+      <span class="admin-bottom-nav-icon">🛒</span>Orders
+      <span class="admin-bottom-nav-badge" id="mobileOrderBadge" style="display:none;"></span>
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-custom" onclick="switchTab('custom')">
+      <span class="admin-bottom-nav-icon">✏️</span>Custom
+      <span class="admin-bottom-nav-badge" id="mobileCustomBadge" style="display:none;"></span>
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-users" onclick="switchTab('users')">
+      <span class="admin-bottom-nav-icon">👥</span>Accounts
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-sales" onclick="switchTab('sales')">
+      <span class="admin-bottom-nav-icon">🏷️</span>Sales
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-clockin" onclick="switchTab('clockin')">
+      <span class="admin-bottom-nav-icon">⏱️</span>Hours
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-settings" onclick="switchTab('settings')">
+      <span class="admin-bottom-nav-icon">⚙️</span>Settings
+    </button>
+  </nav>
+
   <!-- ===== ADMIN CONTENT ===== -->
   <div class="admin-wrap admin-content" id="adminContent">
     <div class="admin-header">
@@ -124,21 +155,10 @@
           <p style="color:var(--text2);font-size:14px;margin-top:4px;">Fill in the details below to list a new item in the shop.</p>
         </div>
 
-        <!-- AI PHOTO CAPTURE -->
-        <div style="background:rgba(124,106,247,0.07);border:1px solid rgba(124,106,247,0.25);border-radius:var(--radius);padding:18px 20px;display:flex;flex-direction:column;gap:12px;">
-          <div style="font-size:13px;font-weight:700;color:var(--accent);">✨ AI Auto-Fill from Photo</div>
-          <p style="font-size:13px;color:var(--text2);margin:0;">Take or upload a photo of your 3D print — AI will generate the name, description, size, and more.</p>
-
-          <!-- Key input — hidden once saved -->
-          <div id="aiKeySection" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <input type="password" id="aiGeminiKeyInput" placeholder="Paste your free Google Gemini API key (AIza...)" autocomplete="off"
-              style="flex:1;min-width:220px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;" />
-            <button type="button" onclick="saveGeminiKeyInline()" class="btn-primary" style="white-space:nowrap;">Save Key</button>
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent);white-space:nowrap;">Get free key →</a>
-          </div>
-          <div id="aiKeyStatus" style="font-size:12px;color:var(--green);display:none;">API key saved ✓ — you can now take a photo.</div>
-
-          <div class="photo-upload-area" id="aiPhotoArea" onclick="document.getElementById('aiPhotoInput').click()" style="min-height:90px;">
+        <!-- PRODUCT PHOTO -->
+        <div class="form-group">
+          <label>Product Photo (optional)</label>
+          <div class="photo-upload-area" id="aiPhotoArea" onclick="document.getElementById('aiPhotoInput').click()">
             <div class="photo-upload-placeholder" id="aiPhotoPlaceholder">
               <div class="photo-upload-icon">📷</div>
               <div class="photo-upload-text">Tap to take a photo or upload one</div>
@@ -147,8 +167,6 @@
             <button type="button" class="photo-remove-btn" id="aiPhotoRemoveBtn" style="display:none;" onclick="removeAiPhoto(event)">✕ Remove</button>
           </div>
           <input type="file" id="aiPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleAiPhoto(event)" />
-          <button type="button" class="btn-primary" id="aiAnalyzeBtn" onclick="analyzeProductPhoto()" style="display:none;align-self:flex-start;">✨ Generate Details</button>
-          <div id="aiStatus" style="font-size:13px;display:none;"></div>
         </div>
 
         <div class="form-row">
@@ -204,12 +222,6 @@
             <label>Dimensions</label>
             <input type="text" name="dimensions" placeholder="50 × 50 × 80 mm" />
           </div>
-        </div>
-
-        <div class="form-group">
-          <label>Product Image URL (optional)</label>
-          <input type="url" name="image" placeholder="https://..." />
-          <span style="font-size:12px;color:var(--text3);margin-top:4px;">Paste a direct image link, or leave blank to use an emoji icon.</span>
         </div>
 
         <div class="form-row">
@@ -348,24 +360,58 @@
       </div>
 
       <div class="pwd-section" style="margin-top:20px;">
-        <h3>Session</h3>
-        <p>Logging out will require the password to access admin again.</p>
-        <button class="logout-btn" onclick="logout()">Log Out</button>
+        <h3>🎨 Appearance</h3>
+        <p>Customize the look of your admin panel. Colors are saved to this device.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:16px;max-width:480px;">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:14px;font-weight:600;">Dark / Light Mode</span>
+            <button class="theme-toggle" id="themeToggleSettings" onclick="toggleTheme()" style="width:auto;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;width:110px;">🌙 Dark</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Background</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorBg" value="#0a0a0f" oninput="applyCustomColor('bg',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorBgHex" value="#0a0a0f" oninput="applyCustomColorHex('bg',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Text</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorText" value="#f0f0f8" oninput="applyCustomColor('text',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorTextHex" value="#f0f0f8" oninput="applyCustomColorHex('text',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Accent</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorAccent" value="#7c6af7" oninput="applyCustomColor('accent',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorAccentHex" value="#7c6af7" oninput="applyCustomColorHex('accent',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Surface / Cards</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorSurface" value="#1a1a26" oninput="applyCustomColor('surface',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorSurfaceHex" value="#1a1a26" oninput="applyCustomColorHex('surface',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+            <button class="btn-primary" style="align-self:flex-start;" onclick="saveCustomColors()">Save Colors</button>
+            <button class="tab-btn" onclick="resetCustomColors()">Reset to Default</button>
+          </div>
+          <div id="colorStatus" style="font-size:13px;color:var(--green);display:none;">Colors saved ✓</div>
+        </div>
       </div>
 
       <div class="pwd-section" style="margin-top:20px;">
-        <h3>✨ AI Photo Auto-Fill</h3>
-        <p>Enter your free Google Gemini API key to enable photo-to-product AI generation. <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get a free key →</a></p>
-        <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;margin-top:14px;">
-          <div class="form-group">
-            <label>Google Gemini API Key</label>
-            <input type="password" id="anthropicKeyInput" placeholder="AIza..." autocomplete="off" />
-          </div>
-          <div style="display:flex;gap:10px;">
-            <button class="btn-primary" style="align-self:flex-start;" onclick="saveAnthropicKey()">Save Key</button>
-          </div>
-          <div id="anthropicKeyStatus" style="font-size:13px;color:var(--text3);"></div>
-        </div>
+        <h3>Session</h3>
+        <p>Logging out will require the password to access admin again.</p>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
       </div>
 
       <div class="pwd-section" style="margin-top:20px;">
@@ -591,14 +637,19 @@
       document.querySelectorAll('[id^="sbi-"]').forEach(el => {
         el.classList.toggle('active', el.id === 'sbi-' + tab);
       });
+      document.querySelectorAll('[id^="mni-"]').forEach(el => {
+        el.classList.toggle('active', el.id === 'mni-' + tab);
+      });
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       document.getElementById('tab-' + tab).classList.add('active');
-      if (tab === 'manage') renderManage();
-      if (tab === 'orders') renderOrders();
-      if (tab === 'custom') renderCustom();
-      if (tab === 'users')  renderUsers();
-      if (tab === 'sales')   renderSales();
-      if (tab === 'clockin') renderClockIn();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (tab === 'manage')   renderManage();
+      if (tab === 'orders')   renderOrders();
+      if (tab === 'custom')   renderCustom();
+      if (tab === 'users')    renderUsers();
+      if (tab === 'sales')    renderSales();
+      if (tab === 'clockin')  renderClockIn();
+      if (tab === 'settings') initColorPickers();
     }
 
     // ===== SALES =====
@@ -772,7 +823,7 @@
         material: data.material || '',
         printTime: data.printTime || '',
         dimensions: data.dimensions || '',
-        image: data.image || '',
+        image: _aiPhotoData || '',
         emoji: data.emoji || '📦',
         inStock: data.inStock === 'true'
       };
@@ -780,6 +831,7 @@
       products.push(product);
       saveProducts(products);
       form.reset();
+      removeAiPhoto({ stopPropagation: () => {} });
       showToast('Product added! ✓');
       switchTab('manage');
     }
@@ -1109,6 +1161,7 @@
       const users = getUsers();
       if (usersBadge && users.length > 0) usersBadge.textContent = `(${users.length})`;
       updateSyncBadge();
+      syncMobileBadges();
       // Resume clock-in timer if currently clocked in
       if (getCIActive()) renderClockIn();
       // Start order polling & request notification permission
@@ -1141,47 +1194,12 @@
       }
     });
 
-    // ===== AI PHOTO AUTO-FILL =====
+    // ===== PRODUCT PHOTO =====
     let _aiPhotoData = null;
-
-    function getGeminiKey() {
-      return (window.PROFAB_CONFIG?.geminiKey || '').trim()
-          || (localStorage.getItem('profab_gemini_key') || '').trim();
-    }
-
-    function saveAnthropicKey() {
-      const val = document.getElementById('anthropicKeyInput')?.value.trim();
-      if (!val) { document.getElementById('anthropicKeyStatus').textContent = 'Please enter a key.'; return; }
-      localStorage.setItem('profab_gemini_key', val);
-      document.getElementById('anthropicKeyStatus').textContent = 'Key saved ✓';
-      setTimeout(() => { document.getElementById('anthropicKeyStatus').textContent = ''; }, 2500);
-    }
-
-    function saveGeminiKeyInline() {
-      const val = document.getElementById('aiGeminiKeyInput')?.value.trim();
-      if (!val) return;
-      localStorage.setItem('profab_gemini_key', val);
-      // Also sync to settings input
-      const settingsEl = document.getElementById('anthropicKeyInput');
-      if (settingsEl) settingsEl.value = val;
-      document.getElementById('aiKeySection').style.display = 'none';
-      document.getElementById('aiKeyStatus').style.display = 'block';
-      setTimeout(() => { document.getElementById('aiKeyStatus').style.display = 'none'; }, 3000);
-    }
-
-    function initAiKeySection() {
-      const key = getGeminiKey();
-      if (key) {
-        document.getElementById('aiKeySection').style.display = 'none';
-        const el = document.getElementById('aiGeminiKeyInput');
-        if (el) el.value = key;
-      }
-    }
 
     function handleAiPhoto(e) {
       const file = e.target.files[0];
       if (!file) return;
-      // Resize to reduce payload size
       const reader = new FileReader();
       reader.onload = ev => {
         const img = new Image();
@@ -1200,7 +1218,6 @@
           document.getElementById('aiPhotoPreview').style.display = 'block';
           document.getElementById('aiPhotoPlaceholder').style.display = 'none';
           document.getElementById('aiPhotoRemoveBtn').style.display = 'block';
-          document.getElementById('aiAnalyzeBtn').style.display = 'inline-flex';
         };
         img.src = ev.target.result;
       };
@@ -1215,113 +1232,135 @@
       document.getElementById('aiPhotoPreview').src = '';
       document.getElementById('aiPhotoPlaceholder').style.display = 'block';
       document.getElementById('aiPhotoRemoveBtn').style.display = 'none';
-      document.getElementById('aiAnalyzeBtn').style.display = 'none';
-      document.getElementById('aiStatus').style.display = 'none';
+    }
+    // ===== THEME =====
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle('light-theme');
+      localStorage.setItem('profab_theme', isLight ? 'light' : 'dark');
+      const icon = isLight ? '☀️' : '🌙';
+      const label = isLight ? '☀️ Light' : '🌙 Dark';
+      const hBtn = document.getElementById('themeToggleBtn');
+      const sBtn = document.getElementById('themeToggleSettings');
+      if (hBtn) hBtn.textContent = icon;
+      if (sBtn) sBtn.textContent = label;
+      // Update pickers to reflect current computed vars
+      initColorPickers();
+    }
+    (function applyTheme() {
+      const saved = localStorage.getItem('profab_theme');
+      if (saved === 'light') {
+        document.body.classList.add('light-theme');
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) btn.textContent = '☀️';
+      }
+    })();
+
+    // ===== CUSTOM COLORS =====
+    const _colorMap = {
+      bg:      { prop: '--bg',      related: ['--bg2','--bg3','--header-bg'] },
+      text:    { prop: '--text',    related: ['--text2','--text3'] },
+      accent:  { prop: '--accent',  related: [] },
+      surface: { prop: '--surface', related: ['--surface2'] }
+    };
+
+    function hexToRgb(hex) {
+      const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      return [r,g,b];
+    }
+    function lighten(hex, amt) {
+      const [r,g,b] = hexToRgb(hex);
+      const cap = v => Math.min(255, Math.max(0, v));
+      return '#' + [cap(r+amt), cap(g+amt), cap(b+amt)].map(v => v.toString(16).padStart(2,'0')).join('');
+    }
+    function darken(hex, amt) { return lighten(hex, -amt); }
+
+    function applyCustomColor(key, value) {
+      const root = document.documentElement;
+      if (!value || value.length < 4) return;
+      if (key === 'bg') {
+        root.style.setProperty('--bg', value);
+        root.style.setProperty('--bg2', lighten(value, 8));
+        root.style.setProperty('--bg3', lighten(value, 14));
+        root.style.setProperty('--header-bg', value + 'e0');
+      } else if (key === 'text') {
+        root.style.setProperty('--text', value);
+        root.style.setProperty('--text2', lighten(value, -40));
+        root.style.setProperty('--text3', lighten(value, -80));
+      } else if (key === 'accent') {
+        root.style.setProperty('--accent', value);
+      } else if (key === 'surface') {
+        root.style.setProperty('--surface', value);
+        root.style.setProperty('--surface2', lighten(value, 12));
+      }
+      // Sync hex input
+      const hexEl = document.getElementById('color' + key.charAt(0).toUpperCase() + key.slice(1) + 'Hex');
+      if (hexEl) hexEl.value = value;
     }
 
-    async function analyzeProductPhoto() {
-      if (!_aiPhotoData) return;
-      let key = getGeminiKey();
-      if (!key) {
-        // Key not saved yet — check the inline input
-        key = document.getElementById('aiGeminiKeyInput')?.value.trim();
-        if (!key) {
-          document.getElementById('aiKeySection').style.display = 'flex';
-          document.getElementById('aiGeminiKeyInput')?.focus();
-          showToast('Enter your Gemini API key first.');
-          return;
-        }
-        localStorage.setItem('profab_gemini_key', key);
+    function applyCustomColorHex(key, value) {
+      if (/^#[0-9a-fA-F]{6}$/.test(value)) {
+        applyCustomColor(key, value);
+        const picker = document.getElementById('color' + key.charAt(0).toUpperCase() + key.slice(1));
+        if (picker) picker.value = value;
       }
-      const btn = document.getElementById('aiAnalyzeBtn');
-      const status = document.getElementById('aiStatus');
-      btn.disabled = true;
-      btn.textContent = '⏳ Analyzing…';
-      status.style.display = 'block';
-      status.style.color = 'var(--text2)';
-      status.textContent = 'Sending photo to AI…';
+    }
 
-      const base64 = _aiPhotoData.split(',')[1];
-      const mimeType = _aiPhotoData.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
-      const prompt = `You are a product listing assistant for a 3D printing shop called Pro-Fab 3D. Analyze this photo of a 3D printed item and return ONLY valid JSON with these fields:
-{
-  "name": "short product name (3-5 words)",
-  "category": "one of: Home Decor, Organization, Desk Accessories, Tools & Hardware, Toys & Games, Art & Gifts, Functional Parts",
-  "description": "2-3 sentence product description covering what it is, its use case, and any notable features",
-  "dimensions": "estimated dimensions in mm (e.g. 80 × 60 × 40 mm) — estimate from visual cues",
-  "printTime": "estimated print time (e.g. ~2 hrs)",
-  "material": "most likely material: PLA, PETG, ASA, ABS, TPU, or Resin",
-  "emoji": "single emoji that best represents this product"
-}
-Return ONLY the JSON object, no markdown, no explanation.`;
+    function saveCustomColors() {
+      const colors = { bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+                       text: getComputedStyle(document.documentElement).getPropertyValue('--text').trim(),
+                       accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+                       surface: getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() };
+      localStorage.setItem('profab_colors', JSON.stringify(colors));
+      const s = document.getElementById('colorStatus');
+      if (s) { s.style.display = 'block'; setTimeout(() => s.style.display = 'none', 2000); }
+    }
 
+    function resetCustomColors() {
+      localStorage.removeItem('profab_colors');
+      const root = document.documentElement;
+      ['--bg','--bg2','--bg3','--header-bg','--text','--text2','--text3','--accent','--surface','--surface2']
+        .forEach(p => root.style.removeProperty(p));
+      initColorPickers();
+      showToast('Colors reset to default.');
+    }
+
+    function initColorPickers() {
+      const cs = getComputedStyle(document.documentElement);
+      const get = p => cs.getPropertyValue(p).trim();
+      const pairs = [['colorBg','--bg'],['colorText','--text'],['colorAccent','--accent'],['colorSurface','--surface']];
+      pairs.forEach(([id, prop]) => {
+        const picker = document.getElementById(id);
+        const hex = document.getElementById(id + 'Hex');
+        const val = get(prop);
+        if (picker && /^#[0-9a-fA-F]{6}$/.test(val)) picker.value = val;
+        if (hex   && /^#[0-9a-fA-F]{6}$/.test(val)) hex.value = val;
+      });
+      // Update settings theme btn label
+      const sBtn = document.getElementById('themeToggleSettings');
+      if (sBtn) sBtn.textContent = document.body.classList.contains('light-theme') ? '☀️ Light' : '🌙 Dark';
+    }
+
+    (function loadSavedColors() {
       try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [
-                  { inline_data: { mime_type: mimeType, data: base64 } },
-                  { text: prompt }
-                ]
-              }],
-              generationConfig: { maxOutputTokens: 512, temperature: 0.2 }
-            })
-          }
-        );
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          const msg = err?.error?.message || `API error ${res.status}`;
-          if (res.status === 400) throw new Error('Bad request — check your API key format.');
-          if (res.status === 403) throw new Error('Invalid or expired API key. Get a new one at aistudio.google.com');
-          if (res.status === 429) throw new Error('Rate limit hit — wait a moment and try again.');
-          throw new Error(msg);
+        const saved = JSON.parse(localStorage.getItem('profab_colors') || 'null');
+        if (saved) {
+          Object.entries(saved).forEach(([k,v]) => applyCustomColor(k, v));
         }
+      } catch {}
+    })();
 
-        const data = await res.json();
-        let text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-        // Strip markdown code fences if present
-        text = text.replace(/^```[a-z]*\n?/, '').replace(/\n?```$/, '').trim();
-        let product;
-        try { product = JSON.parse(text); }
-        catch { throw new Error('Could not parse AI response. Try again.'); }
-
-        const form = document.getElementById('addProductForm');
-        const set = (name, val) => { const el = form.elements[name]; if (el && val) el.value = val; };
-        set('name', product.name);
-        set('category', product.category);
-        set('description', product.description);
-        set('dimensions', product.dimensions);
-        set('printTime', product.printTime);
-        set('material', product.material);
-        set('emoji', product.emoji);
-
-        status.textContent = '✓ Fields filled! Review and adjust, then set a price.';
-        status.style.color = 'var(--green)';
-        btn.textContent = '✨ Re-Analyze';
-        btn.disabled = false;
-
-      } catch (err) {
-        status.textContent = '✕ ' + err.message;
-        status.style.color = '#ef5350';
-        btn.textContent = '✨ Generate Details';
-        btn.disabled = false;
-      }
+    // ===== MOBILE BADGE SYNC =====
+    function syncMobileBadges() {
+      const orders = getOrders();
+      const newOrders = orders.filter(o => o.type !== 'custom' && o.status === 'New').length;
+      const newCustom = orders.filter(o => o.type === 'custom' && o.status === 'New').length;
+      const ob = document.getElementById('mobileOrderBadge');
+      const cb = document.getElementById('mobileCustomBadge');
+      if (ob) { ob.textContent = newOrders || ''; ob.style.display = newOrders ? 'flex' : 'none'; }
+      if (cb) { cb.textContent = newCustom || ''; cb.style.display = newCustom ? 'flex' : 'none'; }
     }
-
-    // Pre-fill key inputs from storage on load
-    document.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('profab_gemini_key') || window.PROFAB_CONFIG?.geminiKey || '';
-      const settingsEl = document.getElementById('anthropicKeyInput');
-      if (settingsEl && saved) settingsEl.value = saved;
-      const inlineEl = document.getElementById('aiGeminiKeyInput');
-      if (inlineEl && saved) inlineEl.value = saved;
-      initAiKeySection();
-    });
+    // Call after unlock
+    document.addEventListener('profab-unlocked', syncMobileBadges);
   </script>
 </body>
 </html>

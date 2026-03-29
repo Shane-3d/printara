@@ -12,8 +12,4 @@ window.PROFAB_CONFIG = {
   adminSalt: 'c72dde47002c655a8c60c5369b162319',
   adminHash: 'd7a18117ad2ec65284ff76e884233e3eeb69ff0404ccb617939a0544a5691a54',
 
-  // Google Gemini API key — used to auto-generate product details from a photo.
-  // Get a free key at https://aistudio.google.com/app/apikey
-  // Paste it here so all devices can use the AI photo feature.
-  geminiKey: ''
 };
