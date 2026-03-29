@@ -1062,8 +1062,176 @@ function showToast(msg) {
   toast._timer = setTimeout(() => { toast.style.transform = 'translateX(-50%) translateY(80px)'; }, 2200);
 }
 
+// ===== THEME & COLOR ENGINE =====
+const THEME_DARK = {
+  '--bg':'#0a0a0f','--bg2':'#111118','--bg3':'#16161f',
+  '--surface':'#1a1a26','--surface2':'#22223a',
+  '--border':'rgba(255,255,255,0.08)',
+  '--text':'#f0f0f8','--text2':'#9090b0','--text3':'#606080',
+  '--accent':'#7c6af7','--green':'#4caf82'
+};
+const THEME_LIGHT = {
+  '--bg':'#f2f3f7','--bg2':'#e8eaf0','--bg3':'#dddfe8',
+  '--surface':'#ffffff','--surface2':'#eceef5',
+  '--border':'rgba(0,0,0,0.09)',
+  '--text':'#18182e','--text2':'#52526e','--text3':'#9494b0',
+  '--accent':'#7c6af7','--green':'#4caf82'
+};
+
+function _hexToRgb(hex) {
+  const h = hex.replace('#','');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function _shift(hex, amt) {
+  const cap = v => Math.min(255,Math.max(0,v));
+  return '#' + _hexToRgb(hex).map(v => cap(v+amt).toString(16).padStart(2,'0')).join('');
+}
+function _hexAlpha(hex, a) {
+  const [r,g,b] = _hexToRgb(hex);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function _luminance(hex) {
+  return _hexToRgb(hex).reduce((s,v) => s + v, 0) / 3;
+}
+
+function applyThemeVars(base, custom) {
+  const root = document.documentElement;
+  // Clear all inline overrides first
+  Object.keys(THEME_DARK).forEach(p => root.style.removeProperty(p));
+  root.style.removeProperty('--header-bg');
+  // Apply base theme
+  Object.entries(base).forEach(([p,v]) => root.style.setProperty(p, v));
+  // Apply custom color overrides
+  if (custom) {
+    if (custom.bg) {
+      root.style.setProperty('--bg', custom.bg);
+      root.style.setProperty('--bg2', _shift(custom.bg, _luminance(custom.bg) > 128 ? -14 : 10));
+      root.style.setProperty('--bg3', _shift(custom.bg, _luminance(custom.bg) > 128 ? -24 : 18));
+    }
+    if (custom.surface) {
+      root.style.setProperty('--surface', custom.surface);
+      root.style.setProperty('--surface2', _shift(custom.surface, _luminance(custom.surface) > 128 ? -12 : 14));
+    }
+    if (custom.text) {
+      root.style.setProperty('--text', custom.text);
+      const isLight = _luminance(custom.text) > 128;
+      root.style.setProperty('--text2', _shift(custom.text, isLight ? -50 : 50));
+      root.style.setProperty('--text3', _shift(custom.text, isLight ? -100 : 100));
+    }
+    if (custom.accent) root.style.setProperty('--accent', custom.accent);
+  }
+  // Always derive header-bg from current --bg
+  const bg = getComputedStyle(root).getPropertyValue('--bg').trim();
+  if (bg.startsWith('#')) root.style.setProperty('--header-bg', _hexAlpha(bg, 0.9));
+  else root.style.setProperty('--header-bg', bg.replace(')',',0.9)').replace('rgb','rgba'));
+}
+
+function _getThemePreset() {
+  return localStorage.getItem('profab_theme') === 'light' ? THEME_LIGHT : THEME_DARK;
+}
+function _getCustomColors() {
+  try { return JSON.parse(localStorage.getItem('profab_colors') || 'null'); } catch { return null; }
+}
+
+function initTheme() {
+  applyThemeVars(_getThemePreset(), _getCustomColors());
+  _updateThemeUI();
+}
+
+function toggleTheme() {
+  const isLight = localStorage.getItem('profab_theme') !== 'light';
+  localStorage.setItem('profab_theme', isLight ? 'light' : 'dark');
+  applyThemeVars(isLight ? THEME_LIGHT : THEME_DARK, _getCustomColors());
+  _updateThemeUI();
+  syncColorPickers();
+}
+
+function _updateThemeUI() {
+  const isLight = localStorage.getItem('profab_theme') === 'light';
+  const icon = isLight ? '☀️' : '🌙';
+  ['themeToggleBtn','themeToggleSettings','shopThemeBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = id === 'themeToggleBtn' ? icon : (isLight ? '☀️ Light' : '🌙 Dark');
+  });
+}
+
+function applyCustomColor(key, value) {
+  if (!value || !/^#[0-9a-fA-F]{6}$/.test(value)) return;
+  const custom = _getCustomColors() || {};
+  custom[key] = value;
+  localStorage.setItem('profab_colors', JSON.stringify(custom));
+  applyThemeVars(_getThemePreset(), custom);
+  syncColorPickers();
+}
+
+function saveCustomColors() {
+  const s = document.getElementById('colorStatus') || document.getElementById('shopColorStatus');
+  if (s) { s.style.display = 'block'; setTimeout(() => s.style.display = 'none', 2000); }
+  showToast('Colors saved ✓');
+}
+
+function resetCustomColors() {
+  localStorage.removeItem('profab_colors');
+  applyThemeVars(_getThemePreset(), null);
+  syncColorPickers();
+  showToast('Colors reset to default.');
+}
+
+function syncColorPickers() {
+  const cs = getComputedStyle(document.documentElement);
+  const get = p => cs.getPropertyValue(p).trim();
+  [['colorBg','--bg'],['colorText','--text'],['colorAccent','--accent'],['colorSurface','--surface']].forEach(([id,prop]) => {
+    const val = get(prop);
+    if (!/^#[0-9a-fA-F]{6}$/i.test(val)) return;
+    const picker = document.getElementById(id);
+    const hexIn  = document.getElementById(id + 'Hex');
+    if (picker) picker.value = val;
+    if (hexIn)  hexIn.value  = val;
+    // shop panel mirrors
+    const sp = document.getElementById('shop' + id.charAt(0).toUpperCase() + id.slice(1));
+    const sh = document.getElementById('shop' + id.charAt(0).toUpperCase() + id.slice(1) + 'Hex');
+    if (sp) sp.value = val;
+    if (sh) sh.value = val;
+  });
+  _updateThemeUI();
+}
+
+// Run immediately (before DOMContentLoaded) so there's no flash of wrong theme
+initTheme();
+
+// ===== SHOP SETTINGS PANEL =====
+function openShopSettings() {
+  syncColorPickers();
+  const panel   = document.getElementById('shopSettingsPanel');
+  const overlay = document.getElementById('shopSettingsOverlay');
+  if (!panel) return;
+  overlay.style.display = 'block';
+  requestAnimationFrame(() => {
+    panel.style.transform   = 'translateX(0)';
+    overlay.style.opacity   = '1';
+  });
+  // sync account state
+  const session = getUserSession();
+  const loginBtn  = document.getElementById('shopSettingsLoginBtn');
+  const logoutBtn = document.getElementById('shopSettingsLogoutBtn');
+  const userEl    = document.getElementById('shopSettingsUser');
+  if (loginBtn)  loginBtn.style.display  = session ? 'none'  : 'block';
+  if (logoutBtn) logoutBtn.style.display = session ? 'block' : 'none';
+  if (userEl)    { userEl.textContent = session ? `Signed in as ${session.name}` : ''; userEl.style.display = session ? 'block' : 'none'; }
+}
+function closeShopSettings() {
+  const panel   = document.getElementById('shopSettingsPanel');
+  const overlay = document.getElementById('shopSettingsOverlay');
+  if (!panel) return;
+  panel.style.transform = 'translateX(100%)';
+  overlay.style.opacity = '0';
+  setTimeout(() => { overlay.style.display = 'none'; }, 280);
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', async () => {
+  initTheme(); // re-apply after DOM ready so UI buttons sync
   await cloudPull();
   renderProducts();
   updateCartUI();
