@@ -418,6 +418,8 @@ function saveCart(cart) {
 
 // ===== SEED DEMO PRODUCTS =====
 (function seedDemo() {
+  // Only seed once — never re-seed if the user has deleted all products
+  if (localStorage.getItem('profab_seed_done')) return;
   if (getProducts().length === 0) {
     const demo = [
       {
@@ -462,6 +464,7 @@ function saveCart(cart) {
     ];
     saveProducts(demo);
   }
+  localStorage.setItem('profab_seed_done', '1');
 })();
 
 // ===== CART =====
