@@ -290,7 +290,8 @@ function cloudPush() {
           users: getUsers(),
           ci_sessions: JSON.parse(localStorage.getItem('profab_ci_sessions') || '[]'),
           ci_active: JSON.parse(localStorage.getItem('profab_ci_active') || 'null'),
-          notifications: getNotifications()
+          notifications: getNotifications(),
+          admin_accounts: JSON.parse(localStorage.getItem('profab_admin_accounts') || '[]')
         })
       });
       setSyncStatus('Synced ✓', 'ok');
@@ -317,7 +318,9 @@ async function cloudPull() {
       if (record.ci_active) localStorage.setItem('profab_ci_active', JSON.stringify(record.ci_active));
       else localStorage.removeItem('profab_ci_active');
     }
-    if (record.notifications) localStorage.setItem('profab_notifications', JSON.stringify(record.notifications));
+    if (record.notifications)   localStorage.setItem('profab_notifications',    JSON.stringify(record.notifications));
+    if (record.admin_accounts && record.admin_accounts.length > 0)
+      localStorage.setItem('profab_admin_accounts', JSON.stringify(record.admin_accounts));
     setSyncStatus('Synced ✓', 'ok');
     return true;
   } catch {
@@ -345,7 +348,8 @@ async function createNewBin() {
           users: getUsers(),
           ci_sessions: JSON.parse(localStorage.getItem('profab_ci_sessions') || '[]'),
           ci_active: JSON.parse(localStorage.getItem('profab_ci_active') || 'null'),
-          notifications: getNotifications()
+          notifications: getNotifications(),
+          admin_accounts: JSON.parse(localStorage.getItem('profab_admin_accounts') || '[]')
         })
     });
     if (!res.ok) { setSyncStatus('Invalid API key.', 'err'); return; }

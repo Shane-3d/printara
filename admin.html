@@ -576,6 +576,7 @@
     }
     function saveAdminAccounts(accounts) {
       localStorage.setItem('profab_admin_accounts', JSON.stringify(accounts));
+      cloudPush();
     }
 
     // Session
