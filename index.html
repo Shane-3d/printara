@@ -212,6 +212,19 @@
         <label>Notes / Special Requests</label>
         <textarea name="notes" rows="2" placeholder="Color preferences, custom text, etc."></textarea>
       </div>
+      <div class="form-group">
+        <label>Reference Photo <span style="font-weight:400;opacity:.6;">(optional)</span></label>
+        <div class="photo-upload-area" id="orderPhotoArea" onclick="document.getElementById('orderPhotoInput').click()">
+          <div class="photo-upload-placeholder" id="orderPhotoPlaceholder">
+            <div class="photo-upload-icon">📷</div>
+            <div class="photo-upload-text">Tap to attach a photo</div>
+            <div class="photo-upload-sub">e.g. colour swatch, reference image</div>
+          </div>
+          <img id="orderPhotoPreview" class="photo-preview-img" style="display:none;" alt="Order reference photo" />
+          <button type="button" class="photo-remove-btn" id="orderPhotoRemoveBtn" style="display:none;" onclick="removeOrderPhoto(event)">✕ Remove</button>
+        </div>
+        <input type="file" id="orderPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleOrderPhoto(event)" />
+      </div>
       <div class="order-summary" id="orderSummary"></div>
       <button type="submit" class="btn-primary btn-full" id="placeOrderBtn">Place Order →</button>
     </form>

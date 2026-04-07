@@ -667,6 +667,7 @@ function buildOrderSummary() {
 function closeOrder() {
   document.getElementById('orderModal').classList.remove('open');
   document.getElementById('orderOverlay').classList.remove('open');
+  removeOrderPhoto({ stopPropagation: () => {} });
 }
 
 async function submitOrder(e) {
@@ -692,6 +693,7 @@ async function submitOrder(e) {
     },
     userId: session.id,
     notes: data.notes || '',
+    photo: _orderPhotoData || null,
     paymentMethod: data.paymentMethod || 'cash',
     meritsTotal: Math.round(cartTotal() * 100),
     items: cart.map(item => {
@@ -720,6 +722,7 @@ async function submitOrder(e) {
   const btn = document.getElementById('placeOrderBtn');
   if (btn) { btn.disabled = false; btn.textContent = 'Place Order →'; }
 
+  removeOrderPhoto({ stopPropagation: () => {} });
   closeOrder();
   const payLabel = data.paymentMethod === 'merits'
     ? `Merits (${order.meritsTotal.toLocaleString()} merits)`
@@ -750,6 +753,46 @@ function openCustomOrder() {
 function closeCustomOrder() {
   document.getElementById('customModal')?.classList.remove('open');
   document.getElementById('customOverlay')?.classList.remove('open');
+}
+
+let _orderPhotoData = null;
+
+function handleOrderPhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 1024;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else       { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      _orderPhotoData = canvas.toDataURL('image/jpeg', 0.85);
+      document.getElementById('orderPhotoPreview').src = _orderPhotoData;
+      document.getElementById('orderPhotoPreview').style.display = 'block';
+      document.getElementById('orderPhotoPlaceholder').style.display = 'none';
+      document.getElementById('orderPhotoRemoveBtn').style.display = 'block';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeOrderPhoto(e) {
+  e.stopPropagation();
+  _orderPhotoData = null;
+  const inp = document.getElementById('orderPhotoInput');
+  if (inp) inp.value = '';
+  document.getElementById('orderPhotoPreview').style.display = 'none';
+  document.getElementById('orderPhotoPreview').src = '';
+  document.getElementById('orderPhotoPlaceholder').style.display = 'block';
+  document.getElementById('orderPhotoRemoveBtn').style.display = 'none';
 }
 
 let _customPhotoData = null;
