@@ -515,53 +515,7 @@
   <script src="app.js"></script>
   <script>
     // ===== CLOUD SYNC (JSONBin) ===============================================
-    const CLOUD_URL = 'https://api.jsonbin.io/v3/b/';
-
-    function getCloudConfig() {
-      const cfg = window.PROFAB_CONFIG || {};
-      return { key: cfg.cloudKey || '', bin: cfg.cloudBin || '' };
-    }
-
-    async function cloudPull() {
-      const { key, bin } = getCloudConfig();
-      if (!key || !bin) return null;
-      try {
-        const r = await fetch(CLOUD_URL + bin + '/latest', { headers: { 'X-Master-Key': key } });
-        if (!r.ok) return null;
-        const json = await r.json();
-        return json.record || null;
-      } catch { return null; }
-    }
-
-    async function cloudPush() {
-      const { key, bin } = getCloudConfig();
-      if (!key || !bin) return;
-      const data = {
-        users:         JSON.parse(localStorage.getItem('profab_users')         || '[]'),
-        orders:        JSON.parse(localStorage.getItem('profab_orders')        || '[]'),
-        products:      JSON.parse(localStorage.getItem('profab_products')      || '[]'),
-        notifications: JSON.parse(localStorage.getItem('profab_notifications') || '[]'),
-      };
-      try {
-        await fetch(CLOUD_URL + bin, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'X-Master-Key': key },
-          body: JSON.stringify(data),
-        });
-      } catch {}
-    }
-
-    let _pushTimer = null;
-    function schedulePush() { clearTimeout(_pushTimer); _pushTimer = setTimeout(cloudPush, 200); }
-
-    async function syncAllFromDB() {
-      const data = await cloudPull();
-      if (!data) return;
-      if (Array.isArray(data.users)         && data.users.length)         localStorage.setItem('profab_users',         JSON.stringify(data.users));
-      if (Array.isArray(data.orders)        && data.orders.length)        localStorage.setItem('profab_orders',        JSON.stringify(data.orders));
-      if (Array.isArray(data.notifications) && data.notifications.length) localStorage.setItem('profab_notifications', JSON.stringify(data.notifications));
-      if (Array.isArray(data.products)      && data.products.length)      localStorage.setItem('profab_products',      JSON.stringify(data.products));
-    }
+    // cloudPull, cloudPush, schedulePush, syncAllFromDB all defined in app.js
 
     // No-op stubs so existing call sites don't break
     async function _dbPost()   {}
