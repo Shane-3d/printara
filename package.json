@@ -1,0 +1,13 @@
+{
+  "name": "pro-fab-3d",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "mysql2": "^3.9.0",
+    "stripe": "^14.0.0"
+  },
+  "devDependencies": {
+    "jimp": "^1.6.1"
+  }
+}

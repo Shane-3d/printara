@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Layer Forge — 3D Design Tools</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <meta name="apple-mobile-web-app-title" content="Layer Forge" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .home-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 72px 24px 48px;
+      gap: 16px;
+    }
+    .home-hero-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 22px;
+      object-fit: cover;
+      box-shadow: 0 8px 32px rgba(224,32,32,0.35);
+      margin-bottom: 8px;
+    }
+    .home-hero h1 {
+      font-size: clamp(28px, 6vw, 52px);
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 40%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+    .home-hero p {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text2);
+      max-width: 480px;
+      margin: 0;
+    }
+    .home-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .home-cta a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .home-cta a:active { transform: scale(.97); }
+    .home-cta .cta-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(224,32,32,0.4);
+    }
+    .home-cta .cta-primary:hover { box-shadow: 0 8px 32px rgba(224,32,32,0.55); }
+    .home-cta .cta-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 72px;
+    }
+    .tool-card-home {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color .2s, transform .2s;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .tool-card-home:hover {
+      border-color: rgba(224,32,32,0.5);
+      transform: translateY(-3px);
+    }
+    .tool-card-home-icon {
+      font-size: 36px;
+      line-height: 1;
+    }
+    .tool-card-home h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .tool-card-home p {
+      font-size: 13px;
+      color: var(--text2);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .tool-card-home-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: auto;
+      padding-top: 8px;
+    }
+
+    .home-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 64px;
+      border-bottom: 1px solid var(--border);
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .home-header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .home-header-logo img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .home-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .home-section-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 480px) {
+      .tools-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="home-header">
+    <a href="index.html" class="home-header-logo">
+      <img src="logo.png" alt="Layer Forge" />
+      Layer Forge
+    </a>
+    <div class="home-header-actions">
+      <a href="admin.html" class="btn-primary" style="padding:9px 20px;font-size:13px;border-radius:10px;text-decoration:none;">
+        Launch Tools →
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="home-hero">
+      <img src="logo.png" alt="Layer Forge" class="home-hero-logo" />
+      <h1>Design. Generate. Print.</h1>
+      <p>Layer Forge gives you powerful 3D design tools — right in your browser. Log in and start creating.</p>
+      <div class="home-cta">
+        <a href="admin.html" class="cta-primary">Get Started →</a>
+      </div>
+    </section>
+
+    <!-- Tools -->
+    <div class="home-section-label">What you can build</div>
+    <div class="tools-grid">
+      <a href="admin.html" class="tool-card-home">
+        <div class="tool-card-home-icon">🖨️</div>
+        <h3>3D Shape Builder</h3>
+        <p>Combine boxes, spheres, cylinders, cones, and more into custom 3D models. Export to STL for printing.</p>
+        <div class="tool-card-home-badge">3D Studio →</div>
+      </a>
+      <a href="admin.html" class="tool-card-home">
+        <div class="tool-card-home-icon">🗿</div>
+        <h3>Statue Generator</h3>
+        <p>Upload a face photo and generate a 3D bas-relief portrait plaque or bust — ready to print.</p>
+        <div class="tool-card-home-badge">Statue Generator →</div>
+      </a>
+      <a href="admin.html" class="tool-card-home">
+        <div class="tool-card-home-icon">🖼️</div>
+        <h3>Lithophane</h3>
+        <p>Turn any photo into a 3D lithophane that glows when backlit. Perfect personalized gifts.</p>
+        <div class="tool-card-home-badge">Lithophane →</div>
+      </a>
+      <a href="admin.html" class="tool-card-home">
+        <div class="tool-card-home-icon">🗺️</div>
+        <h3>Map Generator</h3>
+        <p>Search any address and generate a 3D terrain relief map with real elevation data and buildings.</p>
+        <div class="tool-card-home-badge">Map Generator →</div>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="logo"><img src="logo.png" alt="Layer Forge" class="logo-img" /></div>
+        <p class="footer-copy">© 2026 Layer Forge. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
