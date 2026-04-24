@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Tools — Printara</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <meta name="apple-mobile-web-app-title" content="Printara" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="header admin-content unlocked">
+    <div class="header-inner">
+      <a href="index.html" class="logo"><img src="logo.png" alt="Printara" class="logo-img" /></a>
+      <nav class="nav"><a href="index.html" class="nav-link">← Home</a></nav>
+      <span id="toolsUserBadge" style="margin-left:auto;background:rgba(0,150,255,0.15);border:1px solid rgba(0,150,255,0.4);color:#0099ff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;"></span>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+    </div>
+  </header>
+
+  <aside class="sidebar admin-content unlocked">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">3D Tools</div>
+      <button class="sidebar-item active" id="sbi-studio" onclick="switchTab('studio')"><span class="sidebar-item-icon">🖨️</span> 3D Studio</button>
+      <button class="sidebar-item" id="sbi-statue" onclick="switchTab('statue')"><span class="sidebar-item-icon">🗿</span> Statue Generator</button>
+      <button class="sidebar-item" id="sbi-litho" onclick="switchTab('litho')"><span class="sidebar-item-icon">🖼️</span> Lithophane</button>
+      <button class="sidebar-item" id="sbi-map" onclick="switchTab('map')"><span class="sidebar-item-icon">🗺️</span> Map Generator</button>
+    </div>
+    <div class="sidebar-bottom">
+      <a href="index.html" class="sidebar-item"><span class="sidebar-item-icon">←</span> Home</a>
+    </div>
+  </aside>
+
+  <nav class="admin-bottom-nav admin-content unlocked">
+    <button class="admin-bottom-nav-item active" id="mni-studio" onclick="switchTab('studio')"><span class="admin-bottom-nav-icon">🖨️</span>3D Studio</button>
+    <button class="admin-bottom-nav-item" id="mni-statue" onclick="switchTab('statue')"><span class="admin-bottom-nav-icon">🗿</span>Statue</button>
+    <button class="admin-bottom-nav-item" id="mni-litho" onclick="switchTab('litho')"><span class="admin-bottom-nav-icon">🖼️</span>Litho</button>
+    <button class="admin-bottom-nav-item" id="mni-map" onclick="switchTab('map')"><span class="admin-bottom-nav-icon">🗺️</span>Map</button>
+  </nav>
+
+  <div class="admin-wrap admin-content unlocked">
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('studio')">🖨️ 3D Studio</button>
+      <button class="tab-btn" onclick="switchTab('statue')">🗿 Statue Generator</button>
+      <button class="tab-btn" onclick="switchTab('litho')">🖼️ Lithophane</button>
+      <button class="tab-btn" onclick="switchTab('map')">🗺️ Map Generator</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-studio">
+
+      <!-- Header -->
+      <div class="tool-header">
+        <div class="tool-header-icon">🖨️</div>
+        <div>
+          <h2 class="tool-header-title">3D Shape Builder</h2>
+          <p class="tool-header-sub">Add and arrange 3D primitives, then export as STL.</p>
+        </div>
+      </div>
+
+      <!-- ══ SHAPE BUILDER ══════════════════════════════════════════════════════ -->
+      <div id="studioBuilderPanel">
+
+        <!-- Toolbar -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;font-size:12px;">
+          <span style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;">VIEW</span>
+          <button class="tab-btn" onclick="sbCamView('iso')"   style="padding:4px 10px;font-size:12px;" title="Isometric">Iso</button>
+          <button class="tab-btn" onclick="sbCamView('top')"   style="padding:4px 10px;font-size:12px;" title="Top down">Top</button>
+          <button class="tab-btn" onclick="sbCamView('front')" style="padding:4px 10px;font-size:12px;" title="Front">Front</button>
+          <button class="tab-btn" onclick="sbCamView('side')"  style="padding:4px 10px;font-size:12px;" title="Right side">Side</button>
+          <div style="width:1px;height:18px;background:var(--border);margin:0 2px;"></div>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);" title="Snap positions to 5 mm grid">
+            <input type="checkbox" id="sbSnap" checked style="accent-color:var(--accent);width:13px;height:13px;" /> Grid snap
+          </label>
+          <div style="width:1px;height:18px;background:var(--border);margin:0 2px;"></div>
+          <button class="tab-btn" id="sbUndoBtn" onclick="sbUndo()" style="padding:4px 10px;font-size:12px;" title="Undo (Ctrl+Z)">↩ Undo</button>
+          <button class="tab-btn" id="sbRedoBtn" onclick="sbRedo()" style="padding:4px 10px;font-size:12px;" title="Redo (Ctrl+Y)">↪ Redo</button>
+          <div style="flex:1;min-width:0;"></div>
+          <span id="sbHint" style="font-size:11px;color:var(--text3);font-style:italic;">Click a shape in the viewport to select it</span>
+        </div>
+
+        <!-- Two-column layout -->
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+
+          <!-- LEFT: controls panel -->
+          <div style="flex:0 0 265px;min-width:220px;display:flex;flex-direction:column;gap:10px;">
+
+            <!-- Add shapes -->
+            <div class="tool-card">
+              <div class="tool-card-label">Add Shape</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+                <button class="tab-btn" onclick="studioAddShape('box')"      style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">⬜</span>Box</button>
+                <button class="tab-btn" onclick="studioAddShape('sphere')"   style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">⚪</span>Sphere</button>
+                <button class="tab-btn" onclick="studioAddShape('cylinder')" style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">🥫</span>Cylinder</button>
+                <button class="tab-btn" onclick="studioAddShape('cone')"     style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">🔺</span>Cone</button>
+                <button class="tab-btn" onclick="studioAddShape('torus')"    style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">⭕</span>Torus</button>
+                <button class="tab-btn" onclick="studioAddShape('wedge')"    style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">📐</span>Wedge</button>
+              </div>
+            </div>
+
+            <!-- Object list -->
+            <div class="tool-card">
+              <div class="tool-card-label">Objects <span id="studioObjCount" style="font-weight:400;text-transform:none;">(0)</span></div>
+              <div id="studioObjectList" style="max-height:110px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;">
+                <div style="color:var(--text3);font-size:12px;padding:8px 0;text-align:center;">No shapes yet</div>
+              </div>
+            </div>
+
+            <!-- Transform panel (hidden until shape selected) -->
+            <div id="studioTransform" class="tool-card" style="display:none;">
+
+              <!-- Name + color -->
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+                <input id="sbSelName" type="text" placeholder="Shape name" oninput="sbRenameSelected(this.value)"
+                  style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:5px 8px;color:var(--text);font-size:13px;font-weight:600;" />
+                <input id="sbSelColor" type="color" value="#e02020" oninput="sbColorSelected(this.value)" title="Pick shape color"
+                  style="width:34px;height:30px;border:none;border-radius:7px;cursor:pointer;padding:2px;background:none;" />
+              </div>
+
+              <!-- Position -->
+              <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.07em;margin-bottom:5px;text-transform:uppercase;">Position (mm)</div>
+              <div id="sbPosSliders"></div>
+
+              <!-- Size -->
+              <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.07em;margin:8px 0 5px;text-transform:uppercase;">Size (mm)</div>
+              <div id="sbSizeSliders"></div>
+
+              <!-- Rotate -->
+              <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.07em;margin:8px 0 5px;text-transform:uppercase;">Rotate (°)</div>
+              <div id="sbRotSliders"></div>
+
+              <!-- Quick-action buttons -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px;">
+                <button class="tab-btn" onclick="sbAlignFloor()"    title="Snap bottom of shape to Y = 0" style="font-size:11px;padding:6px;">⬇ To Floor</button>
+                <button class="tab-btn" onclick="sbCenterXZ()"      title="Move to center of scene (X=0, Z=0)" style="font-size:11px;padding:6px;">⊕ Center</button>
+                <button class="tab-btn" onclick="sbDuplicate()"     title="Duplicate selected shape" style="font-size:11px;padding:6px;">⎘ Duplicate</button>
+                <button onclick="studioDeleteSelected()" title="Delete (Del key)" style="font-size:11px;padding:6px;border-radius:7px;border:1px solid var(--accent3);background:rgba(239,83,80,.1);color:var(--accent3);cursor:pointer;font-weight:600;">✕ Delete</button>
+              </div>
+            </div>
+
+            <!-- Export row -->
+            <div style="display:flex;gap:6px;">
+              <button class="btn-primary" onclick="studioExportSTL()" style="flex:1;font-size:13px;padding:11px;">↓ Export STL</button>
+              <button class="tab-btn" onclick="studioClear()" title="Remove all shapes" style="padding:10px 14px;font-size:15px;" title="Clear scene">🗑</button>
+            </div>
+          </div>
+
+          <!-- RIGHT: 3D viewport -->
+          <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
+            <div class="tool-viewport-hint">
+              <b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom · <b>Click shape</b> to select ·
+              <kbd style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;">Del</kbd> delete ·
+              <kbd style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;">Ctrl Z</kbd> undo
+            </div>
+            <canvas id="studioCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
+            <div id="sbDimLabel" style="font-size:11px;color:var(--accent);min-height:16px;text-align:right;"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /tab-studio -->
+
+    <!-- ===== MAP GENERATOR TAB ===== -->
+    <div class="tab-panel" id="tab-map">
+
+      <!-- Header -->
+      <div class="tool-header">
+        <div class="tool-header-icon">🗺️</div>
+        <div>
+          <h2 class="tool-header-title">3D Map Generator</h2>
+          <p class="tool-header-sub">Enter any address or location to generate a 3D printable terrain relief map and export as STL.</p>
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div class="map-search-row">
+        <input type="text" id="mapAddressInput" class="map-search-input"
+          placeholder="Address, city, mountain, or landmark — e.g. Grand Canyon, AZ"
+          onkeydown="if(event.key==='Enter')mapSearch()" />
+        <button class="btn-primary" id="mapSearchBtn" onclick="mapSearch()" style="white-space:nowrap;padding:12px 20px;">Search →</button>
+      </div>
+      <div id="mapGeoResult" style="font-size:13px;color:var(--text2);margin-bottom:10px;min-height:18px;padding:0 2px;max-height:260px;overflow-y:auto;"></div>
+
+      <!-- Area scale selector -->
+      <div class="tool-toolbar">
+        <span class="tool-toolbar-label">Area</span>
+        <button id="mgBtn_property"     onclick="setMapScale('property')"     class="tab-btn"    style="font-size:12px;padding:5px 14px;">🏠 Property</button>
+        <button id="mgBtn_neighborhood" onclick="setMapScale('neighborhood')" class="btn-primary" style="font-size:12px;padding:5px 14px;">🏘️ Neighborhood</button>
+        <button id="mgBtn_city"         onclick="setMapScale('city')"         class="tab-btn"    style="font-size:12px;padding:5px 14px;">🏙️ City</button>
+        <button id="mgBtn_region"       onclick="setMapScale('region')"       class="tab-btn"    style="font-size:12px;padding:5px 14px;">🌄 Region</button>
+      </div>
+
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+
+        <!-- Controls -->
+        <div style="flex:0 0 270px;min-width:220px;display:flex;flex-direction:column;gap:10px;">
+
+          <!-- Model settings -->
+          <div class="tool-card">
+            <div class="tool-card-label">Model Settings</div>
+            <div style="display:flex;flex-direction:column;gap:9px;font-size:12px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Model Width (mm)</span><span id="mgWidthVal" style="color:var(--accent);font-weight:700;">150</span></div>
+                <input type="range" id="mgWidth" min="60" max="300" value="150" oninput="document.getElementById('mgWidthVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Base Thickness (mm)</span><span id="mgBaseVal" style="color:var(--accent);font-weight:700;">4</span></div>
+                <input type="range" id="mgBase" min="2" max="15" value="4" oninput="document.getElementById('mgBaseVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Vertical Exaggeration</span><span id="mgExagVal" style="color:var(--accent);font-weight:700;">5×</span></div>
+                <input type="range" id="mgExag" min="1" max="50" value="5" oninput="document.getElementById('mgExagVal').textContent=this.value+'×'" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Mesh Resolution</span><span id="mgResVal" style="color:var(--accent);font-weight:700;">100</span></div>
+                <input type="range" id="mgRes" min="30" max="200" value="100" step="10" oninput="document.getElementById('mgResVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="color:var(--text2);flex:1;">Terrain Color</span>
+                <input type="color" id="mgColor" value="#c8b89a" title="Terrain color" style="width:38px;height:30px;border:none;border-radius:7px;cursor:pointer;padding:2px;background:none;" />
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="color:var(--text2);flex:1;">Building Color</span>
+                <input type="color" id="mgBldColor" value="#a09898" title="Building color" style="width:38px;height:30px;border:none;border-radius:7px;cursor:pointer;padding:2px;background:none;" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Building Height Scale</span><span id="mgBldScaleVal" style="color:var(--accent);font-weight:700;">8×</span></div>
+                <input type="range" id="mgBldScale" min="1" max="30" value="8" oninput="document.getElementById('mgBldScaleVal').textContent=this.value+'×'" style="width:100%;accent-color:var(--accent);" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <button class="btn-primary" id="mgGenerateBtn" onclick="generateMap()" style="font-size:13px;padding:12px;">Generate Terrain Map →</button>
+          <div id="mgProgress" style="display:none;font-size:12px;color:var(--text3);text-align:center;padding:8px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
+            <span id="mgProgressText">Loading terrain data…</span>
+          </div>
+          <button id="mgBuildingsBtn" class="tab-btn" onclick="addBuildings()" style="font-size:12px;display:none;padding:11px;">🏗️ Refresh Buildings</button>
+          <button id="mgExportBtn" class="tab-btn" onclick="mapExportSTL()" style="font-size:12px;display:none;padding:11px;">↓ Export STL</button>
+          <div id="mgInfo" style="font-size:11px;color:var(--text3);min-height:14px;text-align:center;"></div>
+
+          <!-- How it works -->
+          <div class="tool-card" style="border-color:rgba(224,32,32,0.25);background:rgba(224,32,32,0.06);">
+            <div class="tool-card-label" style="color:var(--accent);">How it works</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.65;">
+              1. Search for any address or place<br>
+              2. Choose the area scale<br>
+              3. Adjust exaggeration &amp; thickness<br>
+              4. Click <b>Generate</b> to build the 3D terrain<br>
+              5. Export as STL and 3D print!
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Viewport -->
+        <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
+          <div class="tool-viewport-hint"><b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom</div>
+          <canvas id="mapCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
+          <div id="mgDimLabel" style="font-size:11px;color:var(--accent);min-height:16px;text-align:right;"></div>
+        </div>
+
+      </div>
+    </div><!-- /tab-map -->
+
+    <!-- ===== LITHOPHANE GENERATOR TAB ===== -->
+    <div class="tab-panel" id="tab-litho">
+
+      <!-- Header -->
+      <div class="tool-header">
+        <div class="tool-header-icon">🖼️</div>
+        <div>
+          <h2 class="tool-header-title">Lithophane Generator</h2>
+          <p class="tool-header-sub">Convert a photo into a 3D printable lithophane and export as STL.</p>
+        </div>
+      </div>
+
+      <!-- Shape type selector -->
+      <div class="tool-toolbar">
+        <span class="tool-toolbar-label">Shape</span>
+        <button id="ltBtn_flat"     onclick="setLithoType('flat')"     class="btn-primary" style="font-size:12px;padding:5px 14px;">&#9633; Flat</button>
+        <button id="ltBtn_curved"   onclick="setLithoType('curved')"   class="tab-btn"     style="font-size:12px;padding:5px 14px;">&#11835; Curved</button>
+        <button id="ltBtn_cylinder" onclick="setLithoType('cylinder')" class="tab-btn"     style="font-size:12px;padding:5px 14px;">&#9649; Cylinder</button>
+        <button id="ltBtn_round"    onclick="setLithoType('round')"    class="tab-btn"     style="font-size:12px;padding:5px 14px;">&#9898; Round</button>
+        <button id="ltBtn_heart"    onclick="setLithoType('heart')"    class="tab-btn"     style="font-size:12px;padding:5px 14px;">&#10084; Heart</button>
+        <button id="ltBtn_ornament" onclick="setLithoType('ornament')" class="tab-btn"     style="font-size:12px;padding:5px 14px;">&#9670; Ornament</button>
+      </div>
+
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <!-- Controls -->
+        <div style="flex:0 0 270px;min-width:220px;display:flex;flex-direction:column;gap:10px;">
+
+          <!-- Upload -->
+          <div class="tool-card">
+            <div class="tool-card-label">Upload Image</div>
+            <div id="imgUploadArea" onclick="document.getElementById('studioImgInput').click()"
+              style="border:2px dashed var(--border);border-radius:10px;padding:20px 12px;text-align:center;cursor:pointer;color:var(--text3);font-size:13px;transition:border-color .2s;"
+              onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+              <div style="font-size:28px;margin-bottom:6px;">&#128444;&#65039;</div>
+              <div style="font-weight:600;color:var(--text2);margin-bottom:3px;">Click to upload</div>
+              <div style="font-size:11px;">JPG &middot; PNG &middot; WebP<br><span style="color:var(--accent);font-weight:600;">Dark = thick &middot; Light = thin</span></div>
+            </div>
+            <input type="file" id="studioImgInput" accept="image/*" style="display:none;" onchange="studioLoadImage(event)" />
+            <img id="studioImgPreview" style="display:none;width:100%;border-radius:8px;margin-top:8px;max-height:120px;object-fit:contain;" alt="preview" />
+          </div>
+
+          <!-- Lithophane settings -->
+          <div class="tool-card">
+            <div class="tool-card-label">Lithophane Settings</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+              <div id="ltWidRow">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span id="ltWidLbl" style="color:var(--text2);">Width (mm)</span><span id="ltWidVal" style="color:var(--accent);font-weight:700;">100</span></div>
+                <input type="range" id="ltWid" min="20" max="300" value="100" oninput="document.getElementById('ltWidVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div id="ltHtRow">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Height (mm)</span><span id="ltHtVal" style="color:var(--accent);font-weight:700;">75</span></div>
+                <input type="range" id="ltHt" min="20" max="300" value="75" oninput="document.getElementById('ltHtVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Max thickness &mdash; dark (mm)</span><span id="ltMaxTVal" style="color:var(--accent);font-weight:700;">3.0</span></div>
+                <input type="range" id="ltMaxT" min="1" max="8" step="0.5" value="3" oninput="document.getElementById('ltMaxTVal').textContent=(+this.value).toFixed(1)" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Min thickness &mdash; light (mm)</span><span id="ltMinTVal" style="color:var(--accent);font-weight:700;">0.6</span></div>
+                <input type="range" id="ltMinT" min="0.2" max="3" step="0.1" value="0.6" oninput="document.getElementById('ltMinTVal').textContent=(+this.value).toFixed(1)" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Resolution (columns)</span><span id="ltResVal" style="color:var(--accent);font-weight:700;">120</span></div>
+                <input type="range" id="ltRes" min="30" max="300" value="120" oninput="document.getElementById('ltResVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div id="ltBordRow">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Border (mm)</span><span id="ltBordVal" style="color:var(--accent);font-weight:700;">3</span></div>
+                <input type="range" id="ltBord" min="0" max="20" value="3" oninput="document.getElementById('ltBordVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--text2);">
+                <input type="checkbox" id="ltInvert" style="accent-color:var(--accent);" /> Invert (light = thick)
+              </label>
+            </div>
+          </div>
+
+          <!-- Shape-specific options -->
+          <div id="ltTypeSettings" class="tool-card" style="display:none;">
+            <div class="tool-card-label">Shape Options</div>
+            <div id="ltTypeBody" style="display:flex;flex-direction:column;gap:8px;font-size:12px;"></div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <button class="btn-primary" onclick="studioGenerateFromImage()" style="font-size:13px;padding:12px;">Generate Lithophane →</button>
+            <button id="imgExportBtn" class="tab-btn" onclick="studioExportImageSTL()" style="font-size:12px;display:none;">↓ Export STL</button>
+          </div>
+          <div id="imgStatus" style="font-size:12px;color:var(--text3);display:none;"></div>
+        </div>
+
+        <!-- Viewport -->
+        <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
+          <div class="tool-viewport-hint"><b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom</div>
+          <canvas id="studioImgCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
+        </div>
+      </div>
+
+    </div><!-- /tab-litho -->
+
+    <!-- ===== STATUE GENERATOR TAB ===== -->
+    <div class="tab-panel" id="tab-statue">
+
+      <!-- Header -->
+      <div class="tool-header">
+        <div class="tool-header-icon">🗿</div>
+        <div>
+          <h2 class="tool-header-title">Statue Generator</h2>
+          <p class="tool-header-sub">Upload a face photo or choose a procedural style, then export as STL.</p>
+        </div>
+      </div>
+
+      <!-- Style selector -->
+      <div class="tool-toolbar">
+        <span class="tool-toolbar-label">Style</span>
+        <button id="sgBtn_face"   onclick="setStatueStyle('face')"   class="btn-primary"  style="font-size:12px;padding:5px 14px;">📷 Face Photo</button>
+        <button id="sgBtn_bust"   onclick="setStatueStyle('bust')"   class="tab-btn"      style="font-size:12px;padding:5px 14px;">👤 Bust</button>
+        <button id="sgBtn_figure" onclick="setStatueStyle('figure')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">🧍 Full Figure</button>
+        <button id="sgBtn_trophy" onclick="setStatueStyle('trophy')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">🏆 Trophy</button>
+        <button id="sgBtn_column" onclick="setStatueStyle('column')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">🏛️ Column</button>
+      </div>
+
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+
+        <!-- Controls -->
+        <div style="flex:0 0 270px;min-width:220px;display:flex;flex-direction:column;gap:10px;">
+
+          <!-- Face Photo Upload (visible in face mode only) -->
+          <div id="sgPhotoCard" class="tool-card">
+            <div class="tool-card-label">Face Photo</div>
+            <div id="sgPhotoUploadArea" onclick="document.getElementById('sgPhotoInput').click()"
+              style="border:2px dashed var(--border);border-radius:10px;padding:18px 12px;text-align:center;cursor:pointer;color:var(--text3);font-size:13px;transition:border-color .2s;"
+              onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+              <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+              <div style="font-weight:600;color:var(--text2);margin-bottom:3px;">Click to upload a face photo</div>
+              <div style="font-size:11px;">JPG · PNG · WebP<br><span style="color:var(--accent);font-weight:600;">Dark = deep · Light = shallow</span></div>
+            </div>
+            <input type="file" id="sgPhotoInput" accept="image/*" style="display:none;" onchange="sgLoadFacePhoto(event)" />
+            <img id="sgPhotoPreview" style="display:none;width:100%;border-radius:8px;margin-top:8px;max-height:130px;object-fit:contain;" alt="Face photo preview" />
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <button class="btn-primary" onclick="sgUpdate()" style="flex:1;font-size:12px;">Generate Relief →</button>
+              <button id="sgPhotoRemoveBtn" class="tab-btn" onclick="sgRemoveFacePhoto()" style="padding:8px 12px;font-size:12px;display:none;">✕</button>
+            </div>
+            <div id="sgPhotoHint" style="font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5;">
+              Upload a portrait photo. The face will be embossed as a 3D bas-relief on a pedestal plaque.
+            </div>
+          </div>
+
+          <!-- Dimensions -->
+          <div class="tool-card">
+            <div class="tool-card-label">Dimensions</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Total Height (mm)</span><span id="sgHeightVal" style="color:var(--accent);font-weight:700;">120</span></div>
+                <input type="range" id="sgHeight" min="40" max="300" value="120" oninput="sgUpdate()" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Base Diameter (mm)</span><span id="sgBaseVal" style="color:var(--accent);font-weight:700;">50</span></div>
+                <input type="range" id="sgBase" min="20" max="150" value="50" oninput="sgUpdate()" style="width:100%;accent-color:var(--accent);" />
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Pedestal Height (mm)</span><span id="sgPedVal" style="color:var(--accent);font-weight:700;">20</span></div>
+                <input type="range" id="sgPed" min="0" max="80" value="20" oninput="sgUpdate()" style="width:100%;accent-color:var(--accent);" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Appearance -->
+          <div class="tool-card">
+            <div class="tool-card-label">Appearance</div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="color:var(--text2);flex:1;">Color</span>
+                <input type="color" id="sgColor" value="#b0a0e8" oninput="sgApplyColor()" title="Statue color" style="width:38px;height:30px;border:none;border-radius:7px;cursor:pointer;padding:2px;background:none;" />
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="color:var(--text2);flex:1;">Detail Level</span>
+                <select id="sgDetail" onchange="sgUpdate()" style="padding:5px 8px;background:var(--surface);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;">
+                  <option value="8">Low (fast)</option>
+                  <option value="16" selected>Medium</option>
+                  <option value="32">High (slow)</option>
+                </select>
+              </div>
+              <div id="sgReliefRow" style="display:flex;align-items:center;gap:10px;display:none;">
+                <span style="color:var(--text2);flex:1;">Relief Depth</span>
+                <select id="sgReliefDepth" onchange="sgUpdate()" style="padding:5px 8px;background:var(--surface);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;">
+                  <option value="0.10">Shallow</option>
+                  <option value="0.18" selected>Medium</option>
+                  <option value="0.28">Deep</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Export -->
+          <button class="btn-primary" onclick="statueExportSTL()" style="font-size:13px;padding:12px;">↓ Export STL</button>
+          <div id="sgDimLabel" style="font-size:11px;color:var(--accent);text-align:center;min-height:16px;"></div>
+        </div>
+
+        <!-- 3D Viewport -->
+        <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
+          <div class="tool-viewport-hint"><b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom</div>
+          <canvas id="statueCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
+        </div>
+
+      </div>
+    </div><!-- /tab-statue -->
+
+
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const SESSION_TTL = 8 * 60 * 60 * 1000;
+    function getSession() {
+      const raw = sessionStorage.getItem('profab_admin_session');
+      if (!raw) return null;
+      const s = JSON.parse(raw);
+      if (Date.now() - s.ts > SESSION_TTL) { sessionStorage.removeItem('profab_admin_session'); return null; }
+      return s;
+    }
+    const TOOL_TABS = ['studio','statue','litho','map'];
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', TOOL_TABS[i]===tab));
+      document.querySelectorAll('[id^="sbi-"]').forEach(el => el.classList.toggle('active', el.id==='sbi-'+tab));
+      document.querySelectorAll('[id^="mni-"]').forEach(el => el.classList.toggle('active', el.id==='mni-'+tab));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-'+tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+      if (tab==='studio') initStudio();
+      if (tab==='litho')  initLitho();
+      if (tab==='map')    initMapGen();
+      if (tab==='statue') initStatueGen();
+    }
+
+    // ===== 3D STUDIO =================================================================
+    let _studioInited = false;
+    let _studioMode   = 'builder';
+
+    // ── Shape builder state ──────────────────────────────────────────────────────
+    let _sbRenderer, _sbScene, _sbCamera, _sbOrbit, _sbAnimId;
+    let _sbRaycaster, _sbMouse;
+    let _sbObjects  = [];   // [{id, type, name, color, mesh}]
+    let _sbSelected = null; // id
+    let _sbIdSeq    = 0;
+    let _sbUndoStack = [], _sbRedoStack = [];
+    let _sbHovered  = null; // id of hovered mesh
+
+    // ── Image-to-3D state ────────────────────────────────────────────────────────
+    let _igRenderer, _igScene, _igCamera, _igOrbit, _igAnimId;
+    let _igImgEl = null, _igMesh = null;
+    let _lithoType = 'flat';
+
+    // ── Mode switcher ────────────────────────────────────────────────────────────
+    function setStudioMode(mode) {
+      // Studio now only has shape builder mode
+      _sbStartRender();
+    }
+
+    function initStudio() {
+      if (!_studioInited) {
+        _studioInited = true;
+        _sbInit();
+        document.addEventListener('keydown', _sbKeyDown);
+      }
+      _sbResize();
+      _sbStartRender();
+    }
+
+    let _lithoInited = false;
+    function initLitho() {
+      if (!_lithoInited) {
+        _lithoInited = true;
+        _igInit();
+      }
+      _igResize();
+      _igStartRender();
+    }
+
+    function _sbKeyDown(e) {
+      // Only fire when studio tab is active
+      if (!document.getElementById('tab-studio')?.classList.contains('active')) return;
+      if ((e.key === 'Delete' || e.key === 'Backspace') && _sbSelected && !['INPUT','TEXTAREA'].includes(e.target.tagName)) {
+        studioDeleteSelected(); e.preventDefault();
+      }
+      if (e.ctrlKey && e.key === 'z') { sbUndo(); e.preventDefault(); }
+      if (e.ctrlKey && (e.key === 'y' || e.key === 'Z')) { sbRedo(); e.preventDefault(); }
+      if (e.ctrlKey && e.key === 'd') { sbDuplicate(); e.preventDefault(); }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // SHARED HELPERS
+    // ════════════════════════════════════════════════════════════════════════════
+
+    // ── Orbit controls ───────────────────────────────────────────────────────────
+    function _makeOrbit(camera, canvas) {
+      let down = false, rdown = false, px = 0, py = 0;
+      let sph = { theta: Math.PI * 0.35, phi: Math.PI * 0.35, r: 80 };
+      const target = new THREE.Vector3(0, 0, 0);
+      const DEG = Math.PI / 180;
+
+      function apply() {
+        camera.position.set(
+          target.x + sph.r * Math.sin(sph.phi) * Math.sin(sph.theta),
+          target.y + sph.r * Math.cos(sph.phi),
+          target.z + sph.r * Math.sin(sph.phi) * Math.cos(sph.theta)
+        );
+        camera.lookAt(target);
+      }
+      apply();
+
+      let _moved = false; // track drag vs click
+      const self = { apply, _wasDragging: false,
+        setTarget: v => { target.copy(v); apply(); },
+        setPreset: ({ theta, phi, r }) => { sph.theta = theta; sph.phi = phi; sph.r = r; apply(); }
+      };
+
+      canvas.addEventListener('mousedown', e => {
+        if (e.button === 0) down  = true;
+        if (e.button === 2) rdown = true;
+        px = e.clientX; py = e.clientY;
+        _moved = false; self._wasDragging = false;
+        e.preventDefault();
+      });
+      canvas.addEventListener('contextmenu', e => e.preventDefault());
+      window.addEventListener('mousemove', e => {
+        const dx = e.clientX - px, dy = e.clientY - py;
+        px = e.clientX; py = e.clientY;
+        if ((down || rdown) && (Math.abs(dx) > 2 || Math.abs(dy) > 2)) {
+          _moved = true; self._wasDragging = true;
+        }
+        if (down) {
+          sph.theta -= dx * 0.012;
+          sph.phi    = Math.max(0.05, Math.min(Math.PI - 0.05, sph.phi - dy * 0.012));
+          apply();
+        }
+        if (rdown) {
+          const right = new THREE.Vector3().crossVectors(
+            camera.getWorldDirection(new THREE.Vector3()), camera.up
+          ).normalize();
+          target.addScaledVector(right, -dx * sph.r * 0.001);
+          target.addScaledVector(camera.up, dy * sph.r * 0.001);
+          apply();
+        }
+      });
+      window.addEventListener('mouseup', () => {
+        down = false; rdown = false;
+        // Reset drag flag after a short delay so click handler can read it
+        setTimeout(() => { self._wasDragging = false; }, 50);
+      });
+      canvas.addEventListener('wheel', e => {
+        sph.r = Math.max(5, Math.min(500, sph.r * (1 + e.deltaY * 0.001)));
+        apply(); e.preventDefault();
+      }, { passive: false });
+
+      let _touches = [], _lastPinchDist = null;
+      canvas.addEventListener('touchstart', e => {
+        _touches = Array.from(e.touches);
+        if (_touches.length === 1) { down = true; px = _touches[0].clientX; py = _touches[0].clientY; }
+        e.preventDefault();
+      }, { passive: false });
+      canvas.addEventListener('touchmove', e => {
+        const t = Array.from(e.touches);
+        if (t.length === 1 && down) {
+          const dx = t[0].clientX - px, dy = t[0].clientY - py;
+          px = t[0].clientX; py = t[0].clientY;
+          sph.theta -= dx * 0.012;
+          sph.phi    = Math.max(0.05, Math.min(Math.PI - 0.05, sph.phi - dy * 0.012));
+          apply();
+        }
+        if (t.length === 2) {
+          const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+          if (_lastPinchDist !== null) sph.r = Math.max(5, Math.min(500, sph.r * (_lastPinchDist / d)));
+          _lastPinchDist = d; apply();
+        }
+        e.preventDefault();
+      }, { passive: false });
+      canvas.addEventListener('touchend', () => { down = false; _lastPinchDist = null; });
+
+      return self;
+    }
+
+    // ── Binary STL exporter ───────────────────────────────────────────────────────
+    function _buildSTL(meshes) {
+      // Collect triangles from all meshes
+      const tris = []; // each: {n: [nx,ny,nz], v: [[x,y,z],[x,y,z],[x,y,z]]}
+      for (const mesh of meshes) {
+        mesh.updateMatrixWorld(true);
+        const geom = mesh.geometry.clone();
+        geom.applyMatrix4(mesh.matrixWorld);
+        if (!geom.getAttribute('normal')) geom.computeVertexNormals();
+        const pos  = geom.getAttribute('position');
+        const norm = geom.getAttribute('normal');
+        const idx  = geom.index ? geom.index.array : null;
+        const count = idx ? idx.length : pos.count;
+        for (let i = 0; i < count; i += 3) {
+          const a = idx ? idx[i]   : i;
+          const b = idx ? idx[i+1] : i+1;
+          const c = idx ? idx[i+2] : i+2;
+          const nx = (norm.getX(a)+norm.getX(b)+norm.getX(c))/3;
+          const ny = (norm.getY(a)+norm.getY(b)+norm.getY(c))/3;
+          const nz = (norm.getZ(a)+norm.getZ(b)+norm.getZ(c))/3;
+          tris.push({
+            n: [nx, ny, nz],
+            v: [
+              [pos.getX(a), pos.getY(a), pos.getZ(a)],
+              [pos.getX(b), pos.getY(b), pos.getZ(b)],
+              [pos.getX(c), pos.getY(c), pos.getZ(c)],
+            ]
+          });
+        }
+      }
+      const buf  = new ArrayBuffer(84 + tris.length * 50);
+      const view = new DataView(buf);
+      const hdr  = 'Printara STL';
+      for (let i = 0; i < 80; i++) view.setUint8(i, i < hdr.length ? hdr.charCodeAt(i) : 0);
+      view.setUint32(80, tris.length, true);
+      let off = 84;
+      for (const t of tris) {
+        [t.n[0],t.n[1],t.n[2]].forEach(v => { view.setFloat32(off, v, true); off += 4; });
+        for (const vert of t.v) {
+          vert.forEach(v => { view.setFloat32(off, v, true); off += 4; });
+        }
+        view.setUint16(off, 0, true); off += 2;
+      }
+      return buf;
+    }
+
+    function _downloadSTL(buf, filename) {
+      const blob = new Blob([buf], { type: 'application/octet-stream' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // SHAPE BUILDER
+    // ════════════════════════════════════════════════════════════════════════════
+
+    function _sbInit() {
+      const canvas = document.getElementById('studioCanvas');
+      _sbRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      _sbRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      _sbRenderer.shadowMap.enabled = true;
+
+      _sbScene = new THREE.Scene();
+      _sbScene.background = new THREE.Color(0x0e0e1a);
+      _sbScene.add(new THREE.GridHelper(200, 20, 0x2a2a40, 0x1e1e30));
+      _sbScene.add(new THREE.AmbientLight(0xffffff, 0.4));
+      const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+      sun.position.set(60, 100, 60); sun.castShadow = true;
+      _sbScene.add(sun);
+      const fill = new THREE.DirectionalLight(0x8080ff, 0.3);
+      fill.position.set(-60, 40, 0); _sbScene.add(fill);
+
+      _sbCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000);
+      _sbOrbit  = _makeOrbit(_sbCamera, canvas);
+      _sbRaycaster = new THREE.Raycaster();
+      _sbMouse     = new THREE.Vector2(-99, -99);
+
+      // Track mouse for raycasting (hover + click)
+      canvas.addEventListener('mousemove', e => {
+        const r = canvas.getBoundingClientRect();
+        _sbMouse.x = ((e.clientX - r.left) / r.width)  *  2 - 1;
+        _sbMouse.y = ((e.clientY - r.top)  / r.height) * -2 + 1;
+      });
+      canvas.addEventListener('mouseleave', () => { _sbMouse.set(-99,-99); });
+
+      // Click to select shape in viewport
+      canvas.addEventListener('click', e => {
+        if (_sbOrbit._wasDragging) return; // ignore drag-release
+        const r = canvas.getBoundingClientRect();
+        const mx = ((e.clientX - r.left) / r.width)  *  2 - 1;
+        const my = ((e.clientY - r.top)  / r.height) * -2 + 1;
+        _sbRaycaster.setFromCamera({ x: mx, y: my }, _sbCamera);
+        const hits = _sbRaycaster.intersectObjects(_sbObjects.map(o => o.mesh));
+        if (hits.length) {
+          _sbPushUndo();
+          _sbSelectObj(hits[0].object.userData.studioId);
+        } else {
+          _sbSelected = null;
+          _sbObjects.forEach(o => _sbApplyMat(o));
+          document.getElementById('studioTransform').style.display = 'none';
+          _sbRenderList();
+        }
+      });
+
+      _sbResize();
+      new ResizeObserver(_sbResize).observe(canvas.parentElement);
+      _sbStartRender();
+    }
+
+    // ── Resize & render loop ─────────────────────────────────────────────────────
+    function _sbResize() {
+      const canvas = document.getElementById('studioCanvas');
+      if (!canvas || !_sbRenderer) return;
+      const w = canvas.parentElement.clientWidth;
+      const h = Math.max(320, Math.round(w * 0.56));
+      _sbRenderer.setSize(w, h);
+      if (_sbCamera) { _sbCamera.aspect = w / h; _sbCamera.updateProjectionMatrix(); }
+    }
+
+    function _sbStartRender() {
+      if (!_sbRenderer) return;
+      if (_sbAnimId) cancelAnimationFrame(_sbAnimId);
+      (function loop() {
+        _sbAnimId = requestAnimationFrame(loop);
+        // Hover highlight via raycasting
+        _sbRaycaster.setFromCamera(_sbMouse, _sbCamera);
+        const hits  = _sbRaycaster.intersectObjects(_sbObjects.map(o => o.mesh));
+        const hovId = hits.length ? hits[0].object.userData.studioId : null;
+        if (hovId !== _sbHovered) {
+          _sbHovered = hovId;
+          _sbObjects.forEach(o => _sbApplyMat(o));
+          document.getElementById('studioCanvas').style.cursor = hovId ? 'pointer' : 'grab';
+        }
+        _sbRenderer.render(_sbScene, _sbCamera);
+      })();
+    }
+
+    // ── Camera presets ────────────────────────────────────────────────────────────
+    function sbCamView(preset) {
+      if (!_sbOrbit) return;
+      const presets = {
+        iso:   { theta: Math.PI * 0.35, phi: Math.PI * 0.35, r: 180 },
+        top:   { theta: 0, phi: 0.01,             r: 200 },
+        front: { theta: 0, phi: Math.PI / 2,      r: 200 },
+        side:  { theta: Math.PI / 2, phi: Math.PI / 2, r: 200 },
+      };
+      if (presets[preset]) _sbOrbit.setPreset(presets[preset]);
+    }
+
+    // ── Material helper ───────────────────────────────────────────────────────────
+    function _sbApplyMat(o) {
+      const isSel  = o.id === _sbSelected;
+      const isHov  = o.id === _sbHovered && !isSel;
+      const col    = o.color || '#e02020';
+      const mat    = o.mesh.material;
+      if (isSel) {
+        mat.color.set(0xf7a26a); mat.emissive.set(0x3a1a00); mat.roughness = 0.45;
+      } else if (isHov) {
+        mat.color.set(col); mat.emissive.setHex(0x111122); mat.roughness = 0.4;
+      } else {
+        mat.color.set(col); mat.emissive.set(0x000000); mat.roughness = 0.55;
+      }
+    }
+
+    // ── Geometry factory ──────────────────────────────────────────────────────────
+    function _sbGeomFor(type) {
+      switch (type) {
+        case 'box':      return new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
+        case 'sphere':   return new THREE.SphereGeometry(0.5, 32, 24);
+        case 'cylinder': return new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+        case 'cone':     return new THREE.ConeGeometry(0.5, 1, 32);
+        case 'torus':    return new THREE.TorusGeometry(0.4, 0.15, 16, 64);
+        case 'wedge': {
+          const g = new THREE.BufferGeometry();
+          const v = new Float32Array([
+            -0.5,-.5, 0.5,  0.5,-.5, 0.5,  0.5, 0.5, 0.5,
+            -0.5,-.5, 0.5,  0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
+            -0.5,-.5,-0.5,  0.5, 0.5,-0.5,  0.5,-.5,-0.5,
+            -0.5,-.5,-0.5, -0.5, 0.5,-0.5,  0.5, 0.5,-0.5,
+            -0.5,-.5, 0.5,  0.5,-.5,-0.5,  0.5,-.5, 0.5,
+            -0.5,-.5, 0.5, -0.5,-.5,-0.5,  0.5,-.5,-0.5,
+             0.5,-.5, 0.5,  0.5, 0.5,-0.5,  0.5,-.5,-0.5,
+             0.5,-.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5,
+            -0.5,-.5, 0.5,  0.5, 0.5, 0.5,  0.5, 0.5,-0.5,
+            -0.5,-.5, 0.5,  0.5, 0.5,-0.5, -0.5, 0.5,-0.5,
+            -0.5,-.5, 0.5, -0.5, 0.5,-0.5, -0.5,-.5,-0.5,
+            -0.5,-.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5,-0.5,
+          ]);
+          g.setAttribute('position', new THREE.BufferAttribute(v, 3));
+          g.computeVertexNormals();
+          return g;
+        }
+        default: return new THREE.BoxGeometry(1, 1, 1);
+      }
+    }
+
+    // ── Add shape ─────────────────────────────────────────────────────────────────
+    function studioAddShape(type) {
+      if (!_sbScene) return;
+      _sbPushUndo();
+      const id    = ++_sbIdSeq;
+      const color = '#e02020';
+      const name  = type.charAt(0).toUpperCase() + type.slice(1) + ' ' + id;
+      const geom  = _sbGeomFor(type);
+      const mat   = new THREE.MeshStandardMaterial({ color, metalness: 0.15, roughness: 0.55 });
+      const mesh  = new THREE.Mesh(geom, mat);
+      // Offset each new shape so they don't stack exactly
+      const offset = (_sbObjects.length % 5) * 25;
+      mesh.scale.setScalar(20);
+      mesh.position.set(offset - 50, 10, 0);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.userData.studioId = id;
+      _sbScene.add(mesh);
+      _sbObjects.push({ id, type, name, color, mesh });
+      _sbSelectObj(id);
+    }
+
+    // ── Object list ───────────────────────────────────────────────────────────────
+    function _sbRenderList() {
+      const list = document.getElementById('studioObjectList');
+      const cnt  = document.getElementById('studioObjCount');
+      if (!list) return;
+      cnt.textContent = `(${_sbObjects.length})`;
+      if (_sbObjects.length === 0) {
+        list.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px 0;text-align:center;">No shapes yet</div>';
+        return;
+      }
+      list.innerHTML = _sbObjects.map(o => `
+        <div onclick="studioSelectById(${o.id})"
+          style="display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;cursor:pointer;
+                 background:${o.id===_sbSelected?'rgba(124,106,247,.18)':'transparent'};
+                 border:1px solid ${o.id===_sbSelected?'rgba(124,106,247,.45)':'transparent'};">
+          <span style="width:10px;height:10px;border-radius:50%;background:${o.color||'#e02020'};flex-shrink:0;"></span>
+          <span style="font-size:12px;flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name}</span>
+          <button onclick="event.stopPropagation();_sbPushUndo();studioDeleteById(${o.id})"
+            style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0;line-height:1;flex-shrink:0;">✕</button>
+        </div>`).join('');
+    }
+
+    // ── Select ────────────────────────────────────────────────────────────────────
+    function studioSelectById(id) { _sbSelectObj(id); }
+    function _sbSelectObj(id) {
+      _sbSelected = id;
+      _sbObjects.forEach(o => _sbApplyMat(o));
+      _sbRenderList();
+      const obj = _sbObjects.find(o => o.id === id);
+      const tx  = document.getElementById('studioTransform');
+      if (!obj || !tx) return;
+      tx.style.display = '';
+      document.getElementById('sbSelName').value  = obj.name;
+      document.getElementById('sbSelColor').value = obj.color || '#e02020';
+      _sbBuildSliders(obj);
+      _sbUpdateDimLabel(obj);
+    }
+
+    // ── Slider panels ─────────────────────────────────────────────────────────────
+    function _sbBuildSliders(obj) {
+      const snap = document.getElementById('sbSnap')?.checked;
+      const px = Math.round(obj.mesh.position.x);
+      const py = Math.round(obj.mesh.position.y);
+      const pz = Math.round(obj.mesh.position.z);
+      const sx = Math.round(obj.mesh.scale.x);
+      const sy = Math.round(obj.mesh.scale.y);
+      const sz = Math.round(obj.mesh.scale.z);
+      const rx = Math.round(obj.mesh.rotation.x * 180/Math.PI);
+      const ry = Math.round(obj.mesh.rotation.y * 180/Math.PI);
+      const rz = Math.round(obj.mesh.rotation.z * 180/Math.PI);
+
+      document.getElementById('sbPosSliders').innerHTML  = _slRow('pos','X',-200,200,1,px) + _slRow('pos','Y',0,200,1,py) + _slRow('pos','Z',-200,200,1,pz);
+      document.getElementById('sbSizeSliders').innerHTML = _slRow('siz','W',1,200,1,sx)    + _slRow('siz','H',1,200,1,sy) + _slRow('siz','D',1,200,1,sz);
+      document.getElementById('sbRotSliders').innerHTML  = _slRow('rot','X',-180,180,5,rx) + _slRow('rot','Y',-180,180,5,ry) + _slRow('rot','Z',-180,180,5,rz);
+    }
+
+    function _slRow(grp, lbl, mn, mx, st, val) {
+      return `<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
+        <span style="width:13px;font-size:10px;font-weight:700;color:var(--text3);">${lbl}</span>
+        <input type="range" id="sbs_${grp}_${lbl}" min="${mn}" max="${mx}" step="${st}" value="${val}"
+          oninput="sbSlide('${grp}','${lbl}',+this.value)"
+          style="flex:1;accent-color:var(--accent);cursor:pointer;height:4px;" />
+        <input type="number" id="sbn_${grp}_${lbl}" value="${val}" step="${st}" min="${mn}" max="${mx}"
+          oninput="sbNum('${grp}','${lbl}',+this.value)"
+          style="width:52px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;" />
+      </div>`;
+    }
+
+    function sbSlide(grp, lbl, raw) {
+      const snap = grp === 'pos' && document.getElementById('sbSnap')?.checked;
+      const v = snap ? Math.round(raw / 5) * 5 : raw;
+      const num = document.getElementById(`sbn_${grp}_${lbl}`);
+      const sl  = document.getElementById(`sbs_${grp}_${lbl}`);
+      if (num) num.value = v;
+      if (sl && snap) sl.value = v;
+      _sbMeshApply(grp, lbl, v);
+    }
+    function sbNum(grp, lbl, raw) {
+      const sl = document.getElementById(`sbs_${grp}_${lbl}`);
+      if (sl) sl.value = Math.min(+sl.max, Math.max(+sl.min, raw));
+      _sbMeshApply(grp, lbl, raw);
+    }
+    function _sbMeshApply(grp, lbl, v) {
+      const obj = _sbObjects.find(o => o.id === _sbSelected);
+      if (!obj) return;
+      const ax = lbl === 'W' ? 'x' : lbl === 'H' ? 'y' : lbl === 'D' ? 'z' : lbl.toLowerCase();
+      if (grp === 'pos') obj.mesh.position[ax] = v;
+      if (grp === 'siz') obj.mesh.scale[ax]    = Math.max(1, v);
+      if (grp === 'rot') obj.mesh.rotation[ax]  = v * Math.PI / 180;
+      _sbUpdateDimLabel(obj);
+    }
+
+    // ── Dimension label ───────────────────────────────────────────────────────────
+    function _sbUpdateDimLabel(obj) {
+      obj = obj || _sbObjects.find(o => o.id === _sbSelected);
+      const el = document.getElementById('sbDimLabel');
+      if (!el || !obj) { if (el) el.style.display='none'; return; }
+      const s = obj.mesh.scale;
+      el.style.display = '';
+      el.textContent = `${Math.round(s.x)} × ${Math.round(s.y)} × ${Math.round(s.z)} mm`;
+    }
+
+    // ── Rename / Color ────────────────────────────────────────────────────────────
+    function sbRenameSelected(name) {
+      const obj = _sbObjects.find(o => o.id === _sbSelected);
+      if (obj) { obj.name = name; _sbRenderList(); }
+    }
+    function sbColorSelected(color) {
+      const obj = _sbObjects.find(o => o.id === _sbSelected);
+      if (!obj) return;
+      obj.color = color;
+      obj.mesh.material.color.set(color);
+      _sbRenderList();
+    }
+
+    // ── Quick actions ─────────────────────────────────────────────────────────────
+    function sbAlignFloor() {
+      const obj = _sbObjects.find(o => o.id === _sbSelected);
+      if (!obj) return;
+      _sbPushUndo();
+      obj.mesh.position.y = obj.mesh.scale.y / 2;
+      _sbBuildSliders(obj);
+    }
+    function sbCenterXZ() {
+      const obj = _sbObjects.find(o => o.id === _sbSelected);
+      if (!obj) return;
+      _sbPushUndo();
+      obj.mesh.position.x = 0;
+      obj.mesh.position.z = 0;
+      _sbBuildSliders(obj);
+    }
+    function sbDuplicate() {
+      const src = _sbObjects.find(o => o.id === _sbSelected);
+      if (!src) { showToast('Select a shape to duplicate.'); return; }
+      _sbPushUndo();
+      const id   = ++_sbIdSeq;
+      const geom = _sbGeomFor(src.type);
+      const mat  = new THREE.MeshStandardMaterial({ color: src.color || '#e02020', metalness: 0.15, roughness: 0.55 });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.position.copy(src.mesh.position).x += src.mesh.scale.x + 5;
+      mesh.scale.copy(src.mesh.scale);
+      mesh.rotation.copy(src.mesh.rotation);
+      mesh.castShadow = true;
+      mesh.userData.studioId = id;
+      _sbScene.add(mesh);
+      _sbObjects.push({ id, type: src.type, name: src.name + ' copy', color: src.color || '#e02020', mesh });
+      _sbSelectObj(id);
+    }
+
+    // ── Delete ────────────────────────────────────────────────────────────────────
+    function studioDeleteSelected() { if (_sbSelected !== null) studioDeleteById(_sbSelected); }
+    function studioDeleteById(id) {
+      _sbPushUndo();
+      const obj = _sbObjects.find(o => o.id === id);
+      if (!obj) return;
+      _sbScene.remove(obj.mesh);
+      obj.mesh.geometry.dispose();
+      _sbObjects = _sbObjects.filter(o => o.id !== id);
+      if (_sbSelected === id) {
+        _sbSelected = _sbObjects.length ? _sbObjects[_sbObjects.length - 1].id : null;
+        if (_sbSelected) _sbSelectObj(_sbSelected);
+        else { document.getElementById('studioTransform').style.display = 'none'; document.getElementById('sbDimLabel').style.display = 'none'; }
+      }
+      _sbRenderList();
+    }
+    function studioClear() {
+      if (_sbObjects.length && !confirm('Remove all shapes?')) return;
+      _sbPushUndo();
+      _sbObjects.forEach(o => { _sbScene.remove(o.mesh); o.mesh.geometry.dispose(); });
+      _sbObjects = []; _sbSelected = null;
+      document.getElementById('studioTransform').style.display = 'none';
+      document.getElementById('sbDimLabel').style.display = 'none';
+      _sbRenderList();
+    }
+
+    // ── Undo / Redo ───────────────────────────────────────────────────────────────
+    function _sbSerialize() {
+      return JSON.stringify(_sbObjects.map(o => ({
+        id: o.id, type: o.type, name: o.name, color: o.color,
+        px: o.mesh.position.x, py: o.mesh.position.y, pz: o.mesh.position.z,
+        sx: o.mesh.scale.x,    sy: o.mesh.scale.y,    sz: o.mesh.scale.z,
+        rx: o.mesh.rotation.x, ry: o.mesh.rotation.y, rz: o.mesh.rotation.z,
+      })));
+    }
+    function _sbPushUndo() {
+      _sbUndoStack.push(_sbSerialize());
+      if (_sbUndoStack.length > 40) _sbUndoStack.shift();
+      _sbRedoStack = [];
+    }
+    function _sbRestore(json) {
+      const data = JSON.parse(json);
+      _sbObjects.forEach(o => { _sbScene.remove(o.mesh); o.mesh.geometry.dispose(); });
+      _sbObjects = [];
+      _sbIdSeq   = 0;
+      for (const d of data) {
+        const mat  = new THREE.MeshStandardMaterial({ color: d.color || '#e02020', metalness: 0.15, roughness: 0.55 });
+        const mesh = new THREE.Mesh(_sbGeomFor(d.type), mat);
+        mesh.position.set(d.px, d.py, d.pz);
+        mesh.scale.set(d.sx, d.sy, d.sz);
+        mesh.rotation.set(d.rx, d.ry, d.rz);
+        mesh.castShadow = true;
+        mesh.userData.studioId = d.id;
+        _sbScene.add(mesh);
+        _sbObjects.push({ id: d.id, type: d.type, name: d.name, color: d.color, mesh });
+        _sbIdSeq = Math.max(_sbIdSeq, d.id);
+      }
+      _sbSelected = _sbObjects.length ? _sbObjects[_sbObjects.length - 1].id : null;
+      if (_sbSelected) _sbSelectObj(_sbSelected);
+      else { document.getElementById('studioTransform').style.display = 'none'; _sbRenderList(); }
+    }
+    function sbUndo() {
+      if (!_sbUndoStack.length) { showToast('Nothing to undo.'); return; }
+      _sbRedoStack.push(_sbSerialize());
+      _sbRestore(_sbUndoStack.pop());
+    }
+    function sbRedo() {
+      if (!_sbRedoStack.length) { showToast('Nothing to redo.'); return; }
+      _sbUndoStack.push(_sbSerialize());
+      _sbRestore(_sbRedoStack.pop());
+    }
+
+    // ── Export ────────────────────────────────────────────────────────────────────
+    function studioExportSTL() {
+      if (_sbObjects.length === 0) { showToast('Add at least one shape first.'); return; }
+      const buf = _buildSTL(_sbObjects.map(o => o.mesh));
+      _downloadSTL(buf, 'profab-model.stl');
+      showToast('STL exported ✓');
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // IMAGE → 3D  (LITHOPHANE GENERATOR)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    function setLithoType(t) {
+      _lithoType = t;
+      ['flat','curved','cylinder','round','heart','ornament'].forEach(n => {
+        const b = document.getElementById('ltBtn_' + n);
+        if (b) b.className = n === t ? 'btn-primary' : 'tab-btn';
+      });
+      // Height row: hide for shapes that use Width as diameter
+      const noH = (t === 'round' || t === 'ornament');
+      const htRow = document.getElementById('ltHtRow');
+      if (htRow) htRow.style.display = noH ? 'none' : '';
+      // Width label rename
+      const wl = document.getElementById('ltWidLbl');
+      if (wl) wl.textContent = noH ? 'Diameter (mm)' : 'Width (mm)';
+      // Type-specific panel
+      const ts = document.getElementById('ltTypeSettings');
+      const tb = document.getElementById('ltTypeBody');
+      let html = '';
+      if (t === 'curved') {
+        html = `<div><div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="color:var(--text2);">Arc angle (&deg;)</span>
+          <span id="ltArcVal" style="color:var(--accent);font-weight:600;">90</span></div>
+          <input type="range" id="ltArc" min="20" max="270" value="90"
+            oninput="document.getElementById('ltArcVal').textContent=this.value"
+            style="width:100%;accent-color:var(--accent);" /></div>`;
+      } else if (t === 'cylinder') {
+        html = `<div><div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="color:var(--text2);">Diameter (mm)</span>
+          <span id="ltDiamVal" style="color:var(--accent);font-weight:600;">80</span></div>
+          <input type="range" id="ltDiam" min="20" max="250" value="80"
+            oninput="document.getElementById('ltDiamVal').textContent=this.value"
+            style="width:100%;accent-color:var(--accent);" /></div>`;
+      } else if (t === 'round') {
+        html = `<div style="color:var(--text3);font-size:11px;line-height:1.6;">Circular disc lithophane. Diameter set by Width. Image maps to the full circle.</div>`;
+      } else if (t === 'heart') {
+        html = `<div style="color:var(--text3);font-size:11px;line-height:1.6;">Heart-shaped panel. Image fills the heart interior; border area uses max thickness.</div>`;
+      } else if (t === 'ornament') {
+        html = `<div style="color:var(--text3);font-size:11px;line-height:1.6;">Circular ornament with a hanging slot at the top. Diameter set by Width.</div>`;
+      }
+      if (tb) tb.innerHTML = html;
+      if (ts) ts.style.display = html ? '' : 'none';
+    }
+
+    function _igInit() {
+      const canvas = document.getElementById('studioImgCanvas');
+      _igRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      _igRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      _igScene = new THREE.Scene();
+      _igScene.background = new THREE.Color(0x0e0e1a);
+      _igScene.add(new THREE.GridHelper(300, 30, 0x2a2a40, 0x1e1e30));
+      _igScene.add(new THREE.AmbientLight(0xffffff, 0.55));
+      const sun = new THREE.DirectionalLight(0xffffff, 1.0); sun.position.set(60, 120, 80); _igScene.add(sun);
+      const back = new THREE.DirectionalLight(0xfff4d0, 0.5); back.position.set(0, 0, -200); _igScene.add(back);
+      _igCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 3000);
+      _igOrbit  = _makeOrbit(_igCamera, canvas);
+      _igOrbit.setPreset({ theta: 0.4, phi: 1.1, r: 280 });
+      _igResize();
+      new ResizeObserver(_igResize).observe(canvas.parentElement);
+    }
+
+    function _igResize() {
+      const canvas = document.getElementById('studioImgCanvas');
+      if (!canvas || !_igRenderer) return;
+      const w = canvas.parentElement.clientWidth;
+      const h = Math.max(340, Math.round(w * 0.58));
+      _igRenderer.setSize(w, h);
+      if (_igCamera) { _igCamera.aspect = w / h; _igCamera.updateProjectionMatrix(); }
+    }
+
+    function _igStartRender() {
+      if (!_igRenderer) return;
+      if (_igAnimId) cancelAnimationFrame(_igAnimId);
+      (function loop() { _igAnimId = requestAnimationFrame(loop); _igRenderer.render(_igScene, _igCamera); })();
+    }
+
+    function studioLoadImage(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          _igImgEl = img;
+          const prev = document.getElementById('studioImgPreview');
+          prev.src = ev.target.result; prev.style.display = 'block';
+          document.getElementById('imgUploadArea').style.display = 'none';
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ── Pixel helpers ─────────────────────────────────────────────────────────────
+    function _sampleGray(cols, rows) {
+      const oc = document.createElement('canvas'); oc.width = cols; oc.height = rows;
+      const ctx = oc.getContext('2d'); ctx.drawImage(_igImgEl, 0, 0, cols, rows);
+      const px = ctx.getImageData(0, 0, cols, rows).data;
+      const g  = new Float32Array(cols * rows);
+      for (let i = 0; i < g.length; i++)
+        g[i] = (px[i*4]*0.299 + px[i*4+1]*0.587 + px[i*4+2]*0.114) / 255;
+      return g;
+    }
+    // Lithophane rule: dark (g≈0) → thick, light (g≈1) → thin
+    function _gToThk(g, maxT, minT, inv) {
+      const t = inv ? g : (1 - g);
+      return minT + t * (maxT - minT);
+    }
+
+    // ── Geometry builders ─────────────────────────────────────────────────────────
+
+    // Closed rectangular grid (flat / curved)
+    function _lithoGeom(fv, bv, cols, rows) {
+      const N = cols * rows;
+      const pos = new Float32Array(N * 6); pos.set(fv, 0); pos.set(bv, N * 3);
+      const idx = [];
+      const F = (r,c) => r*cols+c, B = (r,c) => N+r*cols+c;
+      for (let r = 0; r < rows-1; r++) {
+        for (let c = 0; c < cols-1; c++) {
+          const a=F(r,c),b=F(r,c+1),d=F(r+1,c),e=F(r+1,c+1);
+          idx.push(a,b,e, a,e,d);                                                       // front
+          idx.push(B(r,c),B(r+1,c+1),B(r,c+1), B(r,c),B(r+1,c),B(r+1,c+1));          // back
+        }
+      }
+      for (let r = 0; r < rows-1; r++) {
+        idx.push(F(r,0),B(r+1,0),B(r,0),         F(r,0),F(r+1,0),B(r+1,0));           // left wall
+        idx.push(F(r,cols-1),B(r,cols-1),B(r+1,cols-1), F(r,cols-1),B(r+1,cols-1),F(r+1,cols-1)); // right
+      }
+      for (let c = 0; c < cols-1; c++) {
+        idx.push(F(0,c),B(0,c),B(0,c+1),         F(0,c),B(0,c+1),F(0,c+1));           // bottom
+        idx.push(F(rows-1,c),F(rows-1,c+1),B(rows-1,c+1), F(rows-1,c),B(rows-1,c+1),B(rows-1,c)); // top
+      }
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      g.setIndex(idx); g.computeVertexNormals(); return g;
+    }
+
+    // Closed masked grid: thick[i]==0 means vertex is outside the shape
+    function _lithoMaskedGeom(fv, bv, thick, cols, rows) {
+      const N = cols * rows;
+      const pos = new Float32Array(N * 6); pos.set(fv, 0); pos.set(bv, N * 3);
+      const idx = [];
+      const F = (r,c) => r*cols+c, B = (r,c) => N+r*cols+c;
+      // quad "inside" only if all 4 corners are non-zero
+      const qIn = (r,c) =>
+        r>=0&&r<rows-1&&c>=0&&c<cols-1 &&
+        thick[r*cols+c]>0 && thick[r*cols+c+1]>0 &&
+        thick[(r+1)*cols+c]>0 && thick[(r+1)*cols+c+1]>0;
+
+      for (let r = 0; r < rows-1; r++) {
+        for (let c = 0; c < cols-1; c++) {
+          if (!qIn(r,c)) continue;
+          const a=F(r,c),b=F(r,c+1),d=F(r+1,c),e=F(r+1,c+1);
+          idx.push(a,b,e, a,e,d);
+          idx.push(B(r,c),B(r+1,c+1),B(r,c+1), B(r,c),B(r+1,c),B(r+1,c+1));
+        }
+      }
+      // Boundary walls wherever an inside quad borders an outside (or grid edge)
+      for (let r = 0; r < rows-1; r++) {
+        for (let c = 0; c <= cols-1; c++) {
+          const lIn = qIn(r, c-1), rIn = qIn(r, c);
+          if       (rIn && !lIn) { idx.push(F(r,c),B(r+1,c),B(r,c), F(r,c),F(r+1,c),B(r+1,c)); }
+          else if  (lIn && !rIn) { idx.push(F(r,c),B(r,c),B(r+1,c), F(r,c),B(r+1,c),F(r+1,c)); }
+        }
+      }
+      for (let c = 0; c < cols-1; c++) {
+        for (let r = 0; r <= rows-1; r++) {
+          const bIn = qIn(r, c), aIn = qIn(r-1, c);
+          if      (bIn && !aIn) { idx.push(F(r,c),B(r,c),B(r,c+1), F(r,c),B(r,c+1),F(r,c+1)); }
+          else if (aIn && !bIn) { idx.push(F(r,c),F(r,c+1),B(r,c+1), F(r,c),B(r,c+1),B(r,c)); }
+        }
+      }
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      g.setIndex(idx); g.computeVertexNormals(); return g;
+    }
+
+    // ── Per-shape builders ────────────────────────────────────────────────────────
+
+    function _buildFlat(gray, cols, rows, W, H, maxT, minT, inv, border) {
+      const bC = Math.round(border*(cols-1)/W), bR = Math.round(border*(rows-1)/H);
+      const dx = W/(cols-1), dy = H/(rows-1), N = cols*rows;
+      const fv = new Float32Array(N*3), bv = new Float32Array(N*3);
+      for (let r = 0; r < rows; r++) { for (let c = 0; c < cols; c++) {
+        const i = r*cols+c;
+        const inB = c<bC || c>cols-1-bC || r<bR || r>rows-1-bR;
+        const t = inB ? maxT : _gToThk(gray[i], maxT, minT, inv);
+        fv[i*3]=c*dx-W/2; fv[i*3+1]=r*dy-H/2; fv[i*3+2]=t;
+        bv[i*3]=c*dx-W/2; bv[i*3+1]=r*dy-H/2; bv[i*3+2]=0;
+      }}
+      return _lithoGeom(fv, bv, cols, rows);
+    }
+
+    function _buildCurved(gray, cols, rows, W, H, maxT, minT, inv, border, arcDeg) {
+      const arcRad = arcDeg * Math.PI / 180;
+      const R = W / arcRad;   // radius so arc length == W
+      const bC = Math.round(border*(cols-1)/W), bR = Math.round(border*(rows-1)/H);
+      const dy = H/(rows-1), N = cols*rows;
+      const fv = new Float32Array(N*3), bv = new Float32Array(N*3);
+      for (let r = 0; r < rows; r++) { for (let c = 0; c < cols; c++) {
+        const i = r*cols+c;
+        const inB = c<bC || c>cols-1-bC || r<bR || r>rows-1-bR;
+        const t = inB ? maxT : _gToThk(gray[i], maxT, minT, inv);
+        const theta = (c/(cols-1) - 0.5) * arcRad;
+        const y = r*dy - H/2;
+        // Offset so centre of arc sits at z=0
+        fv[i*3]=(R+t)*Math.sin(theta); fv[i*3+1]=y; fv[i*3+2]=(R+t)*Math.cos(theta)-R;
+        bv[i*3]=R*Math.sin(theta);     bv[i*3+1]=y; bv[i*3+2]=R*Math.cos(theta)-R;
+      }}
+      return _lithoGeom(fv, bv, cols, rows);
+    }
+
+    function _buildCylinder(gray, cols, rows, diam, H, maxT, minT, inv) {
+      const R = diam/2, dy = H/(rows-1), N = cols*rows;
+      const fv = new Float32Array(N*3), bv = new Float32Array(N*3);
+      for (let r = 0; r < rows; r++) { for (let c = 0; c < cols; c++) {
+        const i = r*cols+c, t = _gToThk(gray[i], maxT, minT, inv);
+        const th = (c/cols)*Math.PI*2, y = r*dy - H/2;
+        fv[i*3]=(R+t)*Math.cos(th); fv[i*3+1]=y; fv[i*3+2]=(R+t)*Math.sin(th);
+        bv[i*3]=R*Math.cos(th);     bv[i*3+1]=y; bv[i*3+2]=R*Math.sin(th);
+      }}
+      const idx = [];
+      const F = (r,c) => r*cols+c, B = (r,c) => N+r*cols+c;
+      const pos = new Float32Array(N*6); pos.set(fv,0); pos.set(bv,N*3);
+      for (let r = 0; r < rows-1; r++) { for (let c = 0; c < cols; c++) {
+        const cn = (c+1)%cols;
+        idx.push(F(r,c),F(r,cn),F(r+1,cn),       F(r,c),F(r+1,cn),F(r+1,c));    // outer
+        idx.push(B(r,c),B(r+1,cn),B(r,cn),        B(r,c),B(r+1,c),B(r+1,cn));    // inner
+      }}
+      for (let c = 0; c < cols; c++) {   // annular top / bottom caps
+        const cn = (c+1)%cols;
+        idx.push(F(0,c),B(0,cn),B(0,c),           F(0,c),F(0,cn),B(0,cn));        // bottom
+        idx.push(F(rows-1,c),B(rows-1,c),B(rows-1,cn), F(rows-1,c),B(rows-1,cn),F(rows-1,cn)); // top
+      }
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      g.setIndex(idx); g.computeVertexNormals(); return g;
+    }
+
+    function _buildRound(gray, cols, W, maxT, minT, inv, border) {
+      const rows = cols, R = W/2, dx = W/(cols-1), N = cols*rows;
+      const bFrac = border / R;
+      const fv = new Float32Array(N*3), bv = new Float32Array(N*3), thick = new Float32Array(N);
+      for (let r = 0; r < rows; r++) { for (let c = 0; c < cols; c++) {
+        const i = r*cols+c;
+        const u = c/(cols-1)*2-1, v = r/(rows-1)*2-1, d = Math.sqrt(u*u+v*v);
+        if      (d > 1)          thick[i] = 0;
+        else if (d > 1-bFrac)    thick[i] = maxT;
+        else                     thick[i] = _gToThk(gray[i], maxT, minT, inv);
+        const x=c*dx-R, y=r*dx-R;
+        fv[i*3]=x; fv[i*3+1]=y; fv[i*3+2]=thick[i];
+        bv[i*3]=x; bv[i*3+1]=y; bv[i*3+2]=0;
+      }}
+      return _lithoMaskedGeom(fv, bv, thick, cols, rows);
+    }
+
+    function _buildHeart(gray, cols, rows, W, H, maxT, minT, inv, border) {
+      const N = cols*rows, dx = W/(cols-1), dy = H/(rows-1);
+      const fv = new Float32Array(N*3), bv = new Float32Array(N*3), thick = new Float32Array(N);
+      const inHeart = (u, v) => {
+        const x = u, y = v - 0.15;
+        return Math.pow(x*x + y*y - 1, 3) - x*x*y*y*y <= 0;
+      };
+      const bf = border / Math.min(W, H) * 1.2;
+      for (let r = 0; r < rows; r++) { for (let c = 0; c < cols; c++) {
+        const i = r*cols+c;
+        const u = c/(cols-1)*2.4-1.2, v = r/(rows-1)*2.4-1.2;
+        if      (!inHeart(u, v))                            thick[i] = 0;
+        else if (!inHeart(u*(1-bf*0.9), v*(1-bf*0.9)))     thick[i] = maxT;
+        else                                                thick[i] = _gToThk(gray[i], maxT, minT, inv);
+        const x=c*dx-W/2, y=r*dy-H/2;
+        fv[i*3]=x; fv[i*3+1]=y; fv[i*3+2]=thick[i];
+        bv[i*3]=x; bv[i*3+1]=y; bv[i*3+2]=0;
+      }}
+      return _lithoMaskedGeom(fv, bv, thick, cols, rows);
+    }
+
+    function _buildOrnament(gray, cols, W, maxT, minT, inv, border) {
+      const rows = cols, R = W/2, dx = W/(cols-1), N = cols*rows;
+      const bFrac = border / R;
+      const fv = new Float32Array(N*3), bv = new Float32Array(N*3), thick = new Float32Array(N);
+      for (let r = 0; r < rows; r++) { for (let c = 0; c < cols; c++) {
+        const i = r*cols+c;
+        const u = c/(cols-1)*2-1, v = r/(rows-1)*2-1, d = Math.sqrt(u*u+v*v);
+        const inSlot = Math.abs(u) < 0.09 && v > 0.80;   // hanging slot near top
+        if      (inSlot)         thick[i] = 0;
+        else if (d > 1)          thick[i] = 0;
+        else if (d > 1-bFrac)    thick[i] = maxT;
+        else                     thick[i] = _gToThk(gray[i], maxT, minT, inv);
+        const x=c*dx-R, y=r*dx-R;
+        fv[i*3]=x; fv[i*3+1]=y; fv[i*3+2]=thick[i];
+        bv[i*3]=x; bv[i*3+1]=y; bv[i*3+2]=0;
+      }}
+      return _lithoMaskedGeom(fv, bv, thick, cols, rows);
+    }
+
+    // ── Main generator ────────────────────────────────────────────────────────────
+    function studioGenerateFromImage() {
+      if (!_igImgEl) { showToast('Upload an image first.'); return; }
+      const status = document.getElementById('imgStatus');
+      status.textContent = 'Generating\u2026'; status.style.display = 'block'; status.style.color = 'var(--text3)';
+
+      const W    = +document.getElementById('ltWid').value;
+      const H    = +document.getElementById('ltHt').value;
+      const maxT = +document.getElementById('ltMaxT').value;
+      const minT = Math.min(+document.getElementById('ltMinT').value, maxT - 0.1);
+      const res  = +document.getElementById('ltRes').value;
+      const bord = +document.getElementById('ltBord').value;
+      const inv  = document.getElementById('ltInvert').checked;
+
+      let cols, rows, geom;
+      try {
+        if (_lithoType === 'cylinder') {
+          const diam = +(document.getElementById('ltDiam')?.value || 80);
+          cols = Math.min(360, Math.max(30, res));
+          rows = Math.min(300, Math.max(10, Math.round(H * cols / (Math.PI * diam))));
+          geom = _buildCylinder(_sampleGray(cols, rows), cols, rows, diam, H, maxT, minT, inv);
+        } else if (_lithoType === 'round') {
+          cols = rows = Math.min(300, Math.max(30, res));
+          geom = _buildRound(_sampleGray(cols, rows), cols, W, maxT, minT, inv, bord);
+        } else if (_lithoType === 'ornament') {
+          cols = rows = Math.min(300, Math.max(30, res));
+          geom = _buildOrnament(_sampleGray(cols, rows), cols, W, maxT, minT, inv, bord);
+        } else {
+          cols = Math.min(300, Math.max(20, res));
+          rows = Math.min(300, Math.max(20, Math.round(cols * H / W)));
+          const gray = _sampleGray(cols, rows);
+          if      (_lithoType === 'flat')    geom = _buildFlat(gray, cols, rows, W, H, maxT, minT, inv, bord);
+          else if (_lithoType === 'curved')  geom = _buildCurved(gray, cols, rows, W, H, maxT, minT, inv, bord, +(document.getElementById('ltArc')?.value||90));
+          else if (_lithoType === 'heart')   geom = _buildHeart(gray, cols, rows, W, H, maxT, minT, inv, bord);
+        }
+      } catch (e) {
+        status.textContent = '\u274C Error: ' + e.message; status.style.color = 'red'; return;
+      }
+
+      if (_igMesh) { _igScene.remove(_igMesh); _igMesh.geometry?.dispose(); _igMesh = null; }
+      _igMesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({
+        color: 0xd0c8e0, metalness: 0.0, roughness: 0.55, side: THREE.DoubleSide
+      }));
+      _igScene.add(_igMesh);
+
+      geom.computeBoundingBox();
+      const box = geom.boundingBox;
+      const cx = (box.min.x+box.max.x)/2, cy = (box.min.y+box.max.y)/2, cz = (box.min.z+box.max.z)/2;
+      _igOrbit.setTarget(new THREE.Vector3(cx, cy, cz));
+      const span = Math.max(box.max.x-box.min.x, box.max.y-box.min.y, box.max.z-box.min.z);
+      _igOrbit.setPreset({ theta: 0.4, phi: 1.05, r: span * 2.4 });
+      _igStartRender();
+
+      document.getElementById('imgExportBtn').style.display = '';
+      const tris = geom.index ? geom.index.count / 3 : 0;
+      status.textContent = '\u2705 ' + cols + '\xd7' + rows + ' grid \xb7 ' + tris.toLocaleString() + ' triangles';
+      status.style.color = 'var(--green)';
+    }
+
+    // ── STL export ────────────────────────────────────────────────────────────────
+    function studioExportImageSTL() {
+      if (!_igMesh) { showToast('Generate a lithophane first.'); return; }
+      const geom = _igMesh.geometry, posA = geom.attributes.position, idxArr = geom.index?.array;
+      const tris = idxArr ? idxArr.length / 3 : posA.count / 3;
+      const buf  = new ArrayBuffer(84 + tris * 50);
+      const view = new DataView(buf);
+      const hdr  = new TextEncoder().encode('ProFab 3D Lithophane');
+      for (let i = 0; i < Math.min(hdr.length, 80); i++) view.setUint8(i, hdr[i]);
+      view.setUint32(80, tris, true);
+      let off = 84;
+      for (let t = 0; t < tris; t++) {
+        const ia=idxArr?idxArr[t*3]:t*3, ib=idxArr?idxArr[t*3+1]:t*3+1, ic=idxArr?idxArr[t*3+2]:t*3+2;
+        const ax=posA.getX(ia),ay=posA.getY(ia),az=posA.getZ(ia);
+        const bx=posA.getX(ib),by=posA.getY(ib),bz=posA.getZ(ib);
+        const cx=posA.getX(ic),cy=posA.getY(ic),cz=posA.getZ(ic);
+        const ux=bx-ax,uy=by-ay,uz=bz-az, vx=cx-ax,vy=cy-ay,vz=cz-az;
+        let nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx;
+        const nl = Math.sqrt(nx*nx+ny*ny+nz*nz) || 1; nx/=nl; ny/=nl; nz/=nl;
+        view.setFloat32(off,nx,true);off+=4; view.setFloat32(off,ny,true);off+=4; view.setFloat32(off,nz,true);off+=4;
+        view.setFloat32(off,ax,true);off+=4; view.setFloat32(off,ay,true);off+=4; view.setFloat32(off,az,true);off+=4;
+        view.setFloat32(off,bx,true);off+=4; view.setFloat32(off,by,true);off+=4; view.setFloat32(off,bz,true);off+=4;
+        view.setFloat32(off,cx,true);off+=4; view.setFloat32(off,cy,true);off+=4; view.setFloat32(off,cz,true);off+=4;
+        view.setUint16(off,0,true);off+=2;
+      }
+      _downloadSTL(buf, 'layerforge-litho-' + _lithoType + '.stl');
+      showToast('STL exported \u2713');
+    }
+    // ===== END 3D STUDIO ==========================================================
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // STATUE GENERATOR
+    // ════════════════════════════════════════════════════════════════════════════
+
+    let _sgScene, _sgCamera, _sgRenderer, _sgAnimId;
+    let _sgMeshes = [];
+    let _sgStyle = 'face';
+    let _sgPhotoImage = null;
+    let _sgOrbit = { active: false, button: -1, lastX: 0, lastY: 0, theta: 0.6, phi: 0.38, dist: 300, panX: 0, panY: 60 };
+
+    function initStatueGen() {
+      const canvas = document.getElementById('statueCanvas');
+      if (!canvas) return;
+      // Apply initial UI visibility (no rebuild yet)
+      const photoCard = document.getElementById('sgPhotoCard');
+      const reliefRow = document.getElementById('sgReliefRow');
+      if (photoCard) photoCard.style.display = _sgStyle === 'face' ? '' : 'none';
+      if (reliefRow) reliefRow.style.display  = _sgStyle === 'face' ? 'flex' : 'none';
+      ['face','bust','figure','trophy','column'].forEach(n => {
+        const b = document.getElementById('sgBtn_' + n);
+        if (b) b.className = n === _sgStyle ? 'btn-primary' : 'tab-btn';
+      });
+      if (_sgRenderer) { _sgRebuild(); return; }
+
+      _sgScene = new THREE.Scene();
+      _sgScene.background = new THREE.Color(0x0e0e1a);
+
+      const amb = new THREE.AmbientLight(0xffffff, 0.45);
+      _sgScene.add(amb);
+      const dl1 = new THREE.DirectionalLight(0xffffff, 0.85);
+      dl1.position.set(1, 2, 1.5);
+      _sgScene.add(dl1);
+      const dl2 = new THREE.DirectionalLight(0x8899ff, 0.3);
+      dl2.position.set(-1, 0.5, -1);
+      _sgScene.add(dl2);
+
+      const grid = new THREE.GridHelper(400, 20, 0x333366, 0x1e1e33);
+      _sgScene.add(grid);
+
+      _sgCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 8000);
+      _sgUpdateCamera();
+
+      _sgRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      _sgResizeRenderer();
+
+      // Mouse orbit/pan/zoom
+      canvas.addEventListener('mousedown', e => {
+        _sgOrbit.active = true; _sgOrbit.button = e.button;
+        _sgOrbit.lastX = e.clientX; _sgOrbit.lastY = e.clientY;
+        canvas.style.cursor = 'grabbing'; e.preventDefault();
+      });
+      window.addEventListener('mouseup', () => { _sgOrbit.active = false; canvas.style.cursor = 'grab'; });
+      window.addEventListener('mousemove', e => {
+        if (!_sgOrbit.active) return;
+        const dx = e.clientX - _sgOrbit.lastX, dy = e.clientY - _sgOrbit.lastY;
+        _sgOrbit.lastX = e.clientX; _sgOrbit.lastY = e.clientY;
+        if (_sgOrbit.button === 0) {
+          _sgOrbit.theta -= dx * 0.005;
+          _sgOrbit.phi = Math.max(0.05, Math.min(Math.PI / 2 - 0.05, _sgOrbit.phi - dy * 0.005));
+        } else {
+          _sgOrbit.panX -= dx * 0.5; _sgOrbit.panY += dy * 0.5;
+        }
+        _sgUpdateCamera();
+      });
+      canvas.addEventListener('wheel', e => {
+        _sgOrbit.dist = Math.max(30, Math.min(3000, _sgOrbit.dist + e.deltaY * 0.5));
+        _sgUpdateCamera(); e.preventDefault();
+      }, { passive: false });
+      canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+      // Touch orbit/pinch
+      let _sgT = [];
+      canvas.addEventListener('touchstart', e => { _sgT = [...e.touches]; e.preventDefault(); }, { passive: false });
+      canvas.addEventListener('touchmove', e => {
+        if (e.touches.length === 1 && _sgT.length >= 1) {
+          const dx = e.touches[0].clientX - _sgT[0].clientX;
+          const dy = e.touches[0].clientY - _sgT[0].clientY;
+          _sgOrbit.theta -= dx * 0.005;
+          _sgOrbit.phi = Math.max(0.05, Math.min(Math.PI / 2 - 0.05, _sgOrbit.phi - dy * 0.005));
+          _sgUpdateCamera();
+        } else if (e.touches.length === 2 && _sgT.length >= 2) {
+          const d0 = Math.hypot(_sgT[0].clientX - _sgT[1].clientX, _sgT[0].clientY - _sgT[1].clientY);
+          const d1 = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          _sgOrbit.dist = Math.max(30, Math.min(3000, _sgOrbit.dist * (d0 / d1)));
+          _sgUpdateCamera();
+        }
+        _sgT = [...e.touches]; e.preventDefault();
+      }, { passive: false });
+
+      _sgRebuild();
+      if (_sgAnimId) cancelAnimationFrame(_sgAnimId);
+      _sgRender();
+    }
+
+    function _sgUpdateCamera() {
+      if (!_sgCamera) return;
+      const x = _sgOrbit.dist * Math.sin(_sgOrbit.phi) * Math.sin(_sgOrbit.theta);
+      const y = _sgOrbit.dist * Math.cos(_sgOrbit.phi);
+      const z = _sgOrbit.dist * Math.sin(_sgOrbit.phi) * Math.cos(_sgOrbit.theta);
+      _sgCamera.position.set(x + _sgOrbit.panX, y + _sgOrbit.panY, z);
+      _sgCamera.lookAt(_sgOrbit.panX, _sgOrbit.panY, 0);
+    }
+
+    function _sgResizeRenderer() {
+      if (!_sgRenderer) return;
+      const canvas = document.getElementById('statueCanvas');
+      if (!canvas || !canvas.parentElement) return;
+      const w = canvas.parentElement.clientWidth - 20;
+      const h = Math.max(300, Math.round(w * 0.65));
+      canvas.style.height = h + 'px';
+      _sgRenderer.setSize(w, h, false);
+      if (_sgCamera) { _sgCamera.aspect = w / h; _sgCamera.updateProjectionMatrix(); }
+    }
+
+    function _sgRender() {
+      _sgAnimId = requestAnimationFrame(_sgRender);
+      _sgResizeRenderer();
+      if (_sgRenderer && _sgScene && _sgCamera) _sgRenderer.render(_sgScene, _sgCamera);
+    }
+
+    function setStatueStyle(s) {
+      _sgStyle = s;
+      ['face', 'bust', 'figure', 'trophy', 'column'].forEach(n => {
+        const b = document.getElementById('sgBtn_' + n);
+        if (b) b.className = n === s ? 'btn-primary' : 'tab-btn';
+      });
+      // Show/hide face photo card and relief depth option
+      const photoCard = document.getElementById('sgPhotoCard');
+      const reliefRow = document.getElementById('sgReliefRow');
+      if (photoCard) photoCard.style.display = s === 'face' ? '' : 'none';
+      if (reliefRow) reliefRow.style.display  = s === 'face' ? 'flex' : 'none';
+      // Re-center camera for new style
+      const H = +document.getElementById('sgHeight').value;
+      _sgOrbit.dist = H * 2.8; _sgOrbit.panY = H * 0.45;
+      _sgRebuild();
+    }
+
+    function sgUpdate() {
+      const hEl = document.getElementById('sgHeight');
+      const bEl = document.getElementById('sgBase');
+      const pEl = document.getElementById('sgPed');
+      if (hEl) document.getElementById('sgHeightVal').textContent = hEl.value;
+      if (bEl) document.getElementById('sgBaseVal').textContent = bEl.value;
+      if (pEl) document.getElementById('sgPedVal').textContent = pEl.value;
+      if (_sgScene) _sgRebuild();
+      _sgUpdateDimLabel();
+    }
+
+    function sgApplyColor() {
+      const col = document.getElementById('sgColor')?.value || '#b0a0e8';
+      const color = new THREE.Color(col);
+      _sgMeshes.forEach(m => { if (m.material) m.material.color.set(color); });
+    }
+
+    function _sgUpdateDimLabel() {
+      const h = document.getElementById('sgHeight')?.value || 0;
+      const d = document.getElementById('sgBase')?.value || 0;
+      const lbl = document.getElementById('sgDimLabel');
+      if (lbl) lbl.textContent = `Height: ${h} mm  ·  Base Ø: ${d} mm`;
+    }
+
+    function _sgRebuild() {
+      if (!_sgScene) return;
+      _sgMeshes.forEach(m => {
+        _sgScene.remove(m);
+        m.geometry.dispose();
+        if (m.material) m.material.dispose();
+      });
+      _sgMeshes = [];
+
+      const H   = +document.getElementById('sgHeight').value;
+      const D   = +document.getElementById('sgBase').value;
+      const P   = +document.getElementById('sgPed').value;
+      const seg = +document.getElementById('sgDetail').value;
+      const col = document.getElementById('sgColor')?.value || '#b0a0e8';
+      const R   = D / 2;
+
+      const add = (geo, x, y, z, rx = 0, ry = 0, rz = 0) => {
+        const mat = new THREE.MeshPhongMaterial({ color: new THREE.Color(col), shininess: 55 });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(x, y, z);
+        mesh.rotation.set(rx, ry, rz);
+        _sgScene.add(mesh);
+        _sgMeshes.push(mesh);
+        return mesh;
+      };
+
+      if (_sgStyle === 'face')   _sgBuildFaceRelief(H, R, P, add);
+      if (_sgStyle === 'bust')   _sgBuildBust(H, R, P, seg, add);
+      if (_sgStyle === 'figure') _sgBuildFigure(H, R, P, seg, add);
+      if (_sgStyle === 'trophy') _sgBuildTrophy(H, R, P, seg, add);
+      if (_sgStyle === 'column') _sgBuildColumn(H, R, P, seg, add);
+
+      _sgOrbit.dist = Math.max(H * 2.4, D * 4);
+      _sgOrbit.panY = H * 0.45;
+      _sgUpdateCamera();
+      _sgUpdateDimLabel();
+    }
+
+    // ── Bust ──────────────────────────────────────────────────────────────────
+    function _sgBuildBust(H, R, P, seg, add) {
+      const bodyH = H - P;
+      if (P > 0) add(new THREE.CylinderGeometry(R, R * 1.08, P, seg), 0, P / 2, 0);
+      const shoulH = bodyH * 0.44;
+      add(new THREE.CylinderGeometry(R * 0.54, R * 0.88, shoulH, seg), 0, P + shoulH / 2, 0);
+      const neckH = bodyH * 0.14, neckR = R * 0.18;
+      add(new THREE.CylinderGeometry(neckR * 0.88, neckR, neckH, seg), 0, P + shoulH + neckH / 2, 0);
+      const headR = R * 0.34;
+      add(new THREE.SphereGeometry(headR, seg, seg), 0, P + shoulH + neckH + headR * 0.88, 0);
+    }
+
+    // ── Full Figure ───────────────────────────────────────────────────────────
+    function _sgBuildFigure(H, R, P, seg, add) {
+      const bodyH = H - P;
+      if (P > 0) add(new THREE.CylinderGeometry(R * 0.68, R, P, seg), 0, P / 2, 0);
+      const y0 = P;
+      const legH = bodyH * 0.34, legR = R * 0.13, legSpread = R * 0.27;
+      add(new THREE.CylinderGeometry(legR, legR * 1.1, legH, seg), -legSpread, y0 + legH / 2, 0);
+      add(new THREE.CylinderGeometry(legR, legR * 1.1, legH, seg),  legSpread, y0 + legH / 2, 0);
+      // Feet
+      add(new THREE.SphereGeometry(legR * 1.2, seg, Math.floor(seg / 2)), -legSpread, y0, 0);
+      add(new THREE.SphereGeometry(legR * 1.2, seg, Math.floor(seg / 2)),  legSpread, y0, 0);
+      const hipH = bodyH * 0.07;
+      add(new THREE.CylinderGeometry(R * 0.27, R * 0.27, hipH, seg), 0, y0 + legH + hipH / 2, 0);
+      const torsoH = bodyH * 0.3;
+      add(new THREE.CylinderGeometry(R * 0.21, R * 0.27, torsoH, seg), 0, y0 + legH + hipH + torsoH / 2, 0);
+      const armH = bodyH * 0.27, armR = R * 0.09;
+      const armY = y0 + legH + hipH + torsoH * 0.72;
+      const armX = R * 0.38;
+      add(new THREE.CylinderGeometry(armR * 0.8, armR, armH, seg), -armX, armY, 0, 0, 0,  Math.PI * 0.13);
+      add(new THREE.CylinderGeometry(armR * 0.8, armR, armH, seg),  armX, armY, 0, 0, 0, -Math.PI * 0.13);
+      const neckH = bodyH * 0.07, neckR = R * 0.1;
+      const neckY = y0 + legH + hipH + torsoH;
+      add(new THREE.CylinderGeometry(neckR * 0.85, neckR, neckH, seg), 0, neckY + neckH / 2, 0);
+      const headR = R * 0.21;
+      add(new THREE.SphereGeometry(headR, seg, seg), 0, neckY + neckH + headR, 0);
+    }
+
+    // ── Trophy ────────────────────────────────────────────────────────────────
+    function _sgBuildTrophy(H, R, P, seg, add) {
+      const baseH = H * 0.08;
+      add(new THREE.CylinderGeometry(R, R * 1.05, baseH, seg), 0, baseH / 2, 0);
+      const s1H = H * 0.06;
+      add(new THREE.CylinderGeometry(R * 0.64, R * 0.8, s1H, seg), 0, baseH + s1H / 2, 0);
+      const s2H = H * 0.05;
+      add(new THREE.CylinderGeometry(R * 0.4, R * 0.55, s2H, seg), 0, baseH + s1H + s2H / 2, 0);
+      const stemH = H * 0.3, stemR = R * 0.12;
+      const stemY = baseH + s1H + s2H;
+      add(new THREE.CylinderGeometry(stemR, stemR * 1.1, stemH, seg), 0, stemY + stemH / 2, 0);
+      const nodeR = R * 0.2, nodeY = stemY + stemH;
+      add(new THREE.SphereGeometry(nodeR, seg, seg), 0, nodeY, 0);
+      const cbH = H * 0.05;
+      add(new THREE.CylinderGeometry(R * 0.52, nodeR, cbH, seg), 0, nodeY + nodeR * 0.7 + cbH / 2, 0);
+      const cupH = H * 0.22, cupY = nodeY + nodeR * 0.7 + cbH;
+      add(new THREE.CylinderGeometry(R * 0.68, R * 0.48, cupH, seg), 0, cupY + cupH / 2, 0);
+      // Rim torus (flat)
+      add(new THREE.TorusGeometry(R * 0.68, R * 0.055, 8, seg), 0, cupY + cupH, 0, Math.PI / 2, 0, 0);
+      // Handles (loops sticking out to sides)
+      const hY = cupY + cupH * 0.5, hR = R * 0.32, hTube = R * 0.055;
+      add(new THREE.TorusGeometry(hR, hTube, 6, 12), -R * 0.68, hY, 0, 0, Math.PI / 2, 0);
+      add(new THREE.TorusGeometry(hR, hTube, 6, 12),  R * 0.68, hY, 0, 0, Math.PI / 2, 0);
+    }
+
+    // ── Column ────────────────────────────────────────────────────────────────
+    function _sgBuildColumn(H, R, P, seg, add) {
+      const slabH = H * 0.04;
+      add(new THREE.BoxGeometry(R * 2.4, slabH, R * 2.4), 0, slabH / 2, 0);
+      add(new THREE.BoxGeometry(R * 2.0, slabH, R * 2.0), 0, slabH + slabH / 2, 0);
+      add(new THREE.BoxGeometry(R * 1.68, slabH, R * 1.68), 0, slabH * 2 + slabH / 2, 0);
+      const shaftH = H * 0.63, shaftRBot = R * 0.74, shaftRTop = R * 0.62;
+      const shaftY = slabH * 3;
+      add(new THREE.CylinderGeometry(shaftRTop, shaftRBot, shaftH, seg), 0, shaftY + shaftH / 2, 0);
+      const capY = shaftY + shaftH;
+      const echinH = H * 0.045;
+      add(new THREE.CylinderGeometry(R * 0.84, shaftRTop, echinH, seg), 0, capY + echinH / 2, 0);
+      const abacH = H * 0.04;
+      add(new THREE.BoxGeometry(R * 1.68, abacH, R * 1.68), 0, capY + echinH + abacH / 2, 0);
+      const entY = capY + echinH + abacH;
+      const eH = H * 0.08;
+      add(new THREE.BoxGeometry(R * 2.0, eH * 0.38, R * 2.0), 0, entY + eH * 0.19, 0);
+      add(new THREE.BoxGeometry(R * 2.1, eH * 0.3,  R * 2.1), 0, entY + eH * 0.53, 0);
+      add(new THREE.BoxGeometry(R * 2.2, eH * 0.3,  R * 2.2), 0, entY + eH * 0.83, 0);
+      // Peaked pediment roof
+      const pedH = H * 0.11;
+      add(new THREE.ConeGeometry(R * 1.62, pedH, 4), 0, entY + eH + pedH / 2, 0, 0, Math.PI / 4, 0);
+    }
+
+    // ── Face Photo handlers ───────────────────────────────────────────────────
+    function sgLoadFacePhoto(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          _sgPhotoImage = img;
+          const prev = document.getElementById('sgPhotoPreview');
+          if (prev) { prev.src = ev.target.result; prev.style.display = 'block'; }
+          const area = document.getElementById('sgPhotoUploadArea');
+          if (area) area.style.display = 'none';
+          const rmBtn = document.getElementById('sgPhotoRemoveBtn');
+          if (rmBtn) rmBtn.style.display = '';
+          const hint = document.getElementById('sgPhotoHint');
+          if (hint) hint.textContent = 'Photo loaded. Click "Generate Relief" to build the 3D model.';
+          _sgRebuild();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function sgRemoveFacePhoto() {
+      _sgPhotoImage = null;
+      const prev = document.getElementById('sgPhotoPreview');
+      if (prev) { prev.src = ''; prev.style.display = 'none'; }
+      const area = document.getElementById('sgPhotoUploadArea');
+      if (area) area.style.display = '';
+      const rmBtn = document.getElementById('sgPhotoRemoveBtn');
+      if (rmBtn) rmBtn.style.display = 'none';
+      const input = document.getElementById('sgPhotoInput');
+      if (input) input.value = '';
+      const hint = document.getElementById('sgPhotoHint');
+      if (hint) hint.textContent = 'Upload a portrait photo. The face will be embossed as a 3D bas-relief on a pedestal plaque.';
+      _sgRebuild();
+    }
+
+    // ── Face Relief geometry ─────────────────────────────────────────────────
+    function _sgBuildFaceRelief(H, R, P, add) {
+      const col = document.getElementById('sgColor')?.value || '#b0a0e8';
+      const depthFactor = parseFloat(document.getElementById('sgReliefDepth')?.value || '0.18');
+
+      // Pedestal
+      if (P > 0) {
+        add(new THREE.CylinderGeometry(R, R * 1.08, P, 16), 0, P / 2, 0);
+      }
+
+      const plW      = R * 1.7;           // plaque width
+      const plH      = R * 2.2;           // plaque height
+      const plDepth  = R * 0.08;          // back-plate thickness
+      const maxRelief= R * depthFactor;   // max protrusion
+
+      const cols = 90;
+      const rows = Math.round(cols * plH / plW);
+
+      // Sample photo into grayscale grid
+      let gray = null;
+      if (_sgPhotoImage) {
+        const oc = document.createElement('canvas');
+        oc.width = cols; oc.height = rows;
+        const ctx = oc.getContext('2d');
+        // Center-crop the image to match plaque aspect ratio
+        const srcAR = _sgPhotoImage.naturalWidth / _sgPhotoImage.naturalHeight;
+        const dstAR = plW / plH;
+        let sx = 0, sy = 0, sw = _sgPhotoImage.naturalWidth, sh = _sgPhotoImage.naturalHeight;
+        if (srcAR > dstAR) { sw = sh * dstAR; sx = (_sgPhotoImage.naturalWidth - sw) / 2; }
+        else               { sh = sw / dstAR; sy = (_sgPhotoImage.naturalHeight - sh) / 2; }
+        ctx.drawImage(_sgPhotoImage, sx, sy, sw, sh, 0, 0, cols, rows);
+        const px = ctx.getImageData(0, 0, cols, rows).data;
+        gray = new Float32Array(cols * rows);
+        for (let i = 0; i < gray.length; i++)
+          gray[i] = (px[i*4]*0.299 + px[i*4+1]*0.587 + px[i*4+2]*0.114) / 255;
+        // Smooth slightly to reduce noise
+        const g2 = new Float32Array(gray.length);
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          let s = 0, n = 0;
+          for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+            const nr = r+dr, nc = c+dc;
+            if (nr>=0&&nr<rows&&nc>=0&&nc<cols) { s+=gray[nr*cols+nc]; n++; }
+          }
+          g2[r*cols+c] = s/n;
+        }
+        gray = g2;
+      }
+
+      // Build heightmap vertex arrays (front + back)
+      const N  = cols * rows;
+      const fv = new Float32Array(N * 3);
+      const bv = new Float32Array(N * 3);
+      const yBase = P;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const i   = r * cols + c;
+          const x   = (c / (cols - 1) - 0.5) * plW;
+          const y   = yBase + (r / (rows - 1)) * plH;
+          const imgRow = rows - 1 - r;  // flip: image top → model top
+          const g   = gray ? gray[imgRow * cols + c] : 0.5;
+          const z_f = maxRelief * (1 - g);  // dark = protrudes more
+          fv[i*3]   = x; fv[i*3+1] = y; fv[i*3+2] = z_f;
+          bv[i*3]   = x; bv[i*3+1] = y; bv[i*3+2] = -plDepth;
+        }
+      }
+
+      // Use the existing _lithoGeom builder to close the mesh
+      const geo = _lithoGeom(fv, bv, cols, rows);
+      const mat = new THREE.MeshPhongMaterial({ color: new THREE.Color(col), shininess: 60 });
+      const mesh = new THREE.Mesh(geo, mat);
+      _sgScene.add(mesh);
+      _sgMeshes.push(mesh);
+
+      // If no photo, show a placeholder label
+      if (!_sgPhotoImage) {
+        // Build a simple flat placeholder plaque
+        const placeGeo = new THREE.BoxGeometry(plW, plH, plDepth);
+        const placeMat = new THREE.MeshPhongMaterial({ color: new THREE.Color(col), opacity: 0.35, transparent: true, shininess: 30 });
+        const placeM   = new THREE.Mesh(placeGeo, placeMat);
+        placeM.position.set(0, yBase + plH / 2, -plDepth / 2);
+        _sgScene.add(placeM);
+        _sgMeshes.push(placeM);
+      }
+    }
+
+    function statueExportSTL() {
+      if (!_sgMeshes.length) { showToast('Generate a statue first.'); return; }
+      const buf = _buildSTL(_sgMeshes);
+      _downloadSTL(buf, 'layerforge-statue-' + _sgStyle + '.stl');
+      showToast('STL exported \u2713');
+    }
+
+    // ===== END STATUE GENERATOR ===================================================
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ===== MAP GENERATOR ======================================================
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    let _mapScene, _mapCamera, _mapRenderer, _mapAnimId;
+    let _mapMesh = null, _mapBaseMesh = null;
+    let _mapInited = false;
+    let _mapScale = 'neighborhood';
+    let _mapCenterLat = null, _mapCenterLon = null;
+    let _mapHeights = null, _mapHeightCols = 0, _mapHeightRows = 0;
+    let _mapBuildingMeshes = [];
+    let _mapBbox       = null;  // { n, s, e, w } in degrees
+    let _mapCoordState = null;  // mapping params for lat/lon → model XZ
+    let _mapOrbit = { active: false, button: -1, lastX: 0, lastY: 0,
+                      theta: 0.5, phi: 0.35, dist: 320, panX: 0, panY: 0 };
+
+    const MAP_PRESETS = {
+      property:     { zoom: 16, tiles: 1, label: 'Property ~600 m',      areaM: 600   },
+      neighborhood: { zoom: 14, tiles: 1, label: 'Neighborhood ~2.5 km', areaM: 2500  },
+      city:         { zoom: 12, tiles: 3, label: 'City ~10 km',          areaM: 10000 },
+      region:       { zoom: 10, tiles: 3, label: 'Region ~40 km',        areaM: 40000 },
+    };
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    function initMapGen() {
+      const canvas = document.getElementById('mapCanvas');
+      if (!canvas) return;
+      if (_mapInited) { _mapResizeRenderer(); _mapStartRender(); return; }
+      _mapInited = true;
+
+      _mapScene = new THREE.Scene();
+      _mapScene.background = new THREE.Color(0x0b0b14);
+      _mapScene.add(new THREE.GridHelper(400, 20, 0x222244, 0x191930));
+      _mapScene.add(new THREE.AmbientLight(0xffffff, 0.55));
+      const sun = new THREE.DirectionalLight(0xffffff, 0.9); sun.position.set(1, 2, 1.5); _mapScene.add(sun);
+      const fill = new THREE.DirectionalLight(0x8899dd, 0.3); fill.position.set(-1, 1, -1); _mapScene.add(fill);
+
+      _mapCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 8000);
+      _mapRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      _mapRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      _mapResizeRenderer();
+      new ResizeObserver(_mapResizeRenderer).observe(canvas.parentElement);
+
+      canvas.addEventListener('mousedown', e => {
+        _mapOrbit.active = true; _mapOrbit.button = e.button;
+        _mapOrbit.lastX = e.clientX; _mapOrbit.lastY = e.clientY;
+        canvas.style.cursor = 'grabbing'; e.preventDefault();
+      });
+      window.addEventListener('mouseup', () => { _mapOrbit.active = false; canvas.style.cursor = 'grab'; });
+      window.addEventListener('mousemove', e => {
+        if (!_mapOrbit.active) return;
+        const dx = e.clientX - _mapOrbit.lastX, dy = e.clientY - _mapOrbit.lastY;
+        _mapOrbit.lastX = e.clientX; _mapOrbit.lastY = e.clientY;
+        if (_mapOrbit.button === 0) {
+          _mapOrbit.theta -= dx * 0.005;
+          _mapOrbit.phi = Math.max(0.05, Math.min(Math.PI * 0.48, _mapOrbit.phi - dy * 0.005));
+        } else {
+          _mapOrbit.panX -= dx * 0.4; _mapOrbit.panY += dy * 0.4;
+        }
+        _mapUpdateCamera();
+      });
+      canvas.addEventListener('wheel', e => {
+        _mapOrbit.dist = Math.max(30, Math.min(3000, _mapOrbit.dist + e.deltaY * 0.5));
+        _mapUpdateCamera(); e.preventDefault();
+      }, { passive: false });
+      canvas.addEventListener('contextmenu', e => e.preventDefault());
+      let _mT = [];
+      canvas.addEventListener('touchstart', e => { _mT = [...e.touches]; e.preventDefault(); }, { passive: false });
+      canvas.addEventListener('touchmove', e => {
+        if (e.touches.length === 1 && _mT.length >= 1) {
+          _mapOrbit.theta -= (e.touches[0].clientX - _mT[0].clientX) * 0.005;
+          _mapOrbit.phi = Math.max(0.05, Math.min(Math.PI * 0.48,
+            _mapOrbit.phi - (e.touches[0].clientY - _mT[0].clientY) * 0.005));
+          _mapUpdateCamera();
+        } else if (e.touches.length === 2 && _mT.length >= 2) {
+          const d0 = Math.hypot(_mT[0].clientX - _mT[1].clientX, _mT[0].clientY - _mT[1].clientY);
+          const d1 = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          _mapOrbit.dist = Math.max(30, Math.min(3000, _mapOrbit.dist * d0 / d1));
+          _mapUpdateCamera();
+        }
+        _mT = [...e.touches]; e.preventDefault();
+      }, { passive: false });
+
+      _mapUpdateCamera();
+      _mapStartRender();
+    }
+
+    function _mapUpdateCamera() {
+      if (!_mapCamera) return;
+      const x = _mapOrbit.dist * Math.sin(_mapOrbit.phi) * Math.sin(_mapOrbit.theta);
+      const y = _mapOrbit.dist * Math.cos(_mapOrbit.phi);
+      const z = _mapOrbit.dist * Math.sin(_mapOrbit.phi) * Math.cos(_mapOrbit.theta);
+      _mapCamera.position.set(x + _mapOrbit.panX, y + _mapOrbit.panY, z);
+      _mapCamera.lookAt(_mapOrbit.panX, _mapOrbit.panY, 0);
+    }
+
+    function _mapResizeRenderer() {
+      const canvas = document.getElementById('mapCanvas');
+      if (!canvas || !_mapRenderer) return;
+      const w = canvas.parentElement.clientWidth;
+      const h = Math.max(320, Math.round(w * 0.62));
+      _mapRenderer.setSize(w, h);
+      if (_mapCamera) { _mapCamera.aspect = w / h; _mapCamera.updateProjectionMatrix(); }
+    }
+
+    function _mapStartRender() {
+      if (!_mapRenderer) return;
+      if (_mapAnimId) cancelAnimationFrame(_mapAnimId);
+      (function loop() { _mapAnimId = requestAnimationFrame(loop); _mapRenderer.render(_mapScene, _mapCamera); })();
+    }
+
+    // ── Scale selector ────────────────────────────────────────────────────────
+    function setMapScale(s) {
+      _mapScale = s;
+      Object.keys(MAP_PRESETS).forEach(k => {
+        const b = document.getElementById('mgBtn_' + k);
+        if (b) b.className = k === s ? 'btn-primary' : 'tab-btn';
+        if (b) b.style.fontSize = '12px'; if (b) b.style.padding = '5px 14px';
+      });
+    }
+
+    // ── Geocoding ─────────────────────────────────────────────────────────────
+    let _mapGeoResults = []; // store results by index so onclick never breaks
+
+    function _mapPickResult(i) {
+      const r = _mapGeoResults[i];
+      if (!r) return;
+      _mapCenterLat = parseFloat(r.lat);
+      _mapCenterLon = parseFloat(r.lon);
+      const name = r.display_name.split(',').slice(0, 3).join(', ');
+      const res = document.getElementById('mapGeoResult');
+      if (res) res.innerHTML = `<div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--accent);border-radius:10px;font-size:13px;">
+        📍 <b>${name}</b><br>
+        <span style="color:var(--text3);font-size:11px;">${_mapCenterLat.toFixed(5)}°, ${_mapCenterLon.toFixed(5)}°</span>
+      </div>`;
+      showToast('Location set — click Generate!');
+    }
+
+    async function mapSearch() {
+      const input = document.getElementById('mapAddressInput');
+      const q = input?.value.trim();
+      if (!q) { showToast('Enter an address or place name.'); return; }
+
+      const btn = document.getElementById('mapSearchBtn');
+      if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+      const res = document.getElementById('mapGeoResult');
+      if (res) res.innerHTML = '<span style="color:var(--text3);font-size:12px;">Searching…</span>';
+
+      _mapGeoResults = [];
+
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=8&addressdetails=1`;
+        const data = await fetch(url, { headers: { 'Accept-Language': 'en', 'User-Agent': 'ProFab3D/1.0' } }).then(r => r.json());
+
+        if (!data || !data.length) {
+          // Fallback: try just the raw query with no structured parsing
+          if (res) res.innerHTML = `<div style="color:var(--accent3);font-size:12px;padding:8px 0;">
+            ⚠️ Address not found.<br>
+            <span style="color:var(--text3);">Try: include city &amp; state, use a ZIP code, or search a nearby landmark.</span>
+          </div>`;
+          return;
+        }
+
+        _mapGeoResults = data;
+
+        if (data.length === 1) {
+          _mapPickResult(0);
+          return;
+        }
+
+        // Build clickable result list — no inline JSON, just index
+        let html = `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;background:var(--surface2);">
+          <div style="padding:6px 12px;font-size:11px;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);">
+            ${data.length} results — tap one to select:
+          </div>`;
+        data.forEach((r, i) => {
+          const parts  = r.display_name.split(',');
+          const line1  = parts.slice(0, 2).join(',').trim();
+          const line2  = parts.slice(2, 4).join(',').trim();
+          const badge  = (r.type || r.class || '').replace(/_/g, ' ');
+          html += `<div onclick="_mapPickResult(${i})" style="padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--border);user-select:none;"
+              onmousedown="this.style.background='var(--accent)';this.style.color='#fff'"
+              onmouseup="this.style.background='';this.style.color='';_mapPickResult(${i})"
+              onmouseover="this.style.background='var(--surface3)'"
+              onmouseout="this.style.background=''">
+            <div style="font-size:13px;font-weight:600;">${line1}</div>
+            ${line2 ? `<div style="font-size:11px;color:var(--text3);">${line2}${badge ? ' · ' + badge : ''}</div>` : ''}
+          </div>`;
+        });
+        html += '</div>';
+        if (res) res.innerHTML = html;
+
+      } catch (err) {
+        if (res) res.innerHTML = '<span style="color:var(--accent3);">⚠️ Search failed — check your connection.</span>';
+        console.error(err);
+      } finally {
+        if (btn) { btn.textContent = 'Search →'; btn.disabled = false; }
+      }
+    }
+
+    // ── Tile math ─────────────────────────────────────────────────────────────
+    function _mapLatLonToTile(lat, lon, zoom) {
+      const n = Math.pow(2, zoom);
+      const x = Math.floor((lon + 180) / 360 * n);
+      const latR = lat * Math.PI / 180;
+      const y = Math.floor((1 - Math.log(Math.tan(latR) + 1 / Math.cos(latR)) / Math.PI) / 2 * n);
+      return { x: Math.max(0, Math.min(n - 1, x)), y: Math.max(0, Math.min(n - 1, y)) };
+    }
+
+    function _mapTileToLatLon(tx, ty, zoom) {
+      const n = Math.pow(2, zoom);
+      const lon = tx / n * 360 - 180;
+      const latR = Math.atan(Math.sinh(Math.PI * (1 - 2 * ty / n)));
+      return { lat: latR * 180 / Math.PI, lon };
+    }
+
+    // ── Tile fetching (AWS Terrarium — free, public, CORS-enabled) ─────────────
+    function _mapFetchTile(z, x, y) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const c = document.createElement('canvas');
+            c.width = img.width; c.height = img.height;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const px = ctx.getImageData(0, 0, c.width, c.height).data;
+            const elev = new Float32Array(c.width * c.height);
+            // Terrarium encoding: elevation = R*256 + G + B/256 - 32768
+            for (let i = 0; i < elev.length; i++)
+              elev[i] = (px[i*4] * 256 + px[i*4+1] + px[i*4+2] / 256) - 32768;
+            resolve({ data: elev, w: c.width, h: c.height });
+          } catch (e) { reject(e); }
+        };
+        img.onerror = () => reject(new Error(`Tile ${z}/${x}/${y} failed`));
+        img.src = `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
+      });
+    }
+
+    // ── Stitch tiles into a height grid ──────────────────────────────────────
+    async function _mapFetchRegion(lat, lon, zoom, tileCount, onProgress) {
+      const center = _mapLatLonToTile(lat, lon, zoom);
+      const half = Math.floor(tileCount / 2);
+      const txMin = center.x - half, txMax = center.x + half;
+      const tyMin = center.y - half, tyMax = center.y + half;
+      const tilesX = txMax - txMin + 1;
+      const tilesY = tyMax - tyMin + 1;
+
+      const total = tilesX * tilesY;
+      let loaded = 0;
+      const tileData = [];
+
+      const promises = [];
+      for (let ty = tyMin; ty <= tyMax; ty++) {
+        for (let tx = txMin; tx <= txMax; tx++) {
+          const n = Math.pow(2, zoom);
+          const txW = ((tx % n) + n) % n; // wrap
+          promises.push(
+            _mapFetchTile(zoom, txW, Math.max(0, Math.min(n-1, ty)))
+              .then(t => { loaded++; if(onProgress) onProgress(loaded, total); return { tx, ty, ...t }; })
+              .catch(() => ({ tx, ty, data: null, w: 256, h: 256 }))
+          );
+        }
+      }
+
+      const results = await Promise.all(promises);
+      const tileW = results[0]?.w || 256;
+      const tileH = results[0]?.h || 256;
+      const totalW = tilesX * tileW;
+      const totalH = tilesY * tileH;
+      const stitched = new Float32Array(totalW * totalH);
+
+      results.forEach(({ tx, ty, data }) => {
+        if (!data) return;
+        const offX = (tx - txMin) * tileW;
+        const offY = (ty - tyMin) * tileH;
+        for (let r = 0; r < tileH; r++)
+          for (let c = 0; c < tileW; c++)
+            stitched[(offY + r) * totalW + (offX + c)] = data[r * tileW + c];
+      });
+
+      return { data: stitched, width: totalW, height: totalH };
+    }
+
+    // ── Downsample elevation grid ─────────────────────────────────────────────
+    function _mapDownsample(src, sW, sH, dW, dH) {
+      const out = new Float32Array(dW * dH);
+      for (let r = 0; r < dH; r++) {
+        for (let c = 0; c < dW; c++) {
+          const sr = Math.min(sH - 1, Math.round(r / (dH - 1) * (sH - 1)));
+          const sc = Math.min(sW - 1, Math.round(c / (dW - 1) * (sW - 1)));
+          out[r * dW + c] = src[sr * sW + sc];
+        }
+      }
+      return out;
+    }
+
+    // ── Build terrain mesh (Y = up, slab with terrain top + flat bottom) ──────
+    function _mapBuildTerrainMesh(heights, cols, rows, W, D, baseH, vertScaleMm) {
+      const minH = Math.min(...heights);
+      const N = cols * rows;
+      const topV = new Float32Array(N * 3);
+      const botV = new Float32Array(N * 3);
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const i = r * cols + c;
+          const x = (c / (cols - 1) - 0.5) * W;
+          const z = (r / (rows - 1) - 0.5) * D;
+          const yTop = baseH + (heights[i] - minH) * vertScaleMm;
+          topV[i*3] = x; topV[i*3+1] = yTop; topV[i*3+2] = z;
+          botV[i*3] = x; botV[i*3+1] = 0;    botV[i*3+2] = z;
+        }
+      }
+
+      // Build index buffer: top face + bottom face (reversed) + 4 walls
+      const idx = [];
+      const T = (r, c) => r * cols + c;
+      const B = (r, c) => N + r * cols + c;
+
+      for (let r = 0; r < rows - 1; r++) {
+        for (let c = 0; c < cols - 1; c++) {
+          const a = T(r,c), b = T(r,c+1), d = T(r+1,c), e = T(r+1,c+1);
+          idx.push(a, b, e,  a, e, d);                                   // top (CCW from above)
+          idx.push(B(r,c), B(r+1,c+1), B(r,c+1),  B(r,c), B(r+1,c), B(r+1,c+1)); // bottom
+        }
+      }
+      // Walls
+      for (let c = 0; c < cols - 1; c++) { // front (r=0)
+        idx.push(T(0,c), B(0,c), B(0,c+1),  T(0,c), B(0,c+1), T(0,c+1));
+      }
+      for (let c = 0; c < cols - 1; c++) { // back (r=rows-1)
+        idx.push(T(rows-1,c), T(rows-1,c+1), B(rows-1,c+1),  T(rows-1,c), B(rows-1,c+1), B(rows-1,c));
+      }
+      for (let r = 0; r < rows - 1; r++) { // left (c=0)
+        idx.push(T(r,0), T(r+1,0), B(r+1,0),  T(r,0), B(r+1,0), B(r,0));
+      }
+      for (let r = 0; r < rows - 1; r++) { // right (c=cols-1)
+        idx.push(T(r,cols-1), B(r,cols-1), B(r+1,cols-1),  T(r,cols-1), B(r+1,cols-1), T(r+1,cols-1));
+      }
+
+      const allV = new Float32Array([...topV, ...botV]);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(allV, 3));
+      geo.setIndex(idx);
+      geo.computeVertexNormals();
+      return geo;
+    }
+
+    // ── Main pipeline ─────────────────────────────────────────────────────────
+    async function generateMap() {
+      if (_mapCenterLat === null) {
+        showToast('Search for a location first!'); return;
+      }
+      const preset  = MAP_PRESETS[_mapScale];
+      const modelW  = +document.getElementById('mgWidth').value;
+      const baseH   = +document.getElementById('mgBase').value;
+      const exag    = +document.getElementById('mgExag').value;
+      const res     = +document.getElementById('mgRes').value;
+      const col     = document.getElementById('mgColor')?.value || '#c8b89a';
+
+      const genBtn  = document.getElementById('mgGenerateBtn');
+      const expBtn  = document.getElementById('mgExportBtn');
+      const prog    = document.getElementById('mgProgress');
+      const progTxt = document.getElementById('mgProgressText');
+      const info    = document.getElementById('mgInfo');
+
+      if (genBtn) genBtn.disabled = true;
+      if (expBtn) expBtn.style.display = 'none';
+      if (prog)   prog.style.display = '';
+      if (info)   info.textContent = '';
+      // Clear old buildings
+      _mapBuildingMeshes.forEach(m => { _mapScene?.remove(m); m.geometry?.dispose(); m.material?.dispose(); });
+      _mapBuildingMeshes = [];
+      _mapBbox = null; _mapCoordState = null;
+      const bldBtn = document.getElementById('mgBuildingsBtn');
+      if (bldBtn) bldBtn.style.display = 'none';
+
+      try {
+        // 1. Fetch terrain tiles
+        const tileCount = preset.tiles;
+        if (progTxt) progTxt.textContent = `Fetching ${tileCount * tileCount} terrain tile(s)…`;
+        const region = await _mapFetchRegion(
+          _mapCenterLat, _mapCenterLon, preset.zoom, tileCount,
+          (done, total) => { if (progTxt) progTxt.textContent = `Tiles: ${done}/${total} loaded…`; }
+        );
+
+        // 2. Downsample to mesh resolution
+        if (progTxt) progTxt.textContent = 'Building mesh…';
+        const meshCols = res, meshRows = Math.round(res * region.height / region.width);
+        const heights  = _mapDownsample(region.data, region.width, region.height, meshCols, meshRows);
+
+        _mapHeights    = heights;
+        _mapHeightCols = meshCols;
+        _mapHeightRows = meshRows;
+
+        // 3. Calculate scale
+        const minH = Math.min(...heights), maxH = Math.max(...heights);
+        const range = maxH - minH || 1;
+        const modelD = modelW * (region.height / region.width);   // keep tile aspect ratio
+        // vertScaleMm: how many mm per meter of elevation (with exaggeration)
+        // Scale horizontally: modelW / areaM = mm per meter
+        const mmPerM    = modelW / preset.areaM;
+        const vertScale = mmPerM * exag;
+
+        // 4. Build and display mesh
+        const geo = _mapBuildTerrainMesh(heights, meshCols, meshRows, modelW, modelD, baseH, vertScale);
+        const mat = new THREE.MeshPhongMaterial({ color: new THREE.Color(col), shininess: 35, specular: new THREE.Color(0x222222) });
+
+        // Remove old mesh
+        if (_mapMesh) { _mapScene.remove(_mapMesh); _mapMesh.geometry.dispose(); _mapMesh.material.dispose(); }
+        _mapMesh = new THREE.Mesh(geo, mat);
+        _mapScene.add(_mapMesh);
+
+        // 5. Save coord state for building generation
+        const zoom = preset.zoom;
+        const half = Math.floor(tileCount / 2);
+        const center = _mapLatLonToTile(_mapCenterLat, _mapCenterLon, zoom);
+        const txMin = center.x - half, txMax = center.x + half;
+        const tyMin = center.y - half, tyMax = center.y + half;
+        const nw = _mapTileToLatLon(txMin,     tyMin,     zoom);
+        const se = _mapTileToLatLon(txMax + 1, tyMax + 1, zoom);
+        _mapBbox       = { n: nw.lat, s: se.lat, w: nw.lon, e: se.lon };
+        _mapCoordState = { modelW, modelD, baseH, vertScaleMm: vertScale,
+                           heights, cols: meshCols, rows: meshRows, minElev: minH };
+
+        // 6. Re-center camera
+        const totalH = baseH + range * vertScale;
+        _mapOrbit.dist = Math.max(modelW, modelD) * 2.2;
+        _mapOrbit.panY = totalH * 0.35;
+        _mapOrbit.phi  = 0.38;
+        _mapOrbit.theta = 0.5;
+        _mapUpdateCamera();
+
+        // 7. Update UI
+        if (expBtn) expBtn.style.display = '';
+        const areaKm = (preset.areaM / 1000).toFixed(1);
+        if (info) info.textContent = `${areaKm} km × ${(areaKm * modelD / modelW).toFixed(1)} km · ${range.toFixed(0)} m elevation range · model ${modelW}×${modelD.toFixed(0)} mm`;
+        document.getElementById('mgDimLabel').textContent =
+          `${modelW} × ${modelD.toFixed(0)} mm · vert. scale ${vertScale.toFixed(2)} mm/m · ${meshCols}×${meshRows} pts`;
+        showToast('Terrain generated ✓ — loading buildings…');
+
+        // Auto-load buildings after terrain is ready
+        addBuildings();
+
+      } catch (err) {
+        showToast('Error: ' + (err.message || 'Tile fetch failed. Check connection.'));
+        console.error(err);
+      } finally {
+        if (genBtn) genBtn.disabled = false;
+        if (prog)   prog.style.display = 'none';
+      }
+    }
+
+    // ── Export STL (terrain + all buildings) ─────────────────────────────────
+    function mapExportSTL() {
+      if (!_mapMesh) { showToast('Generate a map first.'); return; }
+      const meshes = [_mapMesh, ..._mapBuildingMeshes];
+      const buf = _buildSTL(meshes);
+      const loc = _mapCenterLat !== null
+        ? `${_mapCenterLat.toFixed(3)}_${_mapCenterLon.toFixed(3)}`
+        : 'terrain';
+      _downloadSTL(buf, `layerforge-map-${_mapScale}-${loc}.stl`);
+      showToast(`STL exported ✓ (terrain + ${_mapBuildingMeshes.length} buildings)`);
+    }
+
+    // ── Coordinate helpers ────────────────────────────────────────────────────
+    function _mapLatLonToModel(lat, lon) {
+      if (!_mapBbox || !_mapCoordState) return null;
+      const { modelW, modelD } = _mapCoordState;
+      const { n, s, w, e } = _mapBbox;
+      // Web-Mercator Y for accurate north/south mapping
+      const mercY = φ => Math.log(Math.tan(Math.PI / 4 + φ * Math.PI / 360));
+      const mN = mercY(n), mS = mercY(s), mLat = mercY(lat);
+      const v = (mN - mLat) / (mN - mS);    // 0=north, 1=south
+      const u = (lon - w) / (e - w);         // 0=west,  1=east
+      if (u < -0.05 || u > 1.05 || v < -0.05 || v > 1.05) return null;  // outside extent
+      return { x: (u - 0.5) * modelW, z: (v - 0.5) * modelD };
+    }
+
+    function _mapSampleTerrain(mx, mz) {
+      if (!_mapCoordState) return 0;
+      const { modelW, modelD, baseH, heights, cols, rows, minElev, vertScaleMm } = _mapCoordState;
+      const c = Math.max(0, Math.min(cols - 1, Math.round((mx / modelW + 0.5) * (cols - 1))));
+      const r = Math.max(0, Math.min(rows - 1, Math.round((mz / modelD + 0.5) * (rows - 1))));
+      return baseH + (heights[r * cols + c] - minElev) * vertScaleMm;
+    }
+
+    // ── Building extruded geometry ────────────────────────────────────────────
+    function _mapBuildingGeo(polyXZ, yBot, yTop) {
+      // polyXZ = [{x, z}, ...] polygon vertices in model space
+      // Returns a closed THREE.BufferGeometry (walls + top + bottom caps)
+      const n = polyXZ.length;
+      if (n < 3) return null;
+
+      // Triangulate top/bottom caps using Three.js ShapeUtils
+      const pts2d = polyXZ.map(p => new THREE.Vector2(p.x, p.z));
+      let tris;
+      try { tris = THREE.ShapeUtils.triangulateShape(pts2d, []); }
+      catch (e) { return null; }
+      if (!tris || !tris.length) return null;
+
+      // Vertices: ring at yBot (0..n-1), ring at yTop (n..2n-1)
+      const pos = [];
+      for (const p of polyXZ) pos.push(p.x, yBot, p.z);
+      for (const p of polyXZ) pos.push(p.x, yTop, p.z);
+
+      const idx = [];
+      // Side walls
+      for (let i = 0; i < n; i++) {
+        const j = (i + 1) % n;
+        idx.push(i, j, n + j,   i, n + j, n + i);
+      }
+      // Top cap (CCW from above in XZ — ShapeUtils gives CCW for positive area)
+      for (const [a, b, c] of tris) idx.push(n + a, n + b, n + c);
+      // Bottom cap (reversed)
+      for (const [a, b, c] of tris) idx.push(a, c, b);
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));
+      geo.setIndex(idx);
+      geo.computeVertexNormals();
+      return geo;
+    }
+
+    // ── OSM building height from tags ─────────────────────────────────────────
+    function _mapBuildingHeight(tags) {
+      if (tags.height) {
+        const h = parseFloat(tags.height);
+        if (!isNaN(h) && h > 0) return h;
+      }
+      if (tags['building:levels']) {
+        const lvl = parseFloat(tags['building:levels']);
+        if (!isNaN(lvl) && lvl > 0) return lvl * 3.2;
+      }
+      // Default by building type
+      const t = tags.building || '';
+      if (t === 'apartments' || t === 'residential') return 9;
+      if (t === 'commercial' || t === 'retail')      return 6;
+      if (t === 'industrial' || t === 'warehouse')   return 8;
+      if (t === 'church' || t === 'cathedral')       return 15;
+      if (t === 'school' || t === 'university')      return 8;
+      return 7;  // generic default
+    }
+
+    // ── Main: fetch OSM buildings + build geometry ────────────────────────────
+    async function addBuildings() {
+      if (!_mapBbox || !_mapCoordState) {
+        showToast('Generate terrain first.'); return;
+      }
+
+      const bldBtn  = document.getElementById('mgBuildingsBtn');
+      const prog    = document.getElementById('mgProgress');
+      const progTxt = document.getElementById('mgProgressText');
+      const info    = document.getElementById('mgInfo');
+      const bldCol  = document.getElementById('mgBldColor')?.value || '#a09898';
+      const bldExag = +document.getElementById('mgBldScale').value;
+
+      // Clear existing buildings
+      _mapBuildingMeshes.forEach(m => { _mapScene.remove(m); m.geometry.dispose(); m.material.dispose(); });
+      _mapBuildingMeshes = [];
+
+      if (bldBtn) { bldBtn.disabled = true; bldBtn.textContent = '⏳ Loading…'; }
+      if (prog)   prog.style.display = '';
+
+      const { n, s, w, e } = _mapBbox;
+      const { modelW, modelD } = _mapCoordState;
+      const mmPerM = modelW / (e - w) * (Math.PI / 180) * 6378137 * Math.cos(_mapCenterLat * Math.PI / 180) / 1000;
+      // Simpler: use preset area to derive mm/m for building heights
+      const preset = MAP_PRESETS[_mapScale];
+      const horizScale = modelW / preset.areaM;   // mm per meter (horizontal)
+
+      try {
+        if (progTxt) progTxt.textContent = 'Fetching buildings from OpenStreetMap…';
+        const bbox = `${s.toFixed(6)},${w.toFixed(6)},${n.toFixed(6)},${e.toFixed(6)}`;
+        const query = `[out:json][timeout:30];(way["building"](${bbox}););out geom;`;
+        const url   = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`Overpass HTTP ${resp.status}`);
+        const data = await resp.json();
+        const ways = data.elements?.filter(el => el.type === 'way' && el.geometry?.length >= 3) || [];
+
+        if (!ways.length) {
+          showToast('No buildings found in this area — try a denser area or larger scale.');
+          return;
+        }
+
+        // Limit to 800 buildings to avoid lag
+        const MAX_BLDS = 800;
+        const limited  = ways.length > MAX_BLDS;
+        const toRender = limited ? ways.slice(0, MAX_BLDS) : ways;
+        if (progTxt) progTxt.textContent = `Building ${toRender.length} structures…${limited ? ' (capped at ' + MAX_BLDS + ')' : ''}`;
+
+        const mat = new THREE.MeshPhongMaterial({
+          color: new THREE.Color(bldCol),
+          shininess: 60,
+          specular: new THREE.Color(0x333333)
+        });
+
+        let built = 0;
+        for (const way of toRender) {
+          // Convert ring of lat/lon to model XZ
+          const ring = way.geometry.map(pt => _mapLatLonToModel(pt.lat, pt.lon)).filter(Boolean);
+          if (ring.length < 3) continue;
+
+          // Building height in model mm
+          const hMeters    = _mapBuildingHeight(way.tags || {});
+          const hModel     = Math.max(1.5, hMeters * horizScale * bldExag);
+
+          // Bottom = terrain height at centroid
+          const cx = ring.reduce((s, p) => s + p.x, 0) / ring.length;
+          const cz = ring.reduce((s, p) => s + p.z, 0) / ring.length;
+          const yBot = _mapSampleTerrain(cx, cz);
+          const yTop = yBot + hModel;
+
+          const geo = _mapBuildingGeo(ring, yBot, yTop);
+          if (!geo) continue;
+
+          const mesh = new THREE.Mesh(geo, mat);
+          _mapScene.add(mesh);
+          _mapBuildingMeshes.push(mesh);
+          built++;
+        }
+
+        const suffix = limited ? ` (first ${MAX_BLDS} of ${ways.length} total)` : '';
+        if (info) info.textContent += `  ·  🏗️ ${built} buildings${suffix}`;
+        showToast(`${built} buildings added ✓`);
+
+      } catch (err) {
+        showToast('Buildings failed: ' + (err.message || 'Check connection'));
+        console.error(err);
+      } finally {
+        if (bldBtn) { bldBtn.disabled = false; bldBtn.textContent = '🏗️ Refresh Buildings'; bldBtn.style.display = ''; }
+        if (prog)   prog.style.display = 'none';
+      }
+    }
+
+    // ===== END MAP GENERATOR ==================================================
+  </script>
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = getSession();
+      if (!s) { location.href = 'index.html'; return; }
+      const badge = document.getElementById('toolsUserBadge');
+      if (badge) badge.textContent = '👤 ' + s.username;
+      const hash = location.hash.replace('#','');
+      switchTab(TOOL_TABS.includes(hash) ? hash : 'studio');
+    });
+  </script>
+</body>
+</html>

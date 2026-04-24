@@ -218,7 +218,7 @@
     <div id="hGuest"><button onclick="openMod('loginModal')" class="btn-primary" style="padding:9px 18px;font-size:13px;border-radius:10px;">Sign In</button></div>
     <div id="hUser" style="display:none;align-items:center;gap:8px;">
       <span class="user-badge" id="hUsername"></span>
-      <a href="admin.html" class="btn-primary" style="padding:9px 18px;font-size:13px;border-radius:10px;text-decoration:none;">Tools →</a>
+      <a href="tools.html" class="btn-primary" style="padding:9px 18px;font-size:13px;border-radius:10px;text-decoration:none;">Tools →</a>
       <button onclick="doLogout()" style="padding:9px 12px;font-size:13px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit;">Out</button>
     </div>
   </div>
@@ -275,7 +275,7 @@
 </footer>
 
 <script>
-  // ── Auth (shared session with admin.html) ──
+  // ── Auth (shared session with tools.html) ──
   const SESSION_TTL = 8 * 60 * 60 * 1000;
 
   async function hashPwd(salt, pwd) {
@@ -306,11 +306,11 @@
     if (s) document.getElementById('hUsername').textContent = '👤 ' + s.username;
     const btn = document.getElementById('heroBtn');
     btn.textContent = s ? 'Open Tools →' : 'Get Started Free →';
-    btn.onclick = s ? () => location.href='admin.html' : () => openMod('loginModal');
+    btn.onclick = s ? () => location.href='tools.html' : () => openMod('loginModal');
   }
 
-  function handleHero() { getSession() ? location.href='admin.html' : openMod('loginModal'); }
-  function goTool(tab) { getSession() ? location.href='admin.html#'+tab : openMod('loginModal'); }
+  function handleHero() { getSession() ? location.href='tools.html' : openMod('loginModal'); }
+  function goTool(tab) { getSession() ? location.href='tools.html#'+tab : openMod('loginModal'); }
 
   // ── Modals ──
   function openMod(id) { document.getElementById(id).classList.add('open'); }
@@ -333,7 +333,7 @@
     if (!accts.length) { err.textContent='No accounts yet — sign up first!'; err.classList.add('on'); switchAuth('up'); return; }
     const acct = accts.find(a => a.username.toLowerCase()===user);
     if (acct && await hashPwd(acct.salt,pwd)===acct.hash) {
-      startSession(acct); closeMod('loginModal'); updateHeader(); location.href='admin.html';
+      startSession(acct); closeMod('loginModal'); updateHeader(); location.href='tools.html';
       return;
     }
     err.textContent='Incorrect username or password.'; err.classList.add('on');
@@ -360,7 +360,7 @@
       permissions: isFirst?['studio','statue','litho','map','users','clockin','settings']:['studio','statue','litho','map']
     };
     accts.push(acct); saveAccounts(accts);
-    startSession(acct); closeMod('loginModal'); updateHeader(); location.href='admin.html';
+    startSession(acct); closeMod('loginModal'); updateHeader(); location.href='tools.html';
   }
 
   // ── IndexedDB for project files ──
@@ -519,7 +519,7 @@
     await openDB();
     updateHeader();
     renderGallery();
-    if (location.hash && getSession()) location.href='admin.html'+location.hash;
+    if (location.hash && getSession()) location.href='tools.html'+location.hash;
   });
 </script>
 </body>
