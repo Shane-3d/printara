@@ -50,11 +50,11 @@
 
   <div class="admin-wrap admin-content unlocked">
     <div class="admin-tabs">
-      <button class="tab-btn active" onclick="switchTab('studio')">🖨️ 3D Studio</button>
-      <button class="tab-btn" onclick="switchTab('statue')">🗿 Statue Generator</button>
-      <button class="tab-btn" onclick="switchTab('litho')">🖼️ Lithophane</button>
-      <button class="tab-btn" onclick="switchTab('map')">🗺️ Map Generator</button>
-      <button class="tab-btn" onclick="switchTab('openscad')">📐 OpenSCAD</button>
+      <button class="tab-btn nav-tab active" onclick="switchTab('studio')">🖨️ 3D Studio</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('statue')">🗿 Statue Generator</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('litho')">🖼️ Lithophane</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('map')">🗺️ Map Generator</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('openscad')">📐 OpenSCAD</button>
     </div>
 
     <div class="tab-panel active" id="tab-studio">
@@ -567,7 +567,7 @@ $fn = 32;
     }
     const TOOL_TABS = ['studio','statue','litho','map','openscad'];
     function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', TOOL_TABS[i]===tab));
+      document.querySelectorAll('.nav-tab').forEach((b,i) => b.classList.toggle('active', TOOL_TABS[i]===tab));
       document.querySelectorAll('[id^="sbi-"]').forEach(el => el.classList.toggle('active', el.id==='sbi-'+tab));
       document.querySelectorAll('[id^="mni-"]').forEach(el => el.classList.toggle('active', el.id==='mni-'+tab));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -2812,8 +2812,6 @@ $fn = 32;
     }
 
     // ===== END MAP GENERATOR ==================================================
-  </script>
-
 
     document.addEventListener('DOMContentLoaded', () => {
       const s = getSession();
