@@ -141,9 +141,50 @@
       .tools-strip .tool-chip span:not(.tool-chip-icon) { display:none; }
     }
     @media(max-width:380px) { .projects-grid { grid-template-columns:1fr; } }
+
+    /* ── Printer modal ── */
+    .printer-modal { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
+    .printer-modal.open { display:flex; }
+    .printer-box { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:28px; width:100%; max-width:480px; position:relative; }
+    .printer-status { display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:12px; background:var(--surface2); border:1px solid var(--border); margin-bottom:16px; }
+    .printer-dot { width:10px; height:10px; border-radius:50%; background:#555; flex-shrink:0; }
+    .printer-dot.on { background:#22c55e; box-shadow:0 0 6px #22c55e; }
+    .printer-dot.err { background:#ef4444; }
+    .printer-terminal { background:#0a0a0f; border:1px solid var(--border); border-radius:10px; padding:10px 12px; height:160px; overflow-y:auto; font-family:monospace; font-size:12px; color:#aef; margin-bottom:12px; white-space:pre-wrap; word-break:break-all; }
+    .printer-input-row { display:flex; gap:8px; }
+    .printer-input-row input { flex:1; padding:10px 12px; font-size:13px; font-family:monospace; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); }
+    .printer-btn { padding:10px 16px; border-radius:10px; border:none; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; }
+    .printer-btn-connect { background:#0099ff; color:#fff; }
+    .printer-btn-connect:hover { background:#007acc; }
+    .printer-btn-disconnect { background:var(--surface2); border:1px solid var(--border); color:var(--text2); }
+    .btn-printer { display:flex; align-items:center; gap:6px; padding:9px 14px; font-size:13px; border-radius:10px; border:1px solid var(--border); background:var(--surface2); color:var(--text); cursor:pointer; font-family:inherit; font-weight:600; transition:border-color .15s, background .15s; }
+    .btn-printer:hover { border-color:#0099ff; }
+    .btn-printer.connected { border-color:#22c55e; color:#22c55e; }
   </style>
 </head>
 <body>
+
+<!-- ===== PRINTER MODAL ===== -->
+<div class="printer-modal" id="printerModal" onclick="if(event.target===this)closeMod('printerModal')">
+  <div class="printer-box">
+    <button class="modal-close" onclick="closeMod('printerModal')">×</button>
+    <h2 style="margin:0 0 4px;font-size:18px;font-weight:800;">Connect Printer</h2>
+    <p style="margin:0 0 16px;font-size:13px;color:var(--text2);">Uses Web Serial — requires Chrome or Edge on desktop.</p>
+    <div class="printer-status">
+      <div class="printer-dot" id="prDot"></div>
+      <span id="prStatusText" style="font-size:13px;font-weight:600;">Not connected</span>
+      <div style="flex:1;"></div>
+      <button class="printer-btn printer-btn-connect" id="prConnectBtn" onclick="printerConnect()">Connect</button>
+    </div>
+    <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.06em;">TERMINAL</div>
+    <div class="printer-terminal" id="prTerminal">// Connect a printer to send G-code commands&#10;</div>
+    <div class="printer-input-row">
+      <input id="prGcodeInput" placeholder="G28 ; home all axes" onkeydown="if(event.key==='Enter')prSend()" disabled />
+      <button class="printer-btn printer-btn-connect" onclick="prSend()" id="prSendBtn" disabled>Send</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);">Common: <code>G28</code> home · <code>G1 Z10 F300</code> move · <code>M104 S200</code> heat · <code>M109 S200</code> wait · <code>M106 S255</code> fan</div>
+  </div>
+</div>
 
 <!-- ===== LOGIN MODAL ===== -->
 <div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeMod('loginModal')">
@@ -218,6 +259,7 @@
     <div id="hGuest"><button onclick="openMod('loginModal')" class="btn-primary" style="padding:9px 18px;font-size:13px;border-radius:10px;">Sign In</button></div>
     <div id="hUser" style="display:none;align-items:center;gap:8px;">
       <span class="user-badge" id="hUsername"></span>
+      <button class="btn-printer" id="prHeaderBtn" onclick="openMod('printerModal')" title="Connect 3D Printer">🖨️ <span id="prHeaderLabel">Connect Printer</span></button>
       <a href="tools.html" class="btn-primary" style="padding:9px 18px;font-size:13px;border-radius:10px;text-decoration:none;">Tools →</a>
       <button onclick="doLogout()" style="padding:9px 12px;font-size:13px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit;">Out</button>
     </div>
@@ -522,6 +564,101 @@
     renderGallery();
     if (location.hash && getSession()) location.href='tools.html'+location.hash;
   });
+
+  // ── Printer (Web Serial) ──
+  let _prPort = null, _prWriter = null, _prReader = null, _prReading = false;
+
+  function prLog(msg) {
+    const t = document.getElementById('prTerminal');
+    if (!t) return;
+    t.textContent += msg + '\n';
+    t.scrollTop = t.scrollHeight;
+  }
+
+  function prSetState(connected) {
+    const dot  = document.getElementById('prDot');
+    const stat = document.getElementById('prStatusText');
+    const btn  = document.getElementById('prConnectBtn');
+    const inp  = document.getElementById('prGcodeInput');
+    const send = document.getElementById('prSendBtn');
+    const hBtn = document.getElementById('prHeaderBtn');
+    const hLbl = document.getElementById('prHeaderLabel');
+    if (connected) {
+      dot.className  = 'printer-dot on';
+      stat.textContent = 'Connected';
+      btn.textContent  = 'Disconnect';
+      btn.className  = 'printer-btn printer-btn-disconnect';
+      btn.onclick    = printerDisconnect;
+      inp.disabled   = false;
+      send.disabled  = false;
+      if (hBtn) hBtn.classList.add('connected');
+      if (hLbl) hLbl.textContent = 'Printer Connected';
+    } else {
+      dot.className  = 'printer-dot';
+      stat.textContent = 'Not connected';
+      btn.textContent  = 'Connect';
+      btn.className  = 'printer-btn printer-btn-connect';
+      btn.onclick    = printerConnect;
+      inp.disabled   = true;
+      send.disabled  = true;
+      if (hBtn) hBtn.classList.remove('connected');
+      if (hLbl) hLbl.textContent = 'Connect Printer';
+    }
+  }
+
+  async function printerConnect() {
+    if (!('serial' in navigator)) {
+      prLog('ERROR: Web Serial not supported. Use Chrome or Edge on desktop.');
+      return;
+    }
+    try {
+      _prPort = await navigator.serial.requestPort();
+      await _prPort.open({ baudRate: 115200 });
+      _prWriter = _prPort.writable.getWriter();
+      prSetState(true);
+      prLog('// Connected at 115200 baud');
+      _prReading = true;
+      _prReadLoop();
+    } catch (e) {
+      prLog('// ' + (e.message || 'Connection cancelled'));
+    }
+  }
+
+  async function _prReadLoop() {
+    _prReader = _prPort.readable.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    try {
+      while (_prReading) {
+        const { value, done } = await _prReader.read();
+        if (done) break;
+        buf += dec.decode(value);
+        const lines = buf.split('\n');
+        buf = lines.pop();
+        lines.forEach(l => { if (l.trim()) prLog('< ' + l.trim()); });
+      }
+    } catch (e) { /* port closed */ }
+    finally { _prReader.releaseLock(); }
+  }
+
+  async function prSend() {
+    const inp = document.getElementById('prGcodeInput');
+    const cmd = inp.value.trim();
+    if (!cmd || !_prWriter) return;
+    const enc = new TextEncoder();
+    await _prWriter.write(enc.encode(cmd + '\n'));
+    prLog('> ' + cmd);
+    inp.value = '';
+    inp.focus();
+  }
+
+  async function printerDisconnect() {
+    _prReading = false;
+    try { if (_prWriter) { _prWriter.releaseLock(); _prWriter = null; } } catch(e){}
+    try { if (_prPort)  { await _prPort.close(); _prPort = null; } } catch(e){}
+    prSetState(false);
+    prLog('// Disconnected');
+  }
 </script>
 </body>
 </html>

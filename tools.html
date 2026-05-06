@@ -17,11 +17,35 @@
 </head>
 <body>
 
+<!-- ===== PRINTER MODAL ===== -->
+<div id="printerModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;box-sizing:border-box;" onclick="if(event.target===this)this.classList.remove('open'),this.style.display='none'">
+  <div style="background:var(--clr-surface,#13131e);border:1px solid var(--clr-border,#2a2a3d);border-radius:20px;padding:28px;width:100%;max-width:480px;position:relative;">
+    <button onclick="document.getElementById('printerModal').style.display='none'" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:22px;color:#888;cursor:pointer;">×</button>
+    <h2 style="margin:0 0 4px;font-size:18px;font-weight:800;color:var(--clr-text,#e8e8f0);">Connect Printer</h2>
+    <p style="margin:0 0 16px;font-size:13px;color:#888;">Uses Web Serial — requires Chrome or Edge on desktop.</p>
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;background:var(--clr-bg,#0d0d14);border:1px solid var(--clr-border,#2a2a3d);margin-bottom:16px;">
+      <div id="prDot" style="width:10px;height:10px;border-radius:50%;background:#555;flex-shrink:0;"></div>
+      <span id="prStatusText" style="font-size:13px;font-weight:600;color:var(--clr-text,#e8e8f0);">Not connected</span>
+      <div style="flex:1;"></div>
+      <button id="prConnectBtn" onclick="printerConnect()" style="padding:9px 16px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:#0099ff;color:#fff;font-family:inherit;">Connect</button>
+    </div>
+    <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:#666;letter-spacing:.06em;">TERMINAL</div>
+    <div id="prTerminal" style="background:#07070f;border:1px solid var(--clr-border,#2a2a3d);border-radius:10px;padding:10px 12px;height:160px;overflow-y:auto;font-family:monospace;font-size:12px;color:#aef;margin-bottom:12px;white-space:pre-wrap;word-break:break-all;">// Connect a printer to send G-code commands
+</div>
+    <div style="display:flex;gap:8px;">
+      <input id="prGcodeInput" placeholder="G28 ; home all axes" onkeydown="if(event.key==='Enter')prSend()" disabled style="flex:1;padding:10px 12px;font-size:13px;font-family:monospace;background:var(--clr-bg,#0d0d14);border:1px solid var(--clr-border,#2a2a3d);border-radius:10px;color:var(--clr-text,#e8e8f0);" />
+      <button id="prSendBtn" onclick="prSend()" disabled style="padding:10px 16px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:#0099ff;color:#fff;font-family:inherit;">Send</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#555;">Common: <code>G28</code> home · <code>G1 Z10 F300</code> move · <code>M104 S200</code> heat nozzle · <code>M109 S200</code> wait · <code>M106 S255</code> fan on</div>
+  </div>
+</div>
+
   <header class="header admin-content unlocked">
     <div class="header-inner">
       <a href="index.html" class="logo"><img src="logo.png" alt="Printara" class="logo-img" /></a>
       <nav class="nav"><a href="index.html" class="nav-link">← Home</a></nav>
       <span id="toolsUserBadge" style="margin-left:auto;background:rgba(0,150,255,0.15);border:1px solid rgba(0,150,255,0.4);color:#0099ff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;"></span>
+      <button id="prHeaderBtn" onclick="document.getElementById('printerModal').classList.add('open')" title="Connect 3D Printer" style="display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:13px;border-radius:10px;border:1px solid var(--clr-border,#2a2a3d);background:var(--clr-surface,#13131e);color:var(--clr-text,#e8e8f0);cursor:pointer;font-family:inherit;font-weight:600;transition:border-color .15s;">🖨️ <span id="prHeaderLabel">Connect Printer</span></button>
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
     </div>
   </header>
@@ -661,13 +685,7 @@ $fn = 32;
           const step = ['sides'].includes(key) ? 1 : 0.5;
           const row = document.createElement('div');
           row.style.cssText = 'display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;font-size:0.8rem;';
-          row.innerHTML = '<span style="width:80px;color:var(--clr-muted);">' + (paramLabels[key]||key) + '</span>' +
-            '<input type="range" min="' + min + '" max="' + max + '" step="' + step + '" value="' + s.params[key] + '" ' +
-            'oninput="this.nextElementSibling.textContent=this.value;oscSetParam(' + s.id + ','' + key + '',this.value)" ' +
-            'style="flex:1;">' +
-            '<span style="width:30px;text-align:right;">' + s.params[key] + '</span>';
-          card.appendChild(row);
-        });
+*You seem to be using an outdated version of Cursor. Please upgrade to the latest version by [downloading Cursor again from our website](https://www.cursor.com/). All your settings will be preserved.*
 
         // Transform row toggle
         const tBtn = document.createElement('button');
@@ -763,12 +781,7 @@ $fn = 32;
       a.href = URL.createObjectURL(blob);
       a.download = 'printara_model.scad';
       a.click();
-    }
-
-    function initOpenSCAD() {
-      oscRenderList();
-      oscGenerate();
-    }
+*You seem to be using an outdated version of Cursor. Please upgrade to the latest version by [downloading Cursor again from our website](https://www.cursor.com/). All your settings will be preserved.*
 
     // ===== 3D STUDIO =================================================================
     let _studioInited = false;
@@ -2813,6 +2826,103 @@ $fn = 32;
     }
 
     // ===== END MAP GENERATOR ==================================================
+
+    // ===== PRINTER (Web Serial) ================================================
+    let _prPort = null, _prWriter = null, _prReader = null, _prReading = false;
+
+    function prLog(msg) {
+      const t = document.getElementById('prTerminal');
+      if (!t) return;
+      t.textContent += msg + '\n';
+      t.scrollTop = t.scrollHeight;
+    }
+
+    function prSetState(connected) {
+      const dot  = document.getElementById('prDot');
+      const stat = document.getElementById('prStatusText');
+      const btn  = document.getElementById('prConnectBtn');
+      const inp  = document.getElementById('prGcodeInput');
+      const send = document.getElementById('prSendBtn');
+      const hBtn = document.getElementById('prHeaderBtn');
+      const hLbl = document.getElementById('prHeaderLabel');
+      if (connected) {
+        dot.style.cssText  = 'width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;flex-shrink:0;';
+        stat.textContent   = 'Connected';
+        btn.textContent    = 'Disconnect';
+        btn.style.background = 'var(--clr-surface,#1e1e2e)';
+        btn.style.color      = 'var(--clr-text,#e8e8f0)';
+        btn.style.border     = '1px solid var(--clr-border,#2a2a3d)';
+        btn.onclick          = printerDisconnect;
+        inp.disabled = false; send.disabled = false;
+        if (hBtn) { hBtn.style.borderColor='#22c55e'; hBtn.style.color='#22c55e'; }
+        if (hLbl) hLbl.textContent = 'Printer Connected';
+      } else {
+        dot.style.cssText  = 'width:10px;height:10px;border-radius:50%;background:#555;flex-shrink:0;';
+        stat.textContent   = 'Not connected';
+        btn.textContent    = 'Connect';
+        btn.style.background = '#0099ff';
+        btn.style.color      = '#fff';
+        btn.style.border     = 'none';
+        btn.onclick          = printerConnect;
+        inp.disabled = true; send.disabled = true;
+        if (hBtn) { hBtn.style.borderColor=''; hBtn.style.color=''; }
+        if (hLbl) hLbl.textContent = 'Connect Printer';
+      }
+    }
+
+    async function printerConnect() {
+      if (!('serial' in navigator)) {
+        prLog('ERROR: Web Serial not supported. Use Chrome or Edge on desktop.');
+        return;
+      }
+      try {
+        _prPort = await navigator.serial.requestPort();
+        await _prPort.open({ baudRate: 115200 });
+        _prWriter = _prPort.writable.getWriter();
+        prSetState(true);
+        prLog('// Connected at 115200 baud');
+        _prReading = true;
+        _prReadLoop();
+      } catch (e) {
+        prLog('// ' + (e.message || 'Connection cancelled'));
+      }
+    }
+
+    async function _prReadLoop() {
+      _prReader = _prPort.readable.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+      try {
+        while (_prReading) {
+          const { value, done } = await _prReader.read();
+          if (done) break;
+          buf += dec.decode(value);
+          const lines = buf.split('\n');
+          buf = lines.pop();
+          lines.forEach(l => { if (l.trim()) prLog('< ' + l.trim()); });
+        }
+      } catch(e) { /* port closed */ }
+      finally { _prReader.releaseLock(); }
+    }
+
+    async function prSend() {
+      const inp = document.getElementById('prGcodeInput');
+      const cmd = inp.value.trim();
+      if (!cmd || !_prWriter) return;
+      await _prWriter.write(new TextEncoder().encode(cmd + '\n'));
+      prLog('> ' + cmd);
+      inp.value = '';
+      inp.focus();
+    }
+
+    async function printerDisconnect() {
+      _prReading = false;
+      try { if (_prWriter) { _prWriter.releaseLock(); _prWriter = null; } } catch(e){}
+      try { if (_prPort)  { await _prPort.close(); _prPort = null; } } catch(e){}
+      prSetState(false);
+      prLog('// Disconnected');
+    }
+    // ===== END PRINTER ===========================================================
 
     document.addEventListener('DOMContentLoaded', () => {
       const s = getSession();
