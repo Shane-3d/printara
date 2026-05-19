@@ -1,0 +1,135 @@
+name: Build & Release Printara App
+
+on:
+  push:
+    tags:
+      - 'app-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Windows (.exe installer)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: electron-app
+        run: npm ci
+
+      - name: Make Electron app
+        working-directory: electron-app
+        run: npx electron-forge make
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: printara-windows
+          path: electron-app/out/make/**/*.exe
+
+  build-mac:
+    name: macOS (.zip)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: electron-app
+        run: npm ci
+
+      - name: Make Electron app
+        working-directory: electron-app
+        run: npx electron-forge make
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: printara-mac
+          path: electron-app/out/make/**/*.zip
+
+  build-linux:
+    name: Linux (.deb / .rpm)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-app/package-lock.json
+
+      - name: Install system dependencies
+        run: sudo apt-get install -y rpm fakeroot
+
+      - name: Install dependencies
+        working-directory: electron-app
+        run: npm ci
+
+      - name: Make Electron app
+        working-directory: electron-app
+        run: npx electron-forge make
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Linux builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: printara-linux
+          path: |
+            electron-app/out/make/**/*.deb
+            electron-app/out/make/**/*.rpm
+
+  release:
+    name: Create GitHub Release
+    needs: [build-windows, build-mac, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Printara ${{ github.ref_name }}
+          body: |
+            ## Printara — 3D Print Queue Manager
+
+            Connect any Marlin-based 3D printer, queue G-code files, and let Printara automatically eject finished prints so your next job starts without you lifting a finger.
+
+            ### Downloads
+            | Platform | File |
+            |----------|------|
+            | Windows  | `Printara Setup.exe` |
+            | macOS    | `Printara-darwin.zip` |
+            | Linux    | `printara_*.deb` / `printara-*.rpm` |
+
+            ### Supported Printers
+            Any printer running Marlin firmware over USB Serial — Ender 3, Prusa MK3/4, Voron, CR-10, Bambu (with serial enabled), and more.
+          files: release-assets/**/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
