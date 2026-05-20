@@ -693,18 +693,14 @@
       <span class="platform-icon" style="font-size:28px">🪟</span>
       <div>
         <h3 style="margin:0 0 2px">Windows</h3>
-        <div class="dl-meta">Windows 10 / 11 · just one file</div>
+        <div class="dl-meta">Windows 10 / 11 · .exe installer</div>
       </div>
     </div>
-    <ol style="font-size:13px;color:#888;line-height:2.2;padding-left:18px;margin-bottom:20px">
-      <li>Install <a href="https://nodejs.org" target="_blank" style="color:#ff6b35">Node.js</a> — free, one-time, takes 2 min</li>
-      <li>Download the file below</li>
-      <li>Double-click it — it downloads the rest automatically and opens your browser</li>
-    </ol>
-    <a class="dl-btn" href="Printara%20Queue.bat" download="Printara Queue.bat" style="display:block;text-align:center;font-size:15px;padding:14px">
-      ↓ Download Printara Queue.bat
+    <p style="font-size:13px;color:#888;margin-bottom:20px">Download, run the installer, open Printara from your Start menu. Done.</p>
+    <a class="dl-btn" href="https://github.com/shanevandekrol-dotcom/printara/releases/latest/download/PrintaraSetup.exe" style="display:block;text-align:center;font-size:15px;padding:14px">
+      ↓ Download for Windows (.exe)
     </a>
-    <p style="font-size:11px;color:#555;margin-top:10px;text-align:center">If Windows shows a warning, click "More info" → "Run anyway"</p>
+    <p style="font-size:11px;color:#555;margin-top:10px;text-align:center">If Windows shows a SmartScreen warning, click "More info" → "Run anyway"</p>
   </div>
 
   <!-- Mac / Linux card -->
@@ -713,14 +709,17 @@
       <span class="platform-icon" style="font-size:28px">🍎🐧</span>
       <div>
         <h3 style="margin:0 0 2px">Mac &amp; Linux</h3>
-        <div class="dl-meta">Requires Node.js</div>
+        <div class="dl-meta">.zip / .deb / .rpm</div>
       </div>
     </div>
-    <p style="font-size:13px;color:#888;margin-bottom:12px">Open Terminal and run this one command — it downloads and starts everything:</p>
-    <div style="background:#0a0a0a;border:1px solid #252525;border-radius:8px;padding:12px 14px;font-family:monospace;font-size:12px;color:#e8e8e8;margin-bottom:16px;word-break:break-all">
-      curl -O https://raw.githubusercontent.com/shanevandekrol-dotcom/printara/main/queue.html &amp;&amp; curl -O https://raw.githubusercontent.com/shanevandekrol-dotcom/printara/main/serve.js &amp;&amp; node serve.js
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <a class="dl-btn secondary" href="https://github.com/shanevandekrol-dotcom/printara/releases/latest/download/Printara-darwin-x64.zip" style="display:block;text-align:center">
+        ↓ Download for macOS (.zip)
+      </a>
+      <a class="dl-btn secondary" href="https://github.com/shanevandekrol-dotcom/printara/releases/latest" style="display:block;text-align:center">
+        ↓ Download for Linux (.deb / .rpm)
+      </a>
     </div>
-    <p style="font-size:11px;color:#555">Browser will open at http://localhost:3000</p>
   </div>
 </div>
 

@@ -3,8 +3,9 @@ module.exports = {
     asar: true,
     name: 'Printara',
     executableName: 'printara',
-    icon: './assets/icon',
     appCopyright: 'Copyright © 2026 Printara',
+    // Bundle queue.html next to the asar so main.js can load it
+    extraResource: ['../queue.html'],
   },
   rebuildConfig: {},
   makers: [
@@ -13,7 +14,6 @@ module.exports = {
       config: {
         name: 'Printara',
         setupExe: 'PrintaraSetup.exe',
-        setupIcon: './assets/icon.ico',
       },
     },
     {
@@ -22,19 +22,11 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {
-        options: {
-          icon: './assets/icon.png',
-        },
-      },
+      config: {},
     },
     {
       name: '@electron-forge/maker-rpm',
-      config: {
-        options: {
-          icon: './assets/icon.png',
-        },
-      },
+      config: {},
     },
   ],
   plugins: [

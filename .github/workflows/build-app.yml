@@ -1,4 +1,4 @@
-name: Build & Release Printara App
+name: Build & Release Printara
 
 on:
   push:
@@ -26,14 +26,13 @@ jobs:
         working-directory: electron-app
         run: npm ci
 
-      - name: Make Electron app
+      - name: Build installer
         working-directory: electron-app
         run: npx electron-forge make
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Windows installer
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: printara-windows
           path: electron-app/out/make/**/*.exe
@@ -54,20 +53,19 @@ jobs:
         working-directory: electron-app
         run: npm ci
 
-      - name: Make Electron app
+      - name: Build app
         working-directory: electron-app
         run: npx electron-forge make
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload macOS build
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: printara-mac
           path: electron-app/out/make/**/*.zip
 
   build-linux:
-    name: Linux (.deb / .rpm)
+    name: Linux (.deb)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,21 +76,20 @@ jobs:
           cache: 'npm'
           cache-dependency-path: electron-app/package-lock.json
 
-      - name: Install system dependencies
+      - name: Install system deps
         run: sudo apt-get install -y rpm fakeroot
 
       - name: Install dependencies
         working-directory: electron-app
         run: npm ci
 
-      - name: Make Electron app
+      - name: Build app
         working-directory: electron-app
         run: npx electron-forge make
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Linux builds
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: printara-linux
           path: |
@@ -105,29 +102,29 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           path: release-assets
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v2
         with:
           name: Printara ${{ github.ref_name }}
           body: |
             ## Printara — 3D Print Queue Manager
 
-            Connect any Marlin-based 3D printer, queue G-code files, and let Printara automatically eject finished prints so your next job starts without you lifting a finger.
+            Connect any WiFi 3D printer (OctoPrint, Moonraker/Klipper, Bambu Lab), queue G-code files, and Printara automatically starts the next job when one finishes.
 
             ### Downloads
             | Platform | File |
             |----------|------|
-            | Windows  | `Printara Setup.exe` |
-            | macOS    | `Printara-darwin.zip` |
+            | Windows  | `PrintaraSetup.exe` |
+            | macOS    | `Printara-darwin-x64.zip` |
             | Linux    | `printara_*.deb` / `printara-*.rpm` |
 
             ### Supported Printers
-            Any printer running Marlin firmware over USB Serial — Ender 3, Prusa MK3/4, Voron, CR-10, Bambu (with serial enabled), and more.
+            - OctoPrint (any Marlin printer over WiFi)
+            - Moonraker / Klipper
+            - Bambu Lab X1, P1, A1 series (LAN mode)
           files: release-assets/**/*
           draft: false
           prerelease: false
