@@ -264,6 +264,12 @@
         <button class="btn-danger btn-sm"    id="p-cancel" disabled onclick="pCancel()">✕ Cancel</button>
       </div>
     </div>
+    <!-- Bambu direct LAN upload (shown only for Bambu printers) -->
+    <div id="bambu-lan-section" style="display:none">
+      <div class="stitle">Send to Printer via LAN</div>
+      <button class="btn-primary" id="bambu-lan-btn" onclick="bambuLanSend()" style="width:100%;padding:9px;font-size:13px">⬆ Upload &amp; Print via LAN</button>
+      <div style="font-size:10px;color:var(--text3);margin-top:6px">Uploads your .gcode or .3mf file directly to the printer over your local network using FTP.</div>
+    </div>
     <!-- Queue -->
     <div>
       <div style="display:flex;align-items:center;margin-bottom:8px">
@@ -803,8 +809,10 @@ async function startPrint(p, item) {
   }
   if (p.type === 'bambu') {
     const ext = item.name.split('.').pop().toLowerCase();
-    if (ext === '3mf') {
-      toast('Bambu .3mf files must be sent from Bambu Studio. Use a .gcode file for direct printing.', 'error');
+    const canFtp = !!(window.ftpBridge || await _serverProbe);
+    if (ext === '3mf' && !canFtp) {
+      // .3mf is binary — can't be streamed line-by-line over MQTT. Need FTP (Electron or server.js).
+      toast('Run "node server.js" locally to upload .3mf files to your Bambu printer via LAN.', 'error');
       item.status = 'queued'; p.isPrinting = false; p.status = 'idle'; renderCard(p); renderPQ(); updatePanelProg(p);
       return;
     }
@@ -980,9 +988,16 @@ function openManage(id) {
     img.classList.add('hidden'); nc.classList.remove('hidden'); live.classList.add('hidden');
   }
 
-  // AMS section only for Bambu
+  // AMS + direct LAN upload section only for Bambu
   const amsSection = document.getElementById('ams-section');
-  if (p.type === 'bambu') { amsSection.style.display = ''; renderAmsSlots(p); } else { amsSection.style.display = 'none'; }
+  const lanSection = document.getElementById('bambu-lan-section');
+  if (p.type === 'bambu') {
+    amsSection.style.display = ''; renderAmsSlots(p);
+    lanSection.style.display = '';
+  } else {
+    amsSection.style.display = 'none';
+    lanSection.style.display = 'none';
+  }
 
   renderPQ(); updatePanelProg(p); updatePanelTemps(p);
   const con = document.getElementById('pcon'); con.innerHTML = '';
@@ -1101,6 +1116,26 @@ function pAddFiles() {
     const c2 = p.filamentColors[1] || null;
     for (const f of inp.files) p.queue.push({ id: uid(), name: f.name, file: f, status: 'queued', color: c1, color2: p.type === 'bambu' ? c2 : null });
     renderPQ();
+  };
+  inp.click();
+}
+
+async function bambuLanSend() {
+  const p = printers.get(managedId); if (!p || p.type !== 'bambu') return;
+  const canFtp = !!(window.ftpBridge || await _serverProbe);
+  if (!canFtp) {
+    toast('Run "node server.js" locally to upload files to your Bambu printer via LAN.', 'error');
+    return;
+  }
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.gcode,.g,.gc,.gco,.ngc,.3mf';
+  inp.onchange = () => {
+    const f = inp.files[0]; if (!f) return;
+    const c1 = p.filamentColors[0] || '#00aaff';
+    const c2 = p.filamentColors[1] || null;
+    const item = { id: uid(), name: f.name, file: f, status: 'queued', color: c1, color2: c2 };
+    p.queue.push(item);
+    renderPQ();
+    if (!p.isPrinting) startPrint(p, item);
   };
   inp.click();
 }
