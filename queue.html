@@ -185,6 +185,13 @@
   <span style="color:var(--text2);font-weight:600;font-size:14px">Dashboard</span>
   <div class="spacer"></div>
   <button class="btn-primary" onclick="openAdd()">+ Add Printer</button>
+  <div id="user-chip" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;">
+    <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;" id="user-avatar">?</div>
+    <span id="user-name" style="font-size:12px;font-weight:600;color:var(--text2);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <button onclick="doLogout()" style="background:none;border:none;color:var(--text3);font-size:11px;padding:0;cursor:pointer;margin-left:2px;" title="Sign out">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </div>
 </header>
 
 <div id="dashboard">
@@ -1487,8 +1494,30 @@ function plog(p, s, t) {
   }
 }
 
+// ── Auth ───────────────────────────────────────────────────────────────────────
+const SESSION_KEY = 'printara_session';
+const SESSION_TTL = 12 * 60 * 60 * 1000;
+function getSession() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+    if (s && Date.now() - s.ts < SESSION_TTL) return s;
+  } catch (_) {}
+  return null;
+}
+function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  location.replace('login.html');
+}
+function initUserChip(session) {
+  const label = session.name || session.email || 'User';
+  document.getElementById('user-name').textContent = label;
+  document.getElementById('user-avatar').textContent = (label[0] || '?').toUpperCase();
+}
+
 // ── Persistence ────────────────────────────────────────────────────────────────
-const LS = 'printara_v3';
+const _session = getSession();
+if (!_session) { location.replace('login.html'); }
+const LS = 'printara_printers_' + (_session ? _session.id : 'guest');
 function save() {
   localStorage.setItem(LS, JSON.stringify([...printers.values()].map(p => ({ id:p.id, name:p.name, type:p.type, ip:p.ip, apiKey:p.apiKey, pin:p.pin, baudRate:p.baudRate, filamentColors:p.filamentColors }))));
 }
@@ -1523,6 +1552,7 @@ if (window.serialBridge) {
   window.serialBridge.onClosed(() => { if (bridgePrinter?.connected) { bridgePrinter.connected = false; bridgePrinter.status = 'idle'; renderCard(bridgePrinter); plog(bridgePrinter, 'Disconnected', 'err'); } });
 }
 setAT('usb');
+if (_session) initUserChip(_session);
 load();
 </script>
 </body>
