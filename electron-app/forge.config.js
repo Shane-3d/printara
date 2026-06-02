@@ -4,8 +4,15 @@ module.exports = {
     name: 'Printara',
     executableName: 'printara',
     appCopyright: 'Copyright © 2026 Printara',
-    // Bundle queue.html next to the asar so main.js can load it
-    extraResource: ['../queue.html'],
+    // Bundle the browser-facing pages next to the asar so main.js can load them
+    // with file:// paths in packaged builds.
+    extraResource: [
+      '../login.html',
+      '../queue.html',
+      '../index.html',
+      '../download.html',
+      '../logo.png',
+    ],
   },
   rebuildConfig: {},
   makers: [
