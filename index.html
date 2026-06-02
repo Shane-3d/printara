@@ -252,8 +252,6 @@
 </head>
 <body>
 
-<!-- ===== FULL-PAGE BACKGROUND CANVAS ===== -->
-<canvas id="bgCanvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
 
 <!-- ===== AMBIENT GLOW ORBS ===== -->
 <div class="glow-orb" style="width:500px;height:500px;top:-150px;left:-150px;background:rgba(0,153,255,0.18);animation-delay:0s"></div>
@@ -423,8 +421,6 @@
 
 <!-- ===== HERO ===== -->
 <section class="hero hero-split">
-  <canvas id="heroCanvas"></canvas>
-
   <!-- Left: brand + CTAs -->
   <div class="hero-left">
     <img src="logo.png" alt="Printara" class="hero-logo" />
@@ -755,7 +751,6 @@
     updateHeader();
     renderGallery();
     if (location.hash && getSession()) location.href='tools.html'+location.hash;
-    initHeroCanvas();
     initPrinterCams();
     initTimelapse();
   });
