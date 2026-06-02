@@ -13,7 +13,7 @@
     /* ── Form wrap ── */
     #loginWrap{
       position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
-      z-index:10;width:320px;opacity:1;
+      z-index:10;width:320px;opacity:0;transition:opacity 0.8s ease;
     }
 
     /* Logo */
@@ -319,10 +319,17 @@ function tick() {
   for(let y=0;y<H;y+=44){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
 
   // ── Completed legs ──
-  ctx.lineWidth=1.5; ctx.lineCap='round'; ctx.shadowBlur=10;
+  ctx.lineWidth=2; ctx.lineCap='square'; ctx.shadowBlur=12;
   for(const l of completedLegs){
-    ctx.globalAlpha=0.75; ctx.strokeStyle=l.color; ctx.shadowColor=l.color;
+    ctx.globalAlpha=0.9; ctx.strokeStyle=l.color; ctx.shadowColor=l.color;
     ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(l.x2,l.y2); ctx.stroke();
+  }
+  // Inner glow fill for closed box rects
+  ctx.shadowBlur=0;
+  for(const l of completedLegs){
+    ctx.globalAlpha=0.04; ctx.fillStyle=l.color;
+    ctx.fillRect(Math.min(l.x1,l.x2), Math.min(l.y1,l.y2),
+                 Math.abs(l.x2-l.x1)||2, Math.abs(l.y2-l.y1)||2);
   }
 
   // ── Move nozzles + draw current leg ──
@@ -365,9 +372,11 @@ function tick() {
     else {
       // Animation complete
       animDone=true;
-      canvas.style.transition='opacity 2s ease';
-      canvas.style.opacity='0.18';
-      setTimeout(()=>{ document.getElementById('siEmail')?.focus(); }, 300);
+      canvas.style.transition='opacity 1.5s ease';
+      canvas.style.opacity='0.15';
+      const wrap = document.getElementById('loginWrap');
+      wrap.style.opacity='1';
+      setTimeout(()=>{ document.getElementById('siEmail')?.focus(); }, 900);
       return;
     }
   }
