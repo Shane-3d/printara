@@ -181,6 +181,52 @@
     #heroCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
     #bgCanvas   { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
 
+    /* ── Hero split layout ── */
+    .hero-split {
+      display:grid; grid-template-columns:1fr 1fr; align-items:center;
+      gap:32px; padding:64px 48px 56px; text-align:left;
+    }
+    .hero-left { display:flex; flex-direction:column; align-items:flex-start; gap:14px; }
+    .hero-left .hero-cta { justify-content:flex-start; }
+
+    /* Camera grid */
+    .hero-cams {
+      display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;
+      gap:6px; border-radius:14px; overflow:hidden; opacity:0.52;
+      aspect-ratio:4/3; box-shadow:0 0 60px rgba(0,153,255,0.12);
+    }
+    .cam-wrap { position:relative; background:#080c14; overflow:hidden; }
+    .cam-cvs  { display:block; width:100%; height:100%; }
+    .cam-hud  {
+      position:absolute; bottom:0; left:0; right:0;
+      padding:4px 8px; display:flex; justify-content:space-between; align-items:center;
+      background:linear-gradient(transparent,rgba(0,0,0,0.72));
+      font-size:9px; font-weight:700; letter-spacing:.06em; pointer-events:none;
+    }
+    .cam-live { color:#ff4444; text-shadow:0 0 6px currentColor; }
+    .cam-id   { color:rgba(255,255,255,0.5); }
+
+    /* Timelapse strip */
+    .tl-section { position:relative; height:220px; background:#06090f; overflow:hidden; border-top:1px solid #1a1f2e; border-bottom:1px solid #1a1f2e; }
+    #timelapseCanvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    .tl-bar {
+      position:absolute; top:0; left:0; right:0; z-index:3;
+      display:flex; align-items:center; gap:12px; padding:10px 20px;
+      background:linear-gradient(rgba(6,9,15,.9),transparent);
+    }
+    .tl-badge { background:#0099ff; color:#fff; font-size:10px; font-weight:800; padding:3px 8px; border-radius:4px; letter-spacing:.08em; white-space:nowrap; }
+    .tl-meta  { color:rgba(255,255,255,.45); font-size:11px; }
+    .tl-progress-wrap { flex:1; height:3px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden; }
+    .tl-progress-fill { height:100%; background:#0099ff; border-radius:2px; width:0%; transition:width .1s linear; box-shadow:0 0 8px #0099ff; }
+    .tl-pct   { color:#0099ff; font-size:11px; font-weight:700; min-width:36px; text-align:right; }
+
+    @media(max-width:768px) {
+      .hero-split { grid-template-columns:1fr; padding:48px 24px; }
+      .hero-left { align-items:center; text-align:center; }
+      .hero-left .hero-cta { justify-content:center; }
+      .hero-cams { display:none; }
+    }
+
     .hero-logo { animation:logoBounce 3s ease-in-out infinite; }
     .btn-blue  { animation:glowPulse 2.5s ease-in-out infinite; }
 
@@ -376,16 +422,51 @@
 </header>
 
 <!-- ===== HERO ===== -->
-<section class="hero">
+<section class="hero hero-split">
   <canvas id="heroCanvas"></canvas>
-  <img src="logo.png" alt="Printara" class="hero-logo" />
-  <h1>Design. Generate. Print.</h1>
-  <p>Browser-based 3D design tools and a community project library — sign up free.</p>
-  <div class="hero-cta">
-    <button class="btn-blue" id="heroBtn" onclick="handleHero()">Get Started Free →</button>
-    <a href="download.html" class="btn-ghost" style="background:#1a1a1a;border-color:#ff6b35;color:#ff6b35;">🖨️ Print Queue</a>
-    <a href="#gallery" class="btn-ghost">Browse Projects ↓</a>
+
+  <!-- Left: brand + CTAs -->
+  <div class="hero-left">
+    <img src="logo.png" alt="Printara" class="hero-logo" />
+    <h1>Design. Generate. Print.</h1>
+    <p>Browser-based 3D design tools and a community project library — sign up free.</p>
+    <div class="hero-cta">
+      <button class="btn-blue" id="heroBtn" onclick="handleHero()">Get Started Free →</button>
+      <a href="download.html" class="btn-ghost" style="background:#1a1a1a;border-color:#ff6b35;color:#ff6b35;">🖨️ Print Queue</a>
+      <a href="#gallery" class="btn-ghost">Browse Projects ↓</a>
+    </div>
   </div>
+
+  <!-- Right: printer camera grid at 50 % opacity -->
+  <div class="hero-cams" id="heroCams">
+    <div class="cam-wrap">
+      <canvas class="cam-cvs" id="cam1"></canvas>
+      <div class="cam-hud"><span class="cam-live">● LIVE</span><span class="cam-id">CAM 1 · Bed</span></div>
+    </div>
+    <div class="cam-wrap">
+      <canvas class="cam-cvs" id="cam2"></canvas>
+      <div class="cam-hud"><span class="cam-live" style="color:#22c55e">● LIVE</span><span class="cam-id">CAM 2 · Layers</span></div>
+    </div>
+    <div class="cam-wrap">
+      <canvas class="cam-cvs" id="cam3"></canvas>
+      <div class="cam-hud"><span class="cam-live" style="color:#a855f7">● LIVE</span><span class="cam-id">CAM 3 · Color</span></div>
+    </div>
+    <div class="cam-wrap">
+      <canvas class="cam-cvs" id="cam4"></canvas>
+      <div class="cam-hud"><span class="cam-live" style="color:#ff6b35">● LIVE</span><span class="cam-id">CAM 4 · Nozzle</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TIMELAPSE STRIP ===== -->
+<section class="tl-section">
+  <div class="tl-bar">
+    <span class="tl-badge">⏩ TIMELAPSE</span>
+    <span class="tl-meta" id="tlMeta">X1C · 14 h 22 m print</span>
+    <div class="tl-progress-wrap"><div class="tl-progress-fill" id="tlFill"></div></div>
+    <span class="tl-pct" id="tlPct">0%</span>
+  </div>
+  <canvas id="timelapseCanvas"></canvas>
 </section>
 
 <!-- ===== TOOLS STRIP ===== -->
@@ -675,6 +756,8 @@
     renderGallery();
     if (location.hash && getSession()) location.href='tools.html'+location.hash;
     initHeroCanvas();
+    initPrinterCams();
+    initTimelapse();
   });
 
   // ── Scroll state ─────────────────────────────────────────────────────────
@@ -954,6 +1037,357 @@
       frame++;requestAnimationFrame(tick);
     }
     tick();
+  }
+
+  // ── Printer camera simulations ─────────────────────────────────────────────
+  function initPrinterCams() {
+    const camIds = ['cam1','cam2','cam3','cam4'];
+    const cvs = camIds.map(id => document.getElementById(id)).filter(Boolean);
+    if (!cvs.length) return;
+
+    // Size all canvases to their CSS size
+    function sizeAll() {
+      cvs.forEach(c => { const r=c.getBoundingClientRect(); c.width=r.width||300; c.height=r.height||220; });
+    }
+    sizeAll();
+    window.addEventListener('resize', sizeAll);
+
+    let gt = 0; // global tick
+
+    // ── Utility ──
+    function scanLines(ctx, W, H) {
+      ctx.save();
+      for (let y=0; y<H; y+=3) {
+        ctx.globalAlpha=0.06; ctx.fillStyle='#000';
+        ctx.fillRect(0,y,W,1);
+      }
+      ctx.restore();
+    }
+    function vignette(ctx, W, H) {
+      const g = ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.3,W/2,H/2,Math.max(W,H)*0.7);
+      g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.55)');
+      ctx.save(); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); ctx.restore();
+    }
+    function bedGrain(ctx, W, H) {
+      ctx.save(); ctx.globalAlpha=0.06; ctx.fillStyle='#888';
+      for (let i=0;i<800;i++) ctx.fillRect(Math.random()*W, Math.random()*H, 1, 1);
+      ctx.restore();
+    }
+
+    // ── CAM 1: Top-down bed — flat panels like the photo ──
+    function drawCam1(ctx, W, H, t) {
+      // Dark printer enclosure background
+      ctx.fillStyle='#0e1018'; ctx.fillRect(0,0,W,H);
+
+      // Back wall (dark gradient at top)
+      const bw = ctx.createLinearGradient(0,0,0,H*0.28);
+      bw.addColorStop(0,'#1a1c24'); bw.addColorStop(1,'#0e1018');
+      ctx.fillStyle=bw; ctx.fillRect(0,0,W,H*0.28);
+
+      // PEI bed — textured dark gray
+      const bedTop = H*0.28, bedH = H*0.72;
+      ctx.fillStyle='#1c1f28'; ctx.fillRect(0, bedTop, W, bedH);
+
+      // Bed grain texture
+      ctx.save(); ctx.globalAlpha=0.04;
+      ctx.strokeStyle='#aaa'; ctx.lineWidth=0.3;
+      for (let x=0;x<W;x+=6) { ctx.beginPath(); ctx.moveTo(x,bedTop); ctx.lineTo(x,H); ctx.stroke(); }
+      for (let y=bedTop;y<H;y+=6) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+      ctx.restore();
+
+      // Printed flat panels — arranged like the photo (2 rows, 4 cols of flat white tiles)
+      const panW = W*0.20, panH = H*0.14, gap = W*0.03;
+      const cols=4, rows=2;
+      const totalW = cols*panW + (cols-1)*gap;
+      const startX = (W-totalW)/2;
+      const startY = bedTop + H*0.08;
+
+      for (let row=0; row<rows; row++) {
+        for (let col=0; col<cols; col++) {
+          const px = startX + col*(panW+gap);
+          const py = startY + row*(panH+gap+H*0.04);
+
+          // Panel shadow
+          ctx.save(); ctx.globalAlpha=0.4; ctx.fillStyle='#000';
+          ctx.fillRect(px+3, py+3, panW, panH);
+
+          // Panel body (slightly warm white, like PLA)
+          const g2 = ctx.createLinearGradient(px,py,px,py+panH);
+          g2.addColorStop(0,'#d8dce8'); g2.addColorStop(1,'#b8bcc8');
+          ctx.globalAlpha=1; ctx.fillStyle=g2; ctx.fillRect(px,py,panW,panH);
+
+          // Layer lines texture on top face
+          ctx.globalAlpha=0.08; ctx.strokeStyle='#000'; ctx.lineWidth=0.5;
+          for (let ly=py; ly<py+panH; ly+=2) {
+            ctx.beginPath(); ctx.moveTo(px,ly); ctx.lineTo(px+panW,ly); ctx.stroke();
+          }
+
+          // Edge highlight (3D bevel)
+          ctx.globalAlpha=0.5; ctx.strokeStyle='#e8ecf8'; ctx.lineWidth=1;
+          ctx.strokeRect(px,py,panW,panH);
+          ctx.restore();
+        }
+      }
+
+      // Moving gantry bar (X-axis rail)
+      const ganY = bedTop + H*0.05 + Math.sin(t*0.008)*H*0.6;
+      ctx.save();
+      ctx.globalAlpha=0.7; ctx.strokeStyle='#3a4060'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(0,ganY); ctx.lineTo(W,ganY); ctx.stroke();
+      // Nozzle on gantry
+      const nozX = W*0.5 + Math.sin(t*0.025)*W*0.4;
+      const ng = ctx.createRadialGradient(nozX,ganY,0,nozX,ganY,8);
+      ng.addColorStop(0,'rgba(255,160,60,0.9)'); ng.addColorStop(1,'rgba(255,80,0,0)');
+      ctx.globalAlpha=0.8; ctx.fillStyle=ng; ctx.beginPath(); ctx.arc(nozX,ganY,8,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      bedGrain(ctx, W, H); scanLines(ctx, W, H); vignette(ctx, W, H);
+
+      // HUD: temp readout bottom-left
+      ctx.save(); ctx.font='bold 9px monospace'; ctx.fillStyle='rgba(100,200,100,0.7)';
+      ctx.fillText(`${(250+Math.sin(t*0.03)*2).toFixed(0)}°C  BED:${(60+Math.sin(t*0.02)*1).toFixed(0)}°C`, 6, H-6);
+      ctx.restore();
+    }
+
+    // ── CAM 2: Side view — objects growing layer by layer ──
+    function drawCam2(ctx, W, H, t) {
+      ctx.fillStyle='#090c15'; ctx.fillRect(0,0,W,H);
+
+      const bedY = H*0.80;
+      // Bed surface
+      ctx.fillStyle='#1e2230'; ctx.fillRect(0, bedY, W, H-bedY);
+      ctx.save(); ctx.globalAlpha=0.3; ctx.strokeStyle='#2a3050'; ctx.lineWidth=0.5;
+      for (let x=0;x<W;x+=10) { ctx.beginPath(); ctx.moveTo(x,bedY); ctx.lineTo(x,H); ctx.stroke(); }
+      ctx.restore();
+
+      // 3 objects at different completion states
+      const objs = [
+        { x:W*0.18, w:W*0.16, maxH:H*0.55, pct:(t%360)/360, color:'#c8cce0' },
+        { x:W*0.42, w:W*0.22, maxH:H*0.45, pct:((t+120)%360)/360, color:'#d0d4ea' },
+        { x:W*0.72, w:W*0.18, maxH:H*0.35, pct:((t+240)%360)/360, color:'#b8bcd4' },
+      ];
+      for (const o of objs) {
+        const h = o.maxH * Math.min(1, o.pct*1.4);
+        if (h < 2) continue;
+        const top = bedY - h;
+
+        // Object body with visible layers
+        ctx.save();
+        for (let ly=0; ly<h; ly+=2.2) {
+          const alpha = 0.6 + 0.4*(ly/h);
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = ly%4.4 < 2.2 ? o.color : '#a8acc4';
+          ctx.fillRect(o.x, bedY-ly-2.2, o.w, 2.2);
+        }
+        // Top face highlight
+        ctx.globalAlpha=0.8; ctx.fillStyle='#e0e4f4'; ctx.fillRect(o.x, top, o.w, 2);
+        ctx.restore();
+
+        // Progress label
+        ctx.save(); ctx.globalAlpha=0.6; ctx.fillStyle='#0099ff';
+        ctx.font='bold 8px monospace';
+        ctx.fillText(`${(Math.min(1,o.pct*1.4)*100).toFixed(0)}%`, o.x, top-4);
+        ctx.restore();
+      }
+
+      bedGrain(ctx, W, H); scanLines(ctx, W, H); vignette(ctx, W, H);
+      ctx.save(); ctx.font='bold 9px monospace'; ctx.fillStyle='rgba(100,200,100,0.7)';
+      ctx.fillText(`Layer ${Math.floor((t%360)/3)+1}/120`, 6, H-6);
+      ctx.restore();
+    }
+
+    // ── CAM 3: Overhead — multi-color print ──
+    function drawCam3(ctx, W, H, t) {
+      ctx.fillStyle='#0a0d18'; ctx.fillRect(0,0,W,H);
+
+      // Bed grid
+      ctx.save(); ctx.globalAlpha=0.07; ctx.strokeStyle='#4060ff'; ctx.lineWidth=0.5;
+      for (let x=0;x<W;x+=18) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+      for (let y=0;y<H;y+=18) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+      ctx.restore();
+
+      const cx=W/2, cy=H/2;
+      const pct = ((t%480)/480);
+      const amsColors = ['#0099ff','#ff6b35','#22c55e','#a855f7'];
+
+      // Multi-color spiral print (top-down view)
+      for (let ring=0; ring<4; ring++) {
+        const r = (ring+1)*(Math.min(W,H)*0.10);
+        const drawn = Math.max(0, pct*5 - ring);
+        if (drawn <= 0) continue;
+        const endAngle = Math.min(1,drawn)*Math.PI*2 - Math.PI/2;
+        ctx.save();
+        ctx.globalAlpha=0.85; ctx.strokeStyle=amsColors[ring];
+        ctx.lineWidth=6; ctx.shadowBlur=10; ctx.shadowColor=amsColors[ring];
+        ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,endAngle);
+        ctx.stroke(); ctx.restore();
+      }
+
+      // AMS color indicator top-right
+      amsColors.forEach((c,i) => {
+        ctx.save(); ctx.fillStyle=c; ctx.globalAlpha=0.85;
+        ctx.beginPath(); ctx.arc(W-14, 12+i*14, 4, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+      });
+
+      // Gantry
+      const gy = H*0.1 + Math.sin(t*0.015)*H*0.8;
+      ctx.save(); ctx.globalAlpha=0.35; ctx.strokeStyle='#506'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
+      ctx.restore();
+
+      scanLines(ctx, W, H); vignette(ctx, W, H);
+      ctx.save(); ctx.font='bold 9px monospace'; ctx.fillStyle='rgba(168,85,247,0.8)';
+      ctx.fillText(`AMS·4CLR  ${(pct*100).toFixed(0)}%`, 6, H-6); ctx.restore();
+    }
+
+    // ── CAM 4: Nozzle closeup ──
+    function drawCam4(ctx, W, H, t) {
+      ctx.fillStyle='#0c0a0a'; ctx.fillRect(0,0,W,H);
+
+      // Previously laid filament strands (horizontal lines)
+      ctx.save();
+      for (let row=0; row<12; row++) {
+        const y = H*0.55 + row*(H*0.038);
+        ctx.globalAlpha=0.5+row*0.04;
+        const hue = row%2===0 ? '#d8dce8' : '#c4c8da';
+        ctx.fillStyle=hue;
+        ctx.fillRect(0, y, W, H*0.032);
+        // Inter-strand gap
+        ctx.globalAlpha=0.3; ctx.fillStyle='#0c0a0a';
+        ctx.fillRect(0, y+H*0.032, W, H*0.006);
+      }
+      ctx.restore();
+
+      // Current extrusion line being laid
+      const extX = (Math.sin(t*0.035)*0.5+0.5)*W;
+      ctx.save();
+      ctx.globalAlpha=0.9; ctx.fillStyle='#e8eaf6';
+      ctx.fillRect(0, H*0.52, extX, H*0.032);
+      // Hot melt glow at nozzle tip
+      const hg = ctx.createRadialGradient(extX,H*0.535,0,extX,H*0.535,18);
+      hg.addColorStop(0,'rgba(255,180,60,0.95)'); hg.addColorStop(0.4,'rgba(255,80,20,0.5)'); hg.addColorStop(1,'rgba(255,40,0,0)');
+      ctx.globalAlpha=1; ctx.fillStyle=hg; ctx.beginPath(); ctx.arc(extX,H*0.535,18,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      // Nozzle body visible at top
+      ctx.save();
+      ctx.globalAlpha=0.8; ctx.fillStyle='#303844';
+      ctx.fillRect(W/2-14,0,28,H*0.42);
+      ctx.globalAlpha=0.9; ctx.fillStyle='#252c38';
+      ctx.beginPath(); ctx.moveTo(W/2-14,H*0.42); ctx.lineTo(W/2+14,H*0.42);
+      ctx.lineTo(W/2+5,H*0.52); ctx.lineTo(W/2-5,H*0.52); ctx.closePath(); ctx.fill();
+      // Heat block glow
+      const hbg = ctx.createRadialGradient(W/2,H*0.35,0,W/2,H*0.35,20);
+      hbg.addColorStop(0,'rgba(255,120,30,0.3)'); hbg.addColorStop(1,'rgba(255,60,0,0)');
+      ctx.globalAlpha=0.7; ctx.fillStyle=hbg; ctx.beginPath(); ctx.arc(W/2,H*0.35,20,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      scanLines(ctx, W, H); vignette(ctx, W, H);
+      ctx.save(); ctx.font='bold 9px monospace'; ctx.fillStyle='rgba(255,140,60,0.85)';
+      ctx.fillText(`NOZZLE 245°C`, 6, H-6); ctx.restore();
+    }
+
+    // ── Tick loop ──
+    const ctxs = cvs.map(c => c.getContext('2d'));
+    const fns  = [drawCam1, drawCam2, drawCam3, drawCam4];
+    function camTick() {
+      gt++;
+      ctxs.forEach((ctx, i) => { if (!cvs[i]) return; fns[i](ctx, cvs[i].width, cvs[i].height, gt); });
+      requestAnimationFrame(camTick);
+    }
+    camTick();
+  }
+
+  // ── Timelapse strip ────────────────────────────────────────────────────────
+  function initTimelapse() {
+    const canvas = document.getElementById('timelapseCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    function resize() { const r=canvas.getBoundingClientRect(); W=canvas.width=r.width||1200; H=canvas.height=r.height||220; }
+    resize(); window.addEventListener('resize', resize);
+
+    const TOTAL = 600; // frames per print cycle
+    let t = 0;
+
+    // Print objects: array of {x,w,maxH,color,delay}
+    const objects = [
+      {x:.06,w:.10,maxH:.75,color:'#c8cce0',delay:0},
+      {x:.19,w:.10,maxH:.75,color:'#c0c4dc',delay:30},
+      {x:.32,w:.10,maxH:.75,color:'#d0d4e8',delay:60},
+      {x:.45,w:.10,maxH:.75,color:'#c4c8de',delay:90},
+      {x:.58,w:.10,maxH:.75,color:'#ccd0e4',delay:120},
+      {x:.71,w:.10,maxH:.75,color:'#bcc0d8',delay:150},
+      {x:.84,w:.10,maxH:.55,color:'#c8cce0',delay:180},
+    ];
+
+    function draw() {
+      requestAnimationFrame(draw);
+      t = (t+1) % TOTAL;
+
+      ctx.fillStyle='#06090f'; ctx.fillRect(0,0,W,H);
+
+      // Bed
+      const bedY = H*0.85;
+      const bg = ctx.createLinearGradient(0,bedY,0,H);
+      bg.addColorStop(0,'#1a2030'); bg.addColorStop(1,'#111620');
+      ctx.fillStyle=bg; ctx.fillRect(0,bedY,W,H-bedY);
+
+      // Bed grid
+      ctx.save(); ctx.globalAlpha=0.06; ctx.strokeStyle='#4060c0'; ctx.lineWidth=0.5;
+      for (let x=0;x<W;x+=20) { ctx.beginPath(); ctx.moveTo(x,bedY); ctx.lineTo(x,H); ctx.stroke(); }
+      ctx.restore();
+
+      // Draw objects
+      for (const o of objects) {
+        const pct = Math.max(0, Math.min(1, (t - o.delay) / (TOTAL - o.delay - 60)));
+        const h = o.maxH * H * pct;
+        if (h < 1) continue;
+        const ox = o.x*W, ow = o.w*W, top = bedY-h;
+
+        // Layer-by-layer with visible lines
+        ctx.save();
+        const lh=2.5;
+        for (let ly=0; ly<h; ly+=lh) {
+          ctx.globalAlpha=0.7+0.3*(ly/h);
+          ctx.fillStyle = ly%5<lh ? o.color : '#a8accc';
+          ctx.fillRect(ox, bedY-ly-lh, ow, lh);
+        }
+        // Top highlight
+        ctx.globalAlpha=0.9; ctx.fillStyle='#dde0f0'; ctx.fillRect(ox,top,ow,2);
+        // Edge glow
+        ctx.globalAlpha=0.2; ctx.strokeStyle='#0099ff'; ctx.lineWidth=1;
+        ctx.strokeRect(ox,top,ow,h);
+        ctx.restore();
+      }
+
+      // Gantry (X rail moving across bed)
+      const gy = bedY*0.15 + (bedY-bedY*0.15) * 0.5 + Math.sin(t*0.18)*bedY*0.42;
+      ctx.save();
+      ctx.globalAlpha=0.45; ctx.strokeStyle='#2a3868'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
+      const nx = (Math.sin(t*0.22)*0.5+0.5)*W;
+      const ng2 = ctx.createRadialGradient(nx,gy,0,nx,gy,12);
+      ng2.addColorStop(0,'rgba(255,160,40,0.9)'); ng2.addColorStop(1,'rgba(255,80,0,0)');
+      ctx.globalAlpha=0.85; ctx.fillStyle=ng2; ctx.beginPath(); ctx.arc(nx,gy,12,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      // Scan lines
+      ctx.save();
+      for (let y=0; y<H; y+=3) { ctx.globalAlpha=0.05; ctx.fillStyle='#000'; ctx.fillRect(0,y,W,1); }
+      ctx.restore();
+
+      // Update HUD
+      const pct = Math.min(1, t/TOTAL);
+      document.getElementById('tlFill') && (document.getElementById('tlFill').style.width = (pct*100)+'%');
+      document.getElementById('tlPct')  && (document.getElementById('tlPct').textContent  = Math.round(pct*100)+'%');
+      const sec = Math.floor(t/TOTAL*1342); // 22min compressed
+      const mm=Math.floor(sec/60), ss=sec%60;
+      document.getElementById('tlMeta') && (document.getElementById('tlMeta').textContent =
+        `X1C · ${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')} elapsed`);
+    }
+    draw();
   }
 
   // ── Printer (Web Serial) ──
