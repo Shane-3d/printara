@@ -197,18 +197,10 @@ function resize() { W=canvas.width=window.innerWidth; H=canvas.height=window.inn
 resize();
 window.addEventListener('resize', resize);
 
-// Geometry
-const RAIL_Y = 58;
-const FW     = 310;      // form width
-const BH     = 44;       // box height
-const GAP    = 13;       // gap between boxes
-
-function ft() { return CY - 112; }   // top of first box
-
-// Nozzles
+// Nozzles — positions set by measureAndBuild() before first tick
 const nozzles = [
-  {x:-80, y:RAIL_Y, color:'#0099ff', sparks:[]},
-  {x:W+80, y:RAIL_Y, color:'#ff6b35', sparks:[]},
+  {x:-80, y:0, color:'#0099ff', sparks:[]},
+  {x:W+80, y:0, color:'#ff6b35', sparks:[]},
 ];
 
 // Completed legs (full lines that stay drawn)
@@ -221,59 +213,66 @@ const legQ   = [[], []];
 // Whether each nozzle finished current leg this frame
 const legDone= [false, false];
 
-// Build the leg sequences
-function buildLegs() {
-  const FT  = ft();
-  const BX  = CX - FW/2;
-  const BXR = CX + FW/2;
-  legQ[0].length = 0; legQ[1].length = 0;
-  nozzles[0].x = -80;  nozzles[0].y = RAIL_Y;
-  nozzles[1].x = W+80; nozzles[1].y = RAIL_Y;
-
-  const ELEMS = [
-    {y:FT,                    color:'#0099ff', speed:6},  // email
-    {y:FT+BH+GAP,             color:'#0099ff', speed:6},  // password
-    {y:FT+(BH+GAP)*2,         color:'#ff6b35', speed:6},  // sign-in
-    {y:FT+(BH+GAP)*2+BH+26,  color:'#4285F4', speed:6},  // google
+// Measure actual DOM positions and build leg sequences from them
+function measureAndBuild() {
+  const ids = ['siEmail', 'siPwd', null, null];
+  const selectors = [
+    '#siEmail', '#siPwd',
+    '#pIn button[type="submit"]',
+    '.btn-google',
   ];
+  const colors = ['#0099ff', '#0099ff', '#ff6b35', '#4285F4'];
 
-  // Entry: both nozzles sweep to center along the rail
-  legQ[0].push({x1:-80, y1:RAIL_Y, x2:CX, y2:RAIL_Y, color:'#0099ff', draw:true, speed:9});
-  legQ[1].push({x1:W+80,y1:RAIL_Y, x2:CX, y2:RAIL_Y, color:'#ff6b35', draw:true, speed:9});
+  const rects = selectors.map(sel => {
+    const el = document.querySelector(sel);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { l: r.left - 1, t: r.top - 1, r: r.right + 1, b: r.bottom + 1 };
+  }).filter(Boolean);
 
-  // For each form element, trace the rectangle (both nozzles split at center)
-  for (let ei = 0; ei < ELEMS.length; ei++) {
-    const {y, color, speed} = ELEMS[ei];
-    const sp = speed;
+  if (!rects.length) return false;
 
-    // Transit from current center to center-top of this box (no line drawn)
-    const prevY = ei===0 ? RAIL_Y : ELEMS[ei-1].y + BH;
-    legQ[0].push({x1:CX, y1:prevY, x2:CX, y2:y, color, draw:false, speed:sp+2});
-    legQ[1].push({x1:CX, y1:prevY, x2:CX, y2:y, color, draw:false, speed:sp+2});
+  legQ[0].length = 0; legQ[1].length = 0;
 
-    // Draw top-left half (nozzle 0 sweeps left) and top-right half (nozzle 1 sweeps right)
-    legQ[0].push({x1:CX, y1:y, x2:BX,  y2:y,    color, draw:true, speed:sp});
-    legQ[1].push({x1:CX, y1:y, x2:BXR, y2:y,    color, draw:true, speed:sp});
+  const entryY = rects[0].t - 40;
+  nozzles[0].x = -80;   nozzles[0].y = entryY;
+  nozzles[1].x = W + 80; nozzles[1].y = entryY;
 
-    // Down the sides
-    legQ[0].push({x1:BX,  y1:y, x2:BX,  y2:y+BH, color, draw:true, speed:sp-1});
-    legQ[1].push({x1:BXR, y1:y, x2:BXR, y2:y+BH, color, draw:true, speed:sp-1});
+  // Entry rail sweep to center
+  legQ[0].push({x1:-80,   y1:entryY, x2:CX,    y2:entryY, color:'#0099ff', draw:true, speed:9});
+  legQ[1].push({x1:W+80,  y1:entryY, x2:CX,    y2:entryY, color:'#ff6b35', draw:true, speed:9});
 
-    // Close the bottom (both converge to center-bottom)
-    legQ[0].push({x1:BX,  y1:y+BH, x2:CX, y2:y+BH, color, draw:true, speed:sp});
-    legQ[1].push({x1:BXR, y1:y+BH, x2:CX, y2:y+BH, color, draw:true, speed:sp});
+  for (let i = 0; i < rects.length; i++) {
+    const rc = rects[i];
+    const color = colors[i] || '#0099ff';
+    const prevY = i === 0 ? entryY : rects[i-1].b;
+
+    // Transit down to top-center of this element (invisible move)
+    legQ[0].push({x1:CX, y1:prevY, x2:CX,  y2:rc.t, color, draw:false, speed:8});
+    legQ[1].push({x1:CX, y1:prevY, x2:CX,  y2:rc.t, color, draw:false, speed:8});
+
+    // Top edge: nozzle 0 sweeps left, nozzle 1 sweeps right — exactly on the box border
+    legQ[0].push({x1:CX,  y1:rc.t, x2:rc.l, y2:rc.t, color, draw:true, speed:6});
+    legQ[1].push({x1:CX,  y1:rc.t, x2:rc.r, y2:rc.t, color, draw:true, speed:6});
+
+    // Side edges down
+    legQ[0].push({x1:rc.l, y1:rc.t, x2:rc.l, y2:rc.b, color, draw:true, speed:5});
+    legQ[1].push({x1:rc.r, y1:rc.t, x2:rc.r, y2:rc.b, color, draw:true, speed:5});
+
+    // Bottom edge: converge back to center
+    legQ[0].push({x1:rc.l, y1:rc.b, x2:CX,  y2:rc.b, color, draw:true, speed:6});
+    legQ[1].push({x1:rc.r, y1:rc.b, x2:CX,  y2:rc.b, color, draw:true, speed:6});
   }
 
-  // Park: nozzles exit stage left/right
-  const lastY = ELEMS[ELEMS.length-1].y + BH;
-  legQ[0].push({x1:CX, y1:lastY, x2:-80,  y2:lastY+60, color:'#0099ff', draw:false, speed:12});
-  legQ[1].push({x1:CX, y1:lastY, x2:W+80, y2:lastY+60, color:'#ff6b35', draw:false, speed:12});
-}
-buildLegs();
+  // Park off-screen
+  const lastB = rects[rects.length-1].b;
+  legQ[0].push({x1:CX, y1:lastB, x2:-80,   y2:lastB+50, color:'#0099ff', draw:false, speed:12});
+  legQ[1].push({x1:CX, y1:lastB, x2:W+80,  y2:lastB+50, color:'#ff6b35', draw:false, speed:12});
 
-// Kick off first leg
-curLeg[0] = legQ[0].shift();
-curLeg[1] = legQ[1].shift();
+  curLeg[0] = legQ[0].shift();
+  curLeg[1] = legQ[1].shift();
+  return true;
+}
 
 function spawnSparks(n, count=5) {
   for (let i=0;i<count;i++){
@@ -388,14 +387,18 @@ function tick() {
   ctx.font='700 13px Inter,sans-serif';
   ctx.fillStyle='rgba(255,255,255,0.25)';
   ctx.textAlign='center';
-  ctx.fillText('PRINTARA DASHBOARD', CX, RAIL_Y - 22);
+  ctx.fillText('PRINTARA', CX, (curLeg[0] ? curLeg[0].y1 : nozzles[0].y) - 22);
   ctx.globalAlpha=1;
 
   // ── Nozzles ──
   for(const n of nozzles){ if(curLeg[nozzles.indexOf(n)]) drawNozzle(n.x,n.y,n.color); }
 }
 
-tick();
+// Wait one frame so layout is done, then measure actual element positions
+requestAnimationFrame(() => {
+  measureAndBuild();
+  tick();
+});
 </script>
 </body>
 </html>
