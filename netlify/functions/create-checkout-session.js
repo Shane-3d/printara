@@ -1,16 +1,16 @@
 // Creates a Stripe Checkout Session for the $3.99/month Print Queue subscription.
 // Set STRIPE_SECRET_KEY in Netlify → Site → Environment Variables.
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   if (!process.env.STRIPE_SECRET_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'Stripe not configured. Add STRIPE_SECRET_KEY to Netlify environment variables.' }) };
+    return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Stripe not configured. Add STRIPE_SECRET_KEY to Netlify environment variables.' }) };
   }
+
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch {}
