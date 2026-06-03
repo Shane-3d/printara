@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Printara Print Queue</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --surface: #101010;
+      --surface2: #181818;
+      --border: #222;
+      --red: #e02020;
+      --red-dim: rgba(224,32,32,0.12);
+      --red-glow: rgba(224,32,32,0.35);
+      --text: #f0f0f0;
+      --text2: #888;
+      --text3: #444;
+      --green: #22c55e;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.6; min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav {
+      display: flex; align-items: center; padding: 0 32px; height: 56px;
+      border-bottom: 1px solid var(--border); background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(14px); position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--text); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; }
+    .nav-logo img { width: 24px; height: 24px; border-radius: 4px; }
+    nav .spacer { flex: 1; }
+    nav a.nl { color: var(--text2); text-decoration: none; font-size: 14px; margin-left: 24px; transition: color .15s; }
+    nav a.nl:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center; padding: 80px 24px 56px; max-width: 700px; margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--red-dim); border: 1px solid rgba(224,32,32,0.28);
+      border-radius: 999px; padding: 5px 16px; font-size: 12px; font-weight: 700;
+      color: var(--red); letter-spacing: .3px; margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5.5vw, 60px); font-weight: 800; line-height: 1.08;
+      margin-bottom: 16px; color: #fff;
+    }
+    .hero h1 span { color: var(--red); }
+    .hero p { font-size: 16px; color: var(--text2); max-width: 480px; margin: 0 auto; line-height: 1.65; }
+
+    /* ── Cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px; max-width: 900px; margin: 0 auto 80px; padding: 0 24px;
+    }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px 32px; position: relative; overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { transform: translateY(-3px); }
+
+    .card.featured {
+      border-color: rgba(224,32,32,0.5);
+      background: linear-gradient(145deg, #111, #150a0a);
+      box-shadow: 0 0 60px rgba(224,32,32,0.10), 0 24px 60px rgba(0,0,0,0.5);
+    }
+    .card.featured::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+    }
+
+    .card-badge {
+      display: inline-block; background: var(--red); color: #fff;
+      font-size: 10px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 999px; margin-bottom: 20px;
+    }
+
+    .card-name { font-size: 13px; font-weight: 700; color: var(--text2); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
+
+    .price {
+      display: flex; align-items: flex-end; gap: 4px; margin-bottom: 6px;
+    }
+    .price .amount { font-family: 'Space Grotesk', sans-serif; font-size: 56px; font-weight: 800; color: #fff; line-height: 1; }
+    .price .cents { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.6; }
+    .price .period { font-size: 14px; color: var(--text2); padding-bottom: 8px; }
+
+    .price-note { font-size: 12px; color: var(--text3); margin-bottom: 28px; }
+
+    .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+    .features { list-style: none; display: flex; flex-direction: column; gap: 13px; margin-bottom: 32px; }
+    .features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text2); }
+    .features li .check { color: var(--green); font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .features li .x { color: var(--text3); font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .features li strong { color: var(--text); }
+
+    .btn-sub {
+      display: block; width: 100%; padding: 15px; border-radius: 12px;
+      font-size: 15px; font-weight: 800; cursor: pointer; font-family: inherit;
+      text-align: center; text-decoration: none; transition: all .15s; border: none;
+    }
+    .btn-sub.primary {
+      background: var(--red); color: #fff;
+      box-shadow: 0 6px 24px var(--red-glow);
+    }
+    .btn-sub.primary:hover { background: #c81a1a; box-shadow: 0 8px 32px var(--red-glow); transform: translateY(-1px); }
+    .btn-sub.secondary {
+      background: transparent; color: var(--text2);
+      border: 1.5px solid var(--border);
+    }
+    .btn-sub.secondary:hover { border-color: #555; color: var(--text); }
+
+    .sub-msg { font-size: 12px; color: var(--text3); text-align: center; margin-top: 12px; min-height: 18px; }
+    .sub-msg.err { color: #e05555; }
+
+    /* ── Compare table ── */
+    .compare { max-width: 720px; margin: 0 auto 80px; padding: 0 24px; }
+    .compare h2 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 32px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); border-bottom: 1px solid var(--border); }
+    th:not(:first-child) { text-align: center; }
+    td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--text2); }
+    td:not(:first-child) { text-align: center; }
+    td.yes { color: var(--green); font-weight: 700; }
+    td.no  { color: var(--text3); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    /* ── FAQ ── */
+    .faq { max-width: 640px; margin: 0 auto 80px; padding: 0 24px; }
+    .faq h2 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 32px; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q { font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--text); }
+    .faq-a { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+    /* ── Footer ── */
+    footer { border-top: 1px solid var(--border); padding: 28px 32px; text-align: center; font-size: 13px; color: var(--text3); }
+    footer a { color: var(--text2); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="Printara" />
+    Printara
+  </a>
+  <div class="spacer"></div>
+  <a href="index.html" class="nl">Home</a>
+  <a href="tools.html" class="nl">Tools</a>
+  <a href="download.html" class="nl">Download</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-badge">🖨️ Print Queue App</div>
+  <h1>Simple pricing.<br/><span>No surprises.</span></h1>
+  <p>One plan. Full access to the Printara Print Queue desktop app on Windows, Mac &amp; Linux. Cancel anytime.</p>
+</section>
+
+<!-- ── Pricing cards ── -->
+<div class="cards">
+
+  <!-- Free tier -->
+  <div class="card">
+    <div class="card-name">Free</div>
+    <div class="price">
+      <span class="amount">$0</span>
+      <span class="period">&nbsp;/ forever</span>
+    </div>
+    <p class="price-note">No credit card required</p>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="check">✓</span> <span><strong>3D design tools</strong> in the browser</span></li>
+      <li><span class="check">✓</span> <span><strong>Community project library</strong></span></li>
+      <li><span class="check">✓</span> <span><strong>Lithophane, map &amp; statue generators</strong></span></li>
+      <li><span class="x">✗</span> <span>Print Queue desktop app</span></li>
+      <li><span class="x">✗</span> <span>Auto-queue &amp; auto-eject</span></li>
+      <li><span class="x">✗</span> <span>Live temperature monitoring</span></li>
+    </ul>
+    <a href="index.html" class="btn-sub secondary">Get Started Free</a>
+  </div>
+
+  <!-- Pro tier -->
+  <div class="card featured">
+    <div class="card-badge">Most Popular</div>
+    <div class="card-name">Print Queue</div>
+    <div class="price">
+      <span class="amount">$3</span><span class="cents">.99</span>
+      <span class="period">&nbsp;/ month</span>
+    </div>
+    <p class="price-note">Billed monthly · cancel anytime</p>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="check">✓</span> <span>Everything in Free</span></li>
+      <li><span class="check">✓</span> <span><strong>Print Queue desktop app</strong> — Windows, Mac &amp; Linux</span></li>
+      <li><span class="check">✓</span> <span><strong>Auto-queue</strong> — next job starts automatically</span></li>
+      <li><span class="check">✓</span> <span><strong>Auto-eject</strong> — configurable end-of-print sequence</span></li>
+      <li><span class="check">✓</span> <span><strong>Live temperature display</strong> — hotend &amp; bed</span></li>
+      <li><span class="check">✓</span> <span><strong>Built-in G-code console</strong></span></li>
+      <li><span class="check">✓</span> <span><strong>All future updates</strong> included</span></li>
+    </ul>
+    <button class="btn-sub primary" id="sub-btn" onclick="startCheckout()">Subscribe &amp; Download →</button>
+    <p class="sub-msg" id="sub-msg"></p>
+  </div>
+
+</div>
+
+<!-- ── Compare table ── -->
+<section class="compare">
+  <h2>Full comparison</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Free</th>
+        <th style="color:var(--red)">Print Queue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Browser-based 3D tools</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Community project library</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Lithophane generator</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Map &amp; statue generator</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      <tr><td>Print Queue desktop app</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      <tr><td>Auto-queue (next job auto-start)</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      <tr><td>Auto-eject after print</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      <tr><td>Live temperature monitoring</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      <tr><td>G-code console</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      <tr><td>Pause / Resume / Cancel</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      <tr><td>All future updates</td><td class="no">✗</td><td class="yes">✓</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq">
+  <h2>Common questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q">Can I cancel anytime?</div>
+    <div class="faq-a">Yes. Cancel from your Stripe billing portal at any time — no questions asked. You keep access until the end of the billing period.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">What printers does it support?</div>
+    <div class="faq-a">Any printer that uses USB serial — Ender 3, Prusa MK3S/MK4, Voron, CR-10, Artillery, Anycubic Kobra, Neptune 4, Bambu Lab (serial mode), and any Marlin or Klipper printer with USB.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Does it work on Mac and Linux?</div>
+    <div class="faq-a">Yes. The desktop app is available for Windows 10/11, macOS, and Linux (.deb / .rpm). All platforms are included in a single subscription.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Is my payment secure?</div>
+    <div class="faq-a">Payments are handled entirely by Stripe — your card details never touch our servers. Stripe is used by millions of businesses worldwide.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">What happens after I subscribe?</div>
+    <div class="faq-a">You're redirected back here instantly with access to the Windows, Mac, and Linux downloads. No email confirmation needed.</div>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-bottom:8px">
+    <a href="index.html">Home</a> &nbsp;·&nbsp;
+    <a href="tools.html">Tools</a> &nbsp;·&nbsp;
+    <a href="download.html">Download</a>
+  </p>
+  © 2026 Printara. Payments secured by Stripe.
+</footer>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const STRIPE_PK = 'pk_test_51THCJOJwfRKy9mYmov2vC8u8cFkrgXRUjjaNhlEj1lvtegHfHEs1mdGDrhYHFmwdC2f9qhLMvjkSM4uYtBJTHKuA00iljZaNZP';
+
+  // Check existing subscription
+  (function () {
+    const sub = JSON.parse(localStorage.getItem('pq_sub') || 'null');
+    if (sub && sub.active && sub.expires > Date.now()) {
+      document.getElementById('sub-btn').textContent = '✓ Subscribed — Go to Download';
+      document.getElementById('sub-btn').onclick = () => location.href = 'download.html#download';
+    }
+  })();
+
+  // Handle return from Stripe
+  (async function () {
+    const params = new URLSearchParams(location.search);
+    if (params.get('sub') === 'success' && params.get('session_id')) {
+      const msg = document.getElementById('sub-msg');
+      const btn = document.getElementById('sub-btn');
+      msg.textContent = 'Verifying payment…';
+      try {
+        const res = await fetch('/.netlify/functions/verify-subscription?session_id=' + params.get('session_id'));
+        const data = await res.json();
+        if (data.active) {
+          localStorage.setItem('pq_sub', JSON.stringify({ active: true, expires: Date.now() + 30*24*60*60*1000, email: data.email }));
+          btn.textContent = '✓ Subscribed — Go to Download';
+          btn.onclick = () => location.href = 'download.html#download';
+          msg.textContent = 'Payment confirmed! Click above to download.';
+          msg.style.color = '#22c55e';
+        } else {
+          msg.textContent = 'Payment not confirmed yet — please wait a moment and refresh.';
+          msg.classList.add('err');
+        }
+      } catch {
+        msg.textContent = 'Could not verify. Please contact support.';
+        msg.classList.add('err');
+      }
+      history.replaceState({}, '', location.pathname);
+    } else if (params.get('sub') === 'cancel') {
+      document.getElementById('sub-msg').textContent = 'Payment cancelled — no charge was made.';
+      history.replaceState({}, '', location.pathname);
+    }
+  })();
+
+  async function startCheckout() {
+    const btn = document.getElementById('sub-btn');
+    const msg = document.getElementById('sub-msg');
+    btn.textContent = 'Loading…';
+    btn.disabled = true;
+    msg.textContent = '';
+    msg.classList.remove('err');
+    try {
+      const res = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+    } catch (e) {
+      msg.textContent = e.message;
+      msg.classList.add('err');
+      btn.textContent = 'Subscribe & Download →';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
