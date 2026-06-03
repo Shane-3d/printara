@@ -1,7 +1,11 @@
 {
-  "name": "pro-fab-3d",
+  "name": "printara",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
   "dependencies": {
     "basic-ftp": "^5.3.1",
     "dotenv": "^16.4.0",
