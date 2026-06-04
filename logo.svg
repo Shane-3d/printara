@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </linearGradient>
+    <linearGradient id="rd" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF4444"/>
+      <stop offset="100%" stop-color="#BB0000"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="48" height="48" rx="11" fill="url(#bg)"/>
+  <!-- Red border -->
+  <rect x="1.25" y="1.25" width="45.5" height="45.5" rx="9.75" stroke="url(#rd)" stroke-width="1.5"/>
+
+  <!-- P stem -->
+  <rect x="11" y="7" width="8" height="24" rx="1" fill="white"/>
+  <!-- P bowl (D-shape upper right) -->
+  <path d="M19 7 Q36 7 36 17 Q36 27 19 27 Z" fill="white"/>
+  <!-- P counter — hollow inside bowl -->
+  <path d="M21 11 Q32 11 32 17 Q32 23 21 23 Z" fill="url(#bg)"/>
+
+  <!-- Nozzle (red downward triangle) -->
+  <polygon points="11,31 19,31 15,42" fill="url(#rd)"/>
+  <!-- Extruded filament drop -->
+  <circle cx="15" cy="45.5" r="1.8" fill="#CC0000"/>
+</svg>

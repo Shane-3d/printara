@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Tools — Printara</title>
-  <link rel="icon" href="logo.png" />
-  <link rel="apple-touch-icon" href="logo.png" />
+  <title>3D Tools â€” Printara</title>
+  <link rel="icon" href="logo.svg" />
+  <link rel="apple-touch-icon" href="logo.svg" />
   <meta name="apple-mobile-web-app-title" content="Printara" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -20,9 +20,9 @@
 <!-- ===== PRINTER MODAL ===== -->
 <div id="printerModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;box-sizing:border-box;" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:var(--clr-surface,#13131e);border:1px solid var(--clr-border,#2a2a3d);border-radius:20px;padding:28px;width:100%;max-width:480px;position:relative;">
-    <button onclick="document.getElementById('printerModal').style.display='none'" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:22px;color:#888;cursor:pointer;">×</button>
+    <button onclick="document.getElementById('printerModal').style.display='none'" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:22px;color:#888;cursor:pointer;">Ã—</button>
     <h2 style="margin:0 0 4px;font-size:18px;font-weight:800;color:var(--clr-text,#e8e8f0);">Connect Printer</h2>
-    <p style="margin:0 0 16px;font-size:13px;color:#888;">Uses Web Serial — requires Chrome or Edge on desktop.</p>
+    <p style="margin:0 0 16px;font-size:13px;color:#888;">Uses Web Serial â€” requires Chrome or Edge on desktop.</p>
     <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;background:var(--clr-bg,#0d0d14);border:1px solid var(--clr-border,#2a2a3d);margin-bottom:16px;">
       <div id="prDot" style="width:10px;height:10px;border-radius:50%;background:#555;flex-shrink:0;"></div>
       <span id="prStatusText" style="font-size:13px;font-weight:600;color:var(--clr-text,#e8e8f0);">Not connected</span>
@@ -36,63 +36,63 @@
       <input id="prGcodeInput" placeholder="G28 ; home all axes" onkeydown="if(event.key==='Enter')prSend()" disabled style="flex:1;padding:10px 12px;font-size:13px;font-family:monospace;background:var(--clr-bg,#0d0d14);border:1px solid var(--clr-border,#2a2a3d);border-radius:10px;color:var(--clr-text,#e8e8f0);" />
       <button id="prSendBtn" onclick="prSend()" disabled style="padding:10px 16px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:#0099ff;color:#fff;font-family:inherit;">Send</button>
     </div>
-    <div style="margin-top:10px;font-size:11px;color:#555;">Common: <code>G28</code> home · <code>G1 Z10 F300</code> move · <code>M104 S200</code> heat nozzle · <code>M109 S200</code> wait · <code>M106 S255</code> fan on</div>
+    <div style="margin-top:10px;font-size:11px;color:#555;">Common: <code>G28</code> home Â· <code>G1 Z10 F300</code> move Â· <code>M104 S200</code> heat nozzle Â· <code>M109 S200</code> wait Â· <code>M106 S255</code> fan on</div>
   </div>
 </div>
 
   <header class="header admin-content unlocked">
     <div class="header-inner">
-      <a href="index.html" class="logo"><img src="logo.png" alt="Printara" class="logo-img" /></a>
-      <nav class="nav"><a href="index.html" class="nav-link">← Home</a></nav>
+      <a href="index.html" class="logo"><img src="logo.svg" alt="Printara" class="logo-img" /></a>
+      <nav class="nav"><a href="index.html" class="nav-link">â† Home</a></nav>
       <span id="toolsUserBadge" style="margin-left:auto;background:rgba(0,150,255,0.15);border:1px solid rgba(0,150,255,0.4);color:#0099ff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;"></span>
-      <button id="prHeaderBtn" onclick="document.getElementById('printerModal').style.display='flex'" title="Connect 3D Printer" style="display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:13px;border-radius:10px;border:1px solid var(--clr-border,#2a2a3d);background:var(--clr-surface,#13131e);color:var(--clr-text,#e8e8f0);cursor:pointer;font-family:inherit;font-weight:600;transition:border-color .15s;">🖨️ <span id="prHeaderLabel">Connect Printer</span></button>
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+      <button id="prHeaderBtn" onclick="document.getElementById('printerModal').style.display='flex'" title="Connect 3D Printer" style="display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:13px;border-radius:10px;border:1px solid var(--clr-border,#2a2a3d);background:var(--clr-surface,#13131e);color:var(--clr-text,#e8e8f0);cursor:pointer;font-family:inherit;font-weight:600;transition:border-color .15s;">ðŸ–¨ï¸ <span id="prHeaderLabel">Connect Printer</span></button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">ðŸŒ™</button>
     </div>
   </header>
 
   <aside class="sidebar admin-content unlocked">
     <div class="sidebar-group">
       <div class="sidebar-group-label">3D Tools</div>
-      <button class="sidebar-item active" id="sbi-studio" onclick="switchTab('studio')"><span class="sidebar-item-icon">🖨️</span> 3D Studio</button>
-      <button class="sidebar-item" id="sbi-statue" onclick="switchTab('statue')"><span class="sidebar-item-icon">🗿</span> Statue Generator</button>
-      <button class="sidebar-item" id="sbi-litho" onclick="switchTab('litho')"><span class="sidebar-item-icon">🖼️</span> Lithophane</button>
-      <button class="sidebar-item" id="sbi-map" onclick="switchTab('map')"><span class="sidebar-item-icon">🗺️</span> Map Generator</button>
-      <button class="sidebar-item" id="sbi-openscad" onclick="switchTab('openscad')"><span class="sidebar-item-icon">📐</span> OpenSCAD</button>
+      <button class="sidebar-item active" id="sbi-studio" onclick="switchTab('studio')"><span class="sidebar-item-icon">ðŸ–¨ï¸</span> 3D Studio</button>
+      <button class="sidebar-item" id="sbi-statue" onclick="switchTab('statue')"><span class="sidebar-item-icon">ðŸ—¿</span> Statue Generator</button>
+      <button class="sidebar-item" id="sbi-litho" onclick="switchTab('litho')"><span class="sidebar-item-icon">ðŸ–¼ï¸</span> Lithophane</button>
+      <button class="sidebar-item" id="sbi-map" onclick="switchTab('map')"><span class="sidebar-item-icon">ðŸ—ºï¸</span> Map Generator</button>
+      <button class="sidebar-item" id="sbi-openscad" onclick="switchTab('openscad')"><span class="sidebar-item-icon">ðŸ“</span> OpenSCAD</button>
     </div>
     <div class="sidebar-bottom">
-      <a href="index.html" class="sidebar-item"><span class="sidebar-item-icon">←</span> Home</a>
+      <a href="index.html" class="sidebar-item"><span class="sidebar-item-icon">â†</span> Home</a>
     </div>
   </aside>
 
   <nav class="admin-bottom-nav admin-content unlocked">
-    <button class="admin-bottom-nav-item active" id="mni-studio" onclick="switchTab('studio')"><span class="admin-bottom-nav-icon">🖨️</span>3D Studio</button>
-    <button class="admin-bottom-nav-item" id="mni-statue" onclick="switchTab('statue')"><span class="admin-bottom-nav-icon">🗿</span>Statue</button>
-    <button class="admin-bottom-nav-item" id="mni-litho" onclick="switchTab('litho')"><span class="admin-bottom-nav-icon">🖼️</span>Litho</button>
-    <button class="admin-bottom-nav-item" id="mni-map" onclick="switchTab('map')"><span class="admin-bottom-nav-icon">🗺️</span>Map</button>
-    <button class="admin-bottom-nav-item" id="mni-openscad" onclick="switchTab('openscad')"><span class="admin-bottom-nav-icon">📐</span>OpenSCAD</button>
+    <button class="admin-bottom-nav-item active" id="mni-studio" onclick="switchTab('studio')"><span class="admin-bottom-nav-icon">ðŸ–¨ï¸</span>3D Studio</button>
+    <button class="admin-bottom-nav-item" id="mni-statue" onclick="switchTab('statue')"><span class="admin-bottom-nav-icon">ðŸ—¿</span>Statue</button>
+    <button class="admin-bottom-nav-item" id="mni-litho" onclick="switchTab('litho')"><span class="admin-bottom-nav-icon">ðŸ–¼ï¸</span>Litho</button>
+    <button class="admin-bottom-nav-item" id="mni-map" onclick="switchTab('map')"><span class="admin-bottom-nav-icon">ðŸ—ºï¸</span>Map</button>
+    <button class="admin-bottom-nav-item" id="mni-openscad" onclick="switchTab('openscad')"><span class="admin-bottom-nav-icon">ðŸ“</span>OpenSCAD</button>
   </nav>
 
   <div class="admin-wrap admin-content unlocked">
     <div class="admin-tabs">
-      <button class="tab-btn nav-tab active" onclick="switchTab('studio')">🖨️ 3D Studio</button>
-      <button class="tab-btn nav-tab" onclick="switchTab('statue')">🗿 Statue Generator</button>
-      <button class="tab-btn nav-tab" onclick="switchTab('litho')">🖼️ Lithophane</button>
-      <button class="tab-btn nav-tab" onclick="switchTab('map')">🗺️ Map Generator</button>
-      <button class="tab-btn nav-tab" onclick="switchTab('openscad')">📐 OpenSCAD</button>
+      <button class="tab-btn nav-tab active" onclick="switchTab('studio')">ðŸ–¨ï¸ 3D Studio</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('statue')">ðŸ—¿ Statue Generator</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('litho')">ðŸ–¼ï¸ Lithophane</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('map')">ðŸ—ºï¸ Map Generator</button>
+      <button class="tab-btn nav-tab" onclick="switchTab('openscad')">ðŸ“ OpenSCAD</button>
     </div>
 
     <div class="tab-panel active" id="tab-studio">
 
       <!-- Header -->
       <div class="tool-header">
-        <div class="tool-header-icon">🖨️</div>
+        <div class="tool-header-icon">ðŸ–¨ï¸</div>
         <div>
           <h2 class="tool-header-title">3D Shape Builder</h2>
           <p class="tool-header-sub">Add and arrange 3D primitives, then export as STL.</p>
         </div>
       </div>
 
-      <!-- ══ SHAPE BUILDER ══════════════════════════════════════════════════════ -->
+      <!-- â•â• SHAPE BUILDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div id="studioBuilderPanel">
 
         <!-- Toolbar -->
@@ -107,8 +107,8 @@
             <input type="checkbox" id="sbSnap" checked style="accent-color:var(--accent);width:13px;height:13px;" /> Grid snap
           </label>
           <div style="width:1px;height:18px;background:var(--border);margin:0 2px;"></div>
-          <button class="tab-btn" id="sbUndoBtn" onclick="sbUndo()" style="padding:4px 10px;font-size:12px;" title="Undo (Ctrl+Z)">↩ Undo</button>
-          <button class="tab-btn" id="sbRedoBtn" onclick="sbRedo()" style="padding:4px 10px;font-size:12px;" title="Redo (Ctrl+Y)">↪ Redo</button>
+          <button class="tab-btn" id="sbUndoBtn" onclick="sbUndo()" style="padding:4px 10px;font-size:12px;" title="Undo (Ctrl+Z)">â†© Undo</button>
+          <button class="tab-btn" id="sbRedoBtn" onclick="sbRedo()" style="padding:4px 10px;font-size:12px;" title="Redo (Ctrl+Y)">â†ª Redo</button>
           <div style="flex:1;min-width:0;"></div>
           <span id="sbHint" style="font-size:11px;color:var(--text3);font-style:italic;">Click a shape in the viewport to select it</span>
         </div>
@@ -123,12 +123,12 @@
             <div class="tool-card">
               <div class="tool-card-label">Add Shape</div>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
-                <button class="tab-btn" onclick="studioAddShape('box')"      style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">⬜</span>Box</button>
-                <button class="tab-btn" onclick="studioAddShape('sphere')"   style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">⚪</span>Sphere</button>
-                <button class="tab-btn" onclick="studioAddShape('cylinder')" style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">🥫</span>Cylinder</button>
-                <button class="tab-btn" onclick="studioAddShape('cone')"     style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">🔺</span>Cone</button>
-                <button class="tab-btn" onclick="studioAddShape('torus')"    style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">⭕</span>Torus</button>
-                <button class="tab-btn" onclick="studioAddShape('wedge')"    style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">📐</span>Wedge</button>
+                <button class="tab-btn" onclick="studioAddShape('box')"      style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">â¬œ</span>Box</button>
+                <button class="tab-btn" onclick="studioAddShape('sphere')"   style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">âšª</span>Sphere</button>
+                <button class="tab-btn" onclick="studioAddShape('cylinder')" style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">ðŸ¥«</span>Cylinder</button>
+                <button class="tab-btn" onclick="studioAddShape('cone')"     style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">ðŸ”º</span>Cone</button>
+                <button class="tab-btn" onclick="studioAddShape('torus')"    style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">â­•</span>Torus</button>
+                <button class="tab-btn" onclick="studioAddShape('wedge')"    style="display:flex;flex-direction:column;align-items:center;padding:7px 4px;font-size:10px;gap:2px;"><span style="font-size:20px;">ðŸ“</span>Wedge</button>
               </div>
             </div>
 
@@ -160,30 +160,30 @@
               <div id="sbSizeSliders"></div>
 
               <!-- Rotate -->
-              <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.07em;margin:8px 0 5px;text-transform:uppercase;">Rotate (°)</div>
+              <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.07em;margin:8px 0 5px;text-transform:uppercase;">Rotate (Â°)</div>
               <div id="sbRotSliders"></div>
 
               <!-- Quick-action buttons -->
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px;">
-                <button class="tab-btn" onclick="sbAlignFloor()"    title="Snap bottom of shape to Y = 0" style="font-size:11px;padding:6px;">⬇ To Floor</button>
-                <button class="tab-btn" onclick="sbCenterXZ()"      title="Move to center of scene (X=0, Z=0)" style="font-size:11px;padding:6px;">⊕ Center</button>
-                <button class="tab-btn" onclick="sbDuplicate()"     title="Duplicate selected shape" style="font-size:11px;padding:6px;">⎘ Duplicate</button>
-                <button onclick="studioDeleteSelected()" title="Delete (Del key)" style="font-size:11px;padding:6px;border-radius:7px;border:1px solid var(--accent3);background:rgba(239,83,80,.1);color:var(--accent3);cursor:pointer;font-weight:600;">✕ Delete</button>
+                <button class="tab-btn" onclick="sbAlignFloor()"    title="Snap bottom of shape to Y = 0" style="font-size:11px;padding:6px;">â¬‡ To Floor</button>
+                <button class="tab-btn" onclick="sbCenterXZ()"      title="Move to center of scene (X=0, Z=0)" style="font-size:11px;padding:6px;">âŠ• Center</button>
+                <button class="tab-btn" onclick="sbDuplicate()"     title="Duplicate selected shape" style="font-size:11px;padding:6px;">âŽ˜ Duplicate</button>
+                <button onclick="studioDeleteSelected()" title="Delete (Del key)" style="font-size:11px;padding:6px;border-radius:7px;border:1px solid var(--accent3);background:rgba(239,83,80,.1);color:var(--accent3);cursor:pointer;font-weight:600;">âœ• Delete</button>
               </div>
             </div>
 
             <!-- Export row -->
             <div style="display:flex;gap:6px;">
-              <button class="btn-primary" onclick="studioExportSTL()" style="flex:1;font-size:13px;padding:11px;">↓ Export STL</button>
-              <button class="tab-btn" onclick="studioClear()" title="Remove all shapes" style="padding:10px 14px;font-size:15px;" title="Clear scene">🗑</button>
+              <button class="btn-primary" onclick="studioExportSTL()" style="flex:1;font-size:13px;padding:11px;">â†“ Export STL</button>
+              <button class="tab-btn" onclick="studioClear()" title="Remove all shapes" style="padding:10px 14px;font-size:15px;" title="Clear scene">ðŸ—‘</button>
             </div>
           </div>
 
           <!-- RIGHT: 3D viewport -->
           <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
             <div class="tool-viewport-hint">
-              <b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom · <b>Click shape</b> to select ·
-              <kbd style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;">Del</kbd> delete ·
+              <b>Left-drag</b> orbit Â· <b>Right-drag</b> pan Â· <b>Scroll</b> zoom Â· <b>Click shape</b> to select Â·
+              <kbd style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;">Del</kbd> delete Â·
               <kbd style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;">Ctrl Z</kbd> undo
             </div>
             <canvas id="studioCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
@@ -200,7 +200,7 @@
 
       <!-- Header -->
       <div class="tool-header">
-        <div class="tool-header-icon">🗺️</div>
+        <div class="tool-header-icon">ðŸ—ºï¸</div>
         <div>
           <h2 class="tool-header-title">3D Map Generator</h2>
           <p class="tool-header-sub">Enter any address or location to generate a 3D printable terrain relief map and export as STL.</p>
@@ -210,19 +210,19 @@
       <!-- Search bar -->
       <div class="map-search-row">
         <input type="text" id="mapAddressInput" class="map-search-input"
-          placeholder="Address, city, mountain, or landmark — e.g. Grand Canyon, AZ"
+          placeholder="Address, city, mountain, or landmark â€” e.g. Grand Canyon, AZ"
           onkeydown="if(event.key==='Enter')mapSearch()" />
-        <button class="btn-primary" id="mapSearchBtn" onclick="mapSearch()" style="white-space:nowrap;padding:12px 20px;">Search →</button>
+        <button class="btn-primary" id="mapSearchBtn" onclick="mapSearch()" style="white-space:nowrap;padding:12px 20px;">Search â†’</button>
       </div>
       <div id="mapGeoResult" style="font-size:13px;color:var(--text2);margin-bottom:10px;min-height:18px;padding:0 2px;max-height:260px;overflow-y:auto;"></div>
 
       <!-- Area scale selector -->
       <div class="tool-toolbar">
         <span class="tool-toolbar-label">Area</span>
-        <button id="mgBtn_property"     onclick="setMapScale('property')"     class="tab-btn"    style="font-size:12px;padding:5px 14px;">🏠 Property</button>
-        <button id="mgBtn_neighborhood" onclick="setMapScale('neighborhood')" class="btn-primary" style="font-size:12px;padding:5px 14px;">🏘️ Neighborhood</button>
-        <button id="mgBtn_city"         onclick="setMapScale('city')"         class="tab-btn"    style="font-size:12px;padding:5px 14px;">🏙️ City</button>
-        <button id="mgBtn_region"       onclick="setMapScale('region')"       class="tab-btn"    style="font-size:12px;padding:5px 14px;">🌄 Region</button>
+        <button id="mgBtn_property"     onclick="setMapScale('property')"     class="tab-btn"    style="font-size:12px;padding:5px 14px;">ðŸ  Property</button>
+        <button id="mgBtn_neighborhood" onclick="setMapScale('neighborhood')" class="btn-primary" style="font-size:12px;padding:5px 14px;">ðŸ˜ï¸ Neighborhood</button>
+        <button id="mgBtn_city"         onclick="setMapScale('city')"         class="tab-btn"    style="font-size:12px;padding:5px 14px;">ðŸ™ï¸ City</button>
+        <button id="mgBtn_region"       onclick="setMapScale('region')"       class="tab-btn"    style="font-size:12px;padding:5px 14px;">ðŸŒ„ Region</button>
       </div>
 
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
@@ -243,8 +243,8 @@
                 <input type="range" id="mgBase" min="2" max="15" value="4" oninput="document.getElementById('mgBaseVal').textContent=this.value" style="width:100%;accent-color:var(--accent);" />
               </div>
               <div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Vertical Exaggeration</span><span id="mgExagVal" style="color:var(--accent);font-weight:700;">5×</span></div>
-                <input type="range" id="mgExag" min="1" max="50" value="5" oninput="document.getElementById('mgExagVal').textContent=this.value+'×'" style="width:100%;accent-color:var(--accent);" />
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Vertical Exaggeration</span><span id="mgExagVal" style="color:var(--accent);font-weight:700;">5Ã—</span></div>
+                <input type="range" id="mgExag" min="1" max="50" value="5" oninput="document.getElementById('mgExagVal').textContent=this.value+'Ã—'" style="width:100%;accent-color:var(--accent);" />
               </div>
               <div>
                 <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Mesh Resolution</span><span id="mgResVal" style="color:var(--accent);font-weight:700;">100</span></div>
@@ -259,19 +259,19 @@
                 <input type="color" id="mgBldColor" value="#a09898" title="Building color" style="width:38px;height:30px;border:none;border-radius:7px;cursor:pointer;padding:2px;background:none;" />
               </div>
               <div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Building Height Scale</span><span id="mgBldScaleVal" style="color:var(--accent);font-weight:700;">8×</span></div>
-                <input type="range" id="mgBldScale" min="1" max="30" value="8" oninput="document.getElementById('mgBldScaleVal').textContent=this.value+'×'" style="width:100%;accent-color:var(--accent);" />
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text2);">Building Height Scale</span><span id="mgBldScaleVal" style="color:var(--accent);font-weight:700;">8Ã—</span></div>
+                <input type="range" id="mgBldScale" min="1" max="30" value="8" oninput="document.getElementById('mgBldScaleVal').textContent=this.value+'Ã—'" style="width:100%;accent-color:var(--accent);" />
               </div>
             </div>
           </div>
 
           <!-- Actions -->
-          <button class="btn-primary" id="mgGenerateBtn" onclick="generateMap()" style="font-size:13px;padding:12px;">Generate Terrain Map →</button>
+          <button class="btn-primary" id="mgGenerateBtn" onclick="generateMap()" style="font-size:13px;padding:12px;">Generate Terrain Map â†’</button>
           <div id="mgProgress" style="display:none;font-size:12px;color:var(--text3);text-align:center;padding:8px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
-            <span id="mgProgressText">Loading terrain data…</span>
+            <span id="mgProgressText">Loading terrain dataâ€¦</span>
           </div>
-          <button id="mgBuildingsBtn" class="tab-btn" onclick="addBuildings()" style="font-size:12px;display:none;padding:11px;">🏗️ Refresh Buildings</button>
-          <button id="mgExportBtn" class="tab-btn" onclick="mapExportSTL()" style="font-size:12px;display:none;padding:11px;">↓ Export STL</button>
+          <button id="mgBuildingsBtn" class="tab-btn" onclick="addBuildings()" style="font-size:12px;display:none;padding:11px;">ðŸ—ï¸ Refresh Buildings</button>
+          <button id="mgExportBtn" class="tab-btn" onclick="mapExportSTL()" style="font-size:12px;display:none;padding:11px;">â†“ Export STL</button>
           <div id="mgInfo" style="font-size:11px;color:var(--text3);min-height:14px;text-align:center;"></div>
 
           <!-- How it works -->
@@ -289,7 +289,7 @@
 
         <!-- 3D Viewport -->
         <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
-          <div class="tool-viewport-hint"><b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom</div>
+          <div class="tool-viewport-hint"><b>Left-drag</b> orbit Â· <b>Right-drag</b> pan Â· <b>Scroll</b> zoom</div>
           <canvas id="mapCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
           <div id="mgDimLabel" style="font-size:11px;color:var(--accent);min-height:16px;text-align:right;"></div>
         </div>
@@ -302,7 +302,7 @@
 
       <!-- Header -->
       <div class="tool-header">
-        <div class="tool-header-icon">🖼️</div>
+        <div class="tool-header-icon">ðŸ–¼ï¸</div>
         <div>
           <h2 class="tool-header-title">Lithophane Generator</h2>
           <p class="tool-header-sub">Convert a photo into a 3D printable lithophane and export as STL.</p>
@@ -380,15 +380,15 @@
 
           <!-- Actions -->
           <div style="display:flex;flex-direction:column;gap:6px;">
-            <button class="btn-primary" onclick="studioGenerateFromImage()" style="font-size:13px;padding:12px;">Generate Lithophane →</button>
-            <button id="imgExportBtn" class="tab-btn" onclick="studioExportImageSTL()" style="font-size:12px;display:none;">↓ Export STL</button>
+            <button class="btn-primary" onclick="studioGenerateFromImage()" style="font-size:13px;padding:12px;">Generate Lithophane â†’</button>
+            <button id="imgExportBtn" class="tab-btn" onclick="studioExportImageSTL()" style="font-size:12px;display:none;">â†“ Export STL</button>
           </div>
           <div id="imgStatus" style="font-size:12px;color:var(--text3);display:none;"></div>
         </div>
 
         <!-- Viewport -->
         <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
-          <div class="tool-viewport-hint"><b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom</div>
+          <div class="tool-viewport-hint"><b>Left-drag</b> orbit Â· <b>Right-drag</b> pan Â· <b>Scroll</b> zoom</div>
           <canvas id="studioImgCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
         </div>
       </div>
@@ -400,7 +400,7 @@
 
       <!-- Header -->
       <div class="tool-header">
-        <div class="tool-header-icon">🗿</div>
+        <div class="tool-header-icon">ðŸ—¿</div>
         <div>
           <h2 class="tool-header-title">Statue Generator</h2>
           <p class="tool-header-sub">Upload a face photo or choose a procedural style, then export as STL.</p>
@@ -410,11 +410,11 @@
       <!-- Style selector -->
       <div class="tool-toolbar">
         <span class="tool-toolbar-label">Style</span>
-        <button id="sgBtn_face"   onclick="setStatueStyle('face')"   class="btn-primary"  style="font-size:12px;padding:5px 14px;">📷 Face Photo</button>
-        <button id="sgBtn_bust"   onclick="setStatueStyle('bust')"   class="tab-btn"      style="font-size:12px;padding:5px 14px;">👤 Bust</button>
-        <button id="sgBtn_figure" onclick="setStatueStyle('figure')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">🧍 Full Figure</button>
-        <button id="sgBtn_trophy" onclick="setStatueStyle('trophy')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">🏆 Trophy</button>
-        <button id="sgBtn_column" onclick="setStatueStyle('column')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">🏛️ Column</button>
+        <button id="sgBtn_face"   onclick="setStatueStyle('face')"   class="btn-primary"  style="font-size:12px;padding:5px 14px;">ðŸ“· Face Photo</button>
+        <button id="sgBtn_bust"   onclick="setStatueStyle('bust')"   class="tab-btn"      style="font-size:12px;padding:5px 14px;">ðŸ‘¤ Bust</button>
+        <button id="sgBtn_figure" onclick="setStatueStyle('figure')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">ðŸ§ Full Figure</button>
+        <button id="sgBtn_trophy" onclick="setStatueStyle('trophy')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">ðŸ† Trophy</button>
+        <button id="sgBtn_column" onclick="setStatueStyle('column')" class="tab-btn"      style="font-size:12px;padding:5px 14px;">ðŸ›ï¸ Column</button>
       </div>
 
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
@@ -428,15 +428,15 @@
             <div id="sgPhotoUploadArea" onclick="document.getElementById('sgPhotoInput').click()"
               style="border:2px dashed var(--border);border-radius:10px;padding:18px 12px;text-align:center;cursor:pointer;color:var(--text3);font-size:13px;transition:border-color .2s;"
               onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
-              <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+              <div style="font-size:28px;margin-bottom:6px;">ðŸ–¼ï¸</div>
               <div style="font-weight:600;color:var(--text2);margin-bottom:3px;">Click to upload a face photo</div>
-              <div style="font-size:11px;">JPG · PNG · WebP<br><span style="color:var(--accent);font-weight:600;">Dark = deep · Light = shallow</span></div>
+              <div style="font-size:11px;">JPG Â· PNG Â· WebP<br><span style="color:var(--accent);font-weight:600;">Dark = deep Â· Light = shallow</span></div>
             </div>
             <input type="file" id="sgPhotoInput" accept="image/*" style="display:none;" onchange="sgLoadFacePhoto(event)" />
             <img id="sgPhotoPreview" style="display:none;width:100%;border-radius:8px;margin-top:8px;max-height:130px;object-fit:contain;" alt="Face photo preview" />
             <div style="display:flex;gap:6px;margin-top:8px;">
-              <button class="btn-primary" onclick="sgUpdate()" style="flex:1;font-size:12px;">Generate Relief →</button>
-              <button id="sgPhotoRemoveBtn" class="tab-btn" onclick="sgRemoveFacePhoto()" style="padding:8px 12px;font-size:12px;display:none;">✕</button>
+              <button class="btn-primary" onclick="sgUpdate()" style="flex:1;font-size:12px;">Generate Relief â†’</button>
+              <button id="sgPhotoRemoveBtn" class="tab-btn" onclick="sgRemoveFacePhoto()" style="padding:8px 12px;font-size:12px;display:none;">âœ•</button>
             </div>
             <div id="sgPhotoHint" style="font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5;">
               Upload a portrait photo. The face will be embossed as a 3D bas-relief on a pedestal plaque.
@@ -490,13 +490,13 @@
           </div>
 
           <!-- Export -->
-          <button class="btn-primary" onclick="statueExportSTL()" style="font-size:13px;padding:12px;">↓ Export STL</button>
+          <button class="btn-primary" onclick="statueExportSTL()" style="font-size:13px;padding:12px;">â†“ Export STL</button>
           <div id="sgDimLabel" style="font-size:11px;color:var(--accent);text-align:center;min-height:16px;"></div>
         </div>
 
         <!-- 3D Viewport -->
         <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:6px;">
-          <div class="tool-viewport-hint"><b>Left-drag</b> orbit · <b>Right-drag</b> pan · <b>Scroll</b> zoom</div>
+          <div class="tool-viewport-hint"><b>Left-drag</b> orbit Â· <b>Right-drag</b> pan Â· <b>Scroll</b> zoom</div>
           <canvas id="statueCanvas" class="tool-viewport-canvas" style="touch-action:none;cursor:grab;"></canvas>
         </div>
 
@@ -506,10 +506,10 @@
     <!-- ===== OPENSCAD TAB ===== -->
     <div class="tab-panel" id="tab-openscad">
       <div class="tool-header">
-        <div class="tool-header-icon">📐</div>
+        <div class="tool-header-icon">ðŸ“</div>
         <div>
           <h2 class="tool-header-title">OpenSCAD Code Generator</h2>
-          <p class="tool-header-sub">Build shapes visually — get ready-to-use OpenSCAD code.</p>
+          <p class="tool-header-sub">Build shapes visually â€” get ready-to-use OpenSCAD code.</p>
         </div>
       </div>
 
@@ -521,12 +521,12 @@
           <div class="tool-card">
             <div class="tool-card-label">Add Shape</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-              <button class="tab-btn" onclick="oscAddShape('cube')"     style="font-size:12px;padding:8px;">⬜ Cube</button>
-              <button class="tab-btn" onclick="oscAddShape('sphere')"   style="font-size:12px;padding:8px;">⚪ Sphere</button>
-              <button class="tab-btn" onclick="oscAddShape('cylinder')" style="font-size:12px;padding:8px;">🥫 Cylinder</button>
-              <button class="tab-btn" onclick="oscAddShape('cone')"     style="font-size:12px;padding:8px;">🔺 Cone</button>
-              <button class="tab-btn" onclick="oscAddShape('torus')"    style="font-size:12px;padding:8px;">⭕ Torus</button>
-              <button class="tab-btn" onclick="oscAddShape('polygon')"  style="font-size:12px;padding:8px;">🔷 Polygon</button>
+              <button class="tab-btn" onclick="oscAddShape('cube')"     style="font-size:12px;padding:8px;">â¬œ Cube</button>
+              <button class="tab-btn" onclick="oscAddShape('sphere')"   style="font-size:12px;padding:8px;">âšª Sphere</button>
+              <button class="tab-btn" onclick="oscAddShape('cylinder')" style="font-size:12px;padding:8px;">ðŸ¥« Cylinder</button>
+              <button class="tab-btn" onclick="oscAddShape('cone')"     style="font-size:12px;padding:8px;">ðŸ”º Cone</button>
+              <button class="tab-btn" onclick="oscAddShape('torus')"    style="font-size:12px;padding:8px;">â­• Torus</button>
+              <button class="tab-btn" onclick="oscAddShape('polygon')"  style="font-size:12px;padding:8px;">ðŸ”· Polygon</button>
             </div>
             <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Operation for next shape</div>
             <select id="oscOp" style="width:100%;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;">
@@ -550,14 +550,14 @@
           <div class="tool-card">
             <div class="tool-card-label">Shapes <span id="oscCount" style="font-weight:400;text-transform:none;font-size:12px;">(0)</span></div>
             <div id="oscShapeList" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;">
-              <div style="color:var(--text3);font-size:12px;text-align:center;padding:12px 0;">No shapes yet — add one above</div>
+              <div style="color:var(--text3);font-size:12px;text-align:center;padding:12px 0;">No shapes yet â€” add one above</div>
             </div>
           </div>
 
           <div style="display:flex;gap:6px;">
-            <button class="btn-primary" onclick="oscDownload()" style="flex:1;font-size:13px;padding:11px;">↓ Download .scad</button>
-            <button class="tab-btn" onclick="oscCopy()" style="padding:10px 14px;font-size:13px;" title="Copy code">⎘ Copy</button>
-            <button class="tab-btn" onclick="oscClear()" style="padding:10px 14px;font-size:13px;" title="Clear all">🗑</button>
+            <button class="btn-primary" onclick="oscDownload()" style="flex:1;font-size:13px;padding:11px;">â†“ Download .scad</button>
+            <button class="tab-btn" onclick="oscCopy()" style="padding:10px 14px;font-size:13px;" title="Copy code">âŽ˜ Copy</button>
+            <button class="tab-btn" onclick="oscClear()" style="padding:10px 14px;font-size:13px;" title="Clear all">ðŸ—‘</button>
           </div>
         </div>
 
@@ -565,7 +565,7 @@
         <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;">Generated OpenSCAD Code</span>
-            <button onclick="oscCopy()" class="tab-btn" style="font-size:12px;padding:5px 12px;">Copy ⎘</button>
+            <button onclick="oscCopy()" class="tab-btn" style="font-size:12px;padding:5px 12px;">Copy âŽ˜</button>
           </div>
           <pre id="oscCode" style="flex:1;min-height:420px;margin:0;padding:16px;background:#0d1117;color:#e6edf3;border:1px solid var(--border);border-radius:12px;font-family:'Fira Code','Cascadia Code','Consolas',monospace;font-size:13px;line-height:1.6;overflow:auto;white-space:pre;tab-size:2;">// Add a shape to get started
 $fn = 32;
@@ -661,7 +661,7 @@ $fn = 32;
         const header = document.createElement('div');
         header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;';
         header.innerHTML = '<span style="font-weight:600;text-transform:capitalize;">' + s.type + ' #' + s.id + '</span>' +
-          '<button onclick="oscRemove(' + s.id + ')" style="background:var(--clr-danger,#e74c3c);color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:0.8rem;">✕</button>';
+          '<button onclick="oscRemove(' + s.id + ')" style="background:var(--clr-danger,#e74c3c);color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:0.8rem;">âœ•</button>';
         card.appendChild(header);
 
         // Operation selector
@@ -699,7 +699,7 @@ $fn = 32;
         tBtn.style.cssText = 'font-size:0.75rem;background:none;border:1px solid var(--clr-border);border-radius:4px;padding:2px 8px;cursor:pointer;color:var(--clr-muted);margin-top:0.25rem;';
         const tPanel = document.createElement('div');
         tPanel.style.display = 'none';
-        tBtn.onclick = () => { tPanel.style.display = tPanel.style.display === 'none' ? 'block' : 'none'; tBtn.textContent = tPanel.style.display === 'none' ? '+ Transform' : '– Transform'; };
+        tBtn.onclick = () => { tPanel.style.display = tPanel.style.display === 'none' ? 'block' : 'none'; tBtn.textContent = tPanel.style.display === 'none' ? '+ Transform' : 'â€“ Transform'; };
         transforms.forEach(key => {
           const labels = { tx:'Translate X', ty:'Translate Y', tz:'Translate Z', rx:'Rotate X', ry:'Rotate Y', rz:'Rotate Z' };
           const max = ['rx','ry','rz'].includes(key) ? 360 : 50;
@@ -793,7 +793,7 @@ $fn = 32;
     let _studioInited = false;
     let _studioMode   = 'builder';
 
-    // ── Shape builder state ──────────────────────────────────────────────────────
+    // â”€â”€ Shape builder state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let _sbRenderer, _sbScene, _sbCamera, _sbOrbit, _sbAnimId;
     let _sbRaycaster, _sbMouse;
     let _sbObjects  = [];   // [{id, type, name, color, mesh}]
@@ -802,12 +802,12 @@ $fn = 32;
     let _sbUndoStack = [], _sbRedoStack = [];
     let _sbHovered  = null; // id of hovered mesh
 
-    // ── Image-to-3D state ────────────────────────────────────────────────────────
+    // â”€â”€ Image-to-3D state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let _igRenderer, _igScene, _igCamera, _igOrbit, _igAnimId;
     let _igImgEl = null, _igMesh = null;
     let _lithoType = 'flat';
 
-    // ── Mode switcher ────────────────────────────────────────────────────────────
+    // â”€â”€ Mode switcher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function setStudioMode(mode) {
       // Studio now only has shape builder mode
       _sbStartRender();
@@ -844,11 +844,11 @@ $fn = 32;
       if (e.ctrlKey && e.key === 'd') { sbDuplicate(); e.preventDefault(); }
     }
 
-    // ════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SHARED HELPERS
-    // ════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-    // ── Orbit controls ───────────────────────────────────────────────────────────
+    // â”€â”€ Orbit controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _makeOrbit(camera, canvas) {
       let down = false, rdown = false, px = 0, py = 0;
       let sph = { theta: Math.PI * 0.35, phi: Math.PI * 0.35, r: 80 };
@@ -936,7 +936,7 @@ $fn = 32;
       return self;
     }
 
-    // ── Binary STL exporter ───────────────────────────────────────────────────────
+    // â”€â”€ Binary STL exporter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _buildSTL(meshes) {
       // Collect triangles from all meshes
       const tris = []; // each: {n: [nx,ny,nz], v: [[x,y,z],[x,y,z],[x,y,z]]}
@@ -990,9 +990,9 @@ $fn = 32;
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    // ════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SHAPE BUILDER
-    // ════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     function _sbInit() {
       const canvas = document.getElementById('studioCanvas');
@@ -1047,7 +1047,7 @@ $fn = 32;
       new ResizeObserver(_sbResize).observe(canvas.parentElement);
     }
 
-    // ── Resize & render loop ─────────────────────────────────────────────────────
+    // â”€â”€ Resize & render loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sbResize() {
       const canvas = document.getElementById('studioCanvas');
       if (!canvas || !_sbRenderer) return;
@@ -1076,7 +1076,7 @@ $fn = 32;
       })();
     }
 
-    // ── Camera presets ────────────────────────────────────────────────────────────
+    // â”€â”€ Camera presets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function sbCamView(preset) {
       if (!_sbOrbit) return;
       const presets = {
@@ -1088,7 +1088,7 @@ $fn = 32;
       if (presets[preset]) _sbOrbit.setPreset(presets[preset]);
     }
 
-    // ── Material helper ───────────────────────────────────────────────────────────
+    // â”€â”€ Material helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sbApplyMat(o) {
       const isSel  = o.id === _sbSelected;
       const isHov  = o.id === _sbHovered && !isSel;
@@ -1103,7 +1103,7 @@ $fn = 32;
       }
     }
 
-    // ── Geometry factory ──────────────────────────────────────────────────────────
+    // â”€â”€ Geometry factory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sbGeomFor(type) {
       switch (type) {
         case 'box':      return new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
@@ -1135,7 +1135,7 @@ $fn = 32;
       }
     }
 
-    // ── Add shape ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Add shape â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function studioAddShape(type) {
       if (!_sbScene) return;
       _sbPushUndo();
@@ -1157,7 +1157,7 @@ $fn = 32;
       _sbSelectObj(id);
     }
 
-    // ── Object list ───────────────────────────────────────────────────────────────
+    // â”€â”€ Object list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sbRenderList() {
       const list = document.getElementById('studioObjectList');
       const cnt  = document.getElementById('studioObjCount');
@@ -1175,11 +1175,11 @@ $fn = 32;
           <span style="width:10px;height:10px;border-radius:50%;background:${o.color||'#e02020'};flex-shrink:0;"></span>
           <span style="font-size:12px;flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name}</span>
           <button onclick="event.stopPropagation();_sbPushUndo();studioDeleteById(${o.id})"
-            style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0;line-height:1;flex-shrink:0;">✕</button>
+            style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0;line-height:1;flex-shrink:0;">âœ•</button>
         </div>`).join('');
     }
 
-    // ── Select ────────────────────────────────────────────────────────────────────
+    // â”€â”€ Select â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function studioSelectById(id) { _sbSelectObj(id); }
     function _sbSelectObj(id) {
       _sbSelected = id;
@@ -1195,7 +1195,7 @@ $fn = 32;
       _sbUpdateDimLabel(obj);
     }
 
-    // ── Slider panels ─────────────────────────────────────────────────────────────
+    // â”€â”€ Slider panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sbBuildSliders(obj) {
       const snap = document.getElementById('sbSnap')?.checked;
       const px = Math.round(obj.mesh.position.x);
@@ -1249,17 +1249,17 @@ $fn = 32;
       _sbUpdateDimLabel(obj);
     }
 
-    // ── Dimension label ───────────────────────────────────────────────────────────
+    // â”€â”€ Dimension label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sbUpdateDimLabel(obj) {
       obj = obj || _sbObjects.find(o => o.id === _sbSelected);
       const el = document.getElementById('sbDimLabel');
       if (!el || !obj) { if (el) el.style.display='none'; return; }
       const s = obj.mesh.scale;
       el.style.display = '';
-      el.textContent = `${Math.round(s.x)} × ${Math.round(s.y)} × ${Math.round(s.z)} mm`;
+      el.textContent = `${Math.round(s.x)} Ã— ${Math.round(s.y)} Ã— ${Math.round(s.z)} mm`;
     }
 
-    // ── Rename / Color ────────────────────────────────────────────────────────────
+    // â”€â”€ Rename / Color â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function sbRenameSelected(name) {
       const obj = _sbObjects.find(o => o.id === _sbSelected);
       if (obj) { obj.name = name; _sbRenderList(); }
@@ -1272,7 +1272,7 @@ $fn = 32;
       _sbRenderList();
     }
 
-    // ── Quick actions ─────────────────────────────────────────────────────────────
+    // â”€â”€ Quick actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function sbAlignFloor() {
       const obj = _sbObjects.find(o => o.id === _sbSelected);
       if (!obj) return;
@@ -1306,7 +1306,7 @@ $fn = 32;
       _sbSelectObj(id);
     }
 
-    // ── Delete ────────────────────────────────────────────────────────────────────
+    // â”€â”€ Delete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function studioDeleteSelected() { if (_sbSelected !== null) studioDeleteById(_sbSelected); }
     function studioDeleteById(id) {
       _sbPushUndo();
@@ -1332,7 +1332,7 @@ $fn = 32;
       _sbRenderList();
     }
 
-    // ── Undo / Redo ───────────────────────────────────────────────────────────────
+    // â”€â”€ Undo / Redo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sbSerialize() {
       return JSON.stringify(_sbObjects.map(o => ({
         id: o.id, type: o.type, name: o.name, color: o.color,
@@ -1378,17 +1378,17 @@ $fn = 32;
       _sbRestore(_sbRedoStack.pop());
     }
 
-    // ── Export ────────────────────────────────────────────────────────────────────
+    // â”€â”€ Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function studioExportSTL() {
       if (_sbObjects.length === 0) { showToast('Add at least one shape first.'); return; }
       const buf = _buildSTL(_sbObjects.map(o => o.mesh));
       _downloadSTL(buf, 'profab-model.stl');
-      showToast('STL exported ✓');
+      showToast('STL exported âœ“');
     }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // IMAGE → 3D  (LITHOPHANE GENERATOR)
-    // ════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // IMAGE â†’ 3D  (LITHOPHANE GENERATOR)
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     function setLithoType(t) {
       _lithoType = t;
@@ -1480,7 +1480,7 @@ $fn = 32;
       reader.readAsDataURL(file);
     }
 
-    // ── Pixel helpers ─────────────────────────────────────────────────────────────
+    // â”€â”€ Pixel helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sampleGray(cols, rows) {
       const oc = document.createElement('canvas'); oc.width = cols; oc.height = rows;
       const ctx = oc.getContext('2d'); ctx.drawImage(_igImgEl, 0, 0, cols, rows);
@@ -1490,13 +1490,13 @@ $fn = 32;
         g[i] = (px[i*4]*0.299 + px[i*4+1]*0.587 + px[i*4+2]*0.114) / 255;
       return g;
     }
-    // Lithophane rule: dark (g≈0) → thick, light (g≈1) → thin
+    // Lithophane rule: dark (gâ‰ˆ0) â†’ thick, light (gâ‰ˆ1) â†’ thin
     function _gToThk(g, maxT, minT, inv) {
       const t = inv ? g : (1 - g);
       return minT + t * (maxT - minT);
     }
 
-    // ── Geometry builders ─────────────────────────────────────────────────────────
+    // â”€â”€ Geometry builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     // Closed rectangular grid (flat / curved)
     function _lithoGeom(fv, bv, cols, rows) {
@@ -1564,7 +1564,7 @@ $fn = 32;
       g.setIndex(idx); g.computeVertexNormals(); return g;
     }
 
-    // ── Per-shape builders ────────────────────────────────────────────────────────
+    // â”€â”€ Per-shape builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     function _buildFlat(gray, cols, rows, W, H, maxT, minT, inv, border) {
       const bC = Math.round(border*(cols-1)/W), bR = Math.round(border*(rows-1)/H);
@@ -1683,7 +1683,7 @@ $fn = 32;
       return _lithoMaskedGeom(fv, bv, thick, cols, rows);
     }
 
-    // ── Main generator ────────────────────────────────────────────────────────────
+    // â”€â”€ Main generator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function studioGenerateFromImage() {
       if (!_igImgEl) { showToast('Upload an image first.'); return; }
       const status = document.getElementById('imgStatus');
@@ -1742,7 +1742,7 @@ $fn = 32;
       status.style.color = 'var(--green)';
     }
 
-    // ── STL export ────────────────────────────────────────────────────────────────
+    // â”€â”€ STL export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function studioExportImageSTL() {
       if (!_igMesh) { showToast('Generate a lithophane first.'); return; }
       const geom = _igMesh.geometry, posA = geom.attributes.position, idxArr = geom.index?.array;
@@ -1772,9 +1772,9 @@ $fn = 32;
     }
     // ===== END 3D STUDIO ==========================================================
 
-    // ════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // STATUE GENERATOR
-    // ════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     let _sgScene, _sgCamera, _sgRenderer, _sgAnimId;
     let _sgMeshes = [];
@@ -1930,7 +1930,7 @@ $fn = 32;
       const h = document.getElementById('sgHeight')?.value || 0;
       const d = document.getElementById('sgBase')?.value || 0;
       const lbl = document.getElementById('sgDimLabel');
-      if (lbl) lbl.textContent = `Height: ${h} mm  ·  Base Ø: ${d} mm`;
+      if (lbl) lbl.textContent = `Height: ${h} mm  Â·  Base Ã˜: ${d} mm`;
     }
 
     function _sgRebuild() {
@@ -1971,7 +1971,7 @@ $fn = 32;
       _sgUpdateDimLabel();
     }
 
-    // ── Bust ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Bust â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sgBuildBust(H, R, P, seg, add) {
       const bodyH = H - P;
       if (P > 0) add(new THREE.CylinderGeometry(R, R * 1.08, P, seg), 0, P / 2, 0);
@@ -1983,7 +1983,7 @@ $fn = 32;
       add(new THREE.SphereGeometry(headR, seg, seg), 0, P + shoulH + neckH + headR * 0.88, 0);
     }
 
-    // ── Full Figure ───────────────────────────────────────────────────────────
+    // â”€â”€ Full Figure â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sgBuildFigure(H, R, P, seg, add) {
       const bodyH = H - P;
       if (P > 0) add(new THREE.CylinderGeometry(R * 0.68, R, P, seg), 0, P / 2, 0);
@@ -2010,7 +2010,7 @@ $fn = 32;
       add(new THREE.SphereGeometry(headR, seg, seg), 0, neckY + neckH + headR, 0);
     }
 
-    // ── Trophy ────────────────────────────────────────────────────────────────
+    // â”€â”€ Trophy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sgBuildTrophy(H, R, P, seg, add) {
       const baseH = H * 0.08;
       add(new THREE.CylinderGeometry(R, R * 1.05, baseH, seg), 0, baseH / 2, 0);
@@ -2035,7 +2035,7 @@ $fn = 32;
       add(new THREE.TorusGeometry(hR, hTube, 6, 12),  R * 0.68, hY, 0, 0, Math.PI / 2, 0);
     }
 
-    // ── Column ────────────────────────────────────────────────────────────────
+    // â”€â”€ Column â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sgBuildColumn(H, R, P, seg, add) {
       const slabH = H * 0.04;
       add(new THREE.BoxGeometry(R * 2.4, slabH, R * 2.4), 0, slabH / 2, 0);
@@ -2059,7 +2059,7 @@ $fn = 32;
       add(new THREE.ConeGeometry(R * 1.62, pedH, 4), 0, entY + eH + pedH / 2, 0, 0, Math.PI / 4, 0);
     }
 
-    // ── Face Photo handlers ───────────────────────────────────────────────────
+    // â”€â”€ Face Photo handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function sgLoadFacePhoto(e) {
       const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader();
@@ -2097,7 +2097,7 @@ $fn = 32;
       _sgRebuild();
     }
 
-    // ── Face Relief geometry ─────────────────────────────────────────────────
+    // â”€â”€ Face Relief geometry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _sgBuildFaceRelief(H, R, P, add) {
       const col = document.getElementById('sgColor')?.value || '#b0a0e8';
       const depthFactor = parseFloat(document.getElementById('sgReliefDepth')?.value || '0.18');
@@ -2156,7 +2156,7 @@ $fn = 32;
           const i   = r * cols + c;
           const x   = (c / (cols - 1) - 0.5) * plW;
           const y   = yBase + (r / (rows - 1)) * plH;
-          const imgRow = rows - 1 - r;  // flip: image top → model top
+          const imgRow = rows - 1 - r;  // flip: image top â†’ model top
           const g   = gray ? gray[imgRow * cols + c] : 0.5;
           const z_f = maxRelief * (1 - g);  // dark = protrudes more
           fv[i*3]   = x; fv[i*3+1] = y; fv[i*3+2] = z_f;
@@ -2192,9 +2192,9 @@ $fn = 32;
 
     // ===== END STATUE GENERATOR ===================================================
 
-    // ═══════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // ===== MAP GENERATOR ======================================================
-    // ═══════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     let _mapScene, _mapCamera, _mapRenderer, _mapAnimId;
     let _mapMesh = null, _mapBaseMesh = null;
@@ -2204,7 +2204,7 @@ $fn = 32;
     let _mapHeights = null, _mapHeightCols = 0, _mapHeightRows = 0;
     let _mapBuildingMeshes = [];
     let _mapBbox       = null;  // { n, s, e, w } in degrees
-    let _mapCoordState = null;  // mapping params for lat/lon → model XZ
+    let _mapCoordState = null;  // mapping params for lat/lon â†’ model XZ
     let _mapOrbit = { active: false, button: -1, lastX: 0, lastY: 0,
                       theta: 0.5, phi: 0.35, dist: 320, panX: 0, panY: 0 };
 
@@ -2215,7 +2215,7 @@ $fn = 32;
       region:       { zoom: 10, tiles: 3, label: 'Region ~40 km',        areaM: 40000 },
     };
 
-    // ── Init ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function initMapGen() {
       const canvas = document.getElementById('mapCanvas');
       if (!canvas) return;
@@ -2303,7 +2303,7 @@ $fn = 32;
       (function loop() { _mapAnimId = requestAnimationFrame(loop); _mapRenderer.render(_mapScene, _mapCamera); })();
     }
 
-    // ── Scale selector ────────────────────────────────────────────────────────
+    // â”€â”€ Scale selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function setMapScale(s) {
       _mapScale = s;
       Object.keys(MAP_PRESETS).forEach(k => {
@@ -2313,7 +2313,7 @@ $fn = 32;
       });
     }
 
-    // ── Geocoding ─────────────────────────────────────────────────────────────
+    // â”€â”€ Geocoding â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let _mapGeoResults = []; // store results by index so onclick never breaks
 
     function _mapPickResult(i) {
@@ -2324,10 +2324,10 @@ $fn = 32;
       const name = r.display_name.split(',').slice(0, 3).join(', ');
       const res = document.getElementById('mapGeoResult');
       if (res) res.innerHTML = `<div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--accent);border-radius:10px;font-size:13px;">
-        📍 <b>${name}</b><br>
-        <span style="color:var(--text3);font-size:11px;">${_mapCenterLat.toFixed(5)}°, ${_mapCenterLon.toFixed(5)}°</span>
+        ðŸ“ <b>${name}</b><br>
+        <span style="color:var(--text3);font-size:11px;">${_mapCenterLat.toFixed(5)}Â°, ${_mapCenterLon.toFixed(5)}Â°</span>
       </div>`;
-      showToast('Location set — click Generate!');
+      showToast('Location set â€” click Generate!');
     }
 
     async function mapSearch() {
@@ -2336,9 +2336,9 @@ $fn = 32;
       if (!q) { showToast('Enter an address or place name.'); return; }
 
       const btn = document.getElementById('mapSearchBtn');
-      if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+      if (btn) { btn.textContent = 'â³'; btn.disabled = true; }
       const res = document.getElementById('mapGeoResult');
-      if (res) res.innerHTML = '<span style="color:var(--text3);font-size:12px;">Searching…</span>';
+      if (res) res.innerHTML = '<span style="color:var(--text3);font-size:12px;">Searchingâ€¦</span>';
 
       _mapGeoResults = [];
 
@@ -2349,7 +2349,7 @@ $fn = 32;
         if (!data || !data.length) {
           // Fallback: try just the raw query with no structured parsing
           if (res) res.innerHTML = `<div style="color:var(--accent3);font-size:12px;padding:8px 0;">
-            ⚠️ Address not found.<br>
+            âš ï¸ Address not found.<br>
             <span style="color:var(--text3);">Try: include city &amp; state, use a ZIP code, or search a nearby landmark.</span>
           </div>`;
           return;
@@ -2362,10 +2362,10 @@ $fn = 32;
           return;
         }
 
-        // Build clickable result list — no inline JSON, just index
+        // Build clickable result list â€” no inline JSON, just index
         let html = `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;background:var(--surface2);">
           <div style="padding:6px 12px;font-size:11px;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);">
-            ${data.length} results — tap one to select:
+            ${data.length} results â€” tap one to select:
           </div>`;
         data.forEach((r, i) => {
           const parts  = r.display_name.split(',');
@@ -2378,21 +2378,21 @@ $fn = 32;
               onmouseover="this.style.background='var(--surface3)'"
               onmouseout="this.style.background=''">
             <div style="font-size:13px;font-weight:600;">${line1}</div>
-            ${line2 ? `<div style="font-size:11px;color:var(--text3);">${line2}${badge ? ' · ' + badge : ''}</div>` : ''}
+            ${line2 ? `<div style="font-size:11px;color:var(--text3);">${line2}${badge ? ' Â· ' + badge : ''}</div>` : ''}
           </div>`;
         });
         html += '</div>';
         if (res) res.innerHTML = html;
 
       } catch (err) {
-        if (res) res.innerHTML = '<span style="color:var(--accent3);">⚠️ Search failed — check your connection.</span>';
+        if (res) res.innerHTML = '<span style="color:var(--accent3);">âš ï¸ Search failed â€” check your connection.</span>';
         console.error(err);
       } finally {
-        if (btn) { btn.textContent = 'Search →'; btn.disabled = false; }
+        if (btn) { btn.textContent = 'Search â†’'; btn.disabled = false; }
       }
     }
 
-    // ── Tile math ─────────────────────────────────────────────────────────────
+    // â”€â”€ Tile math â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _mapLatLonToTile(lat, lon, zoom) {
       const n = Math.pow(2, zoom);
       const x = Math.floor((lon + 180) / 360 * n);
@@ -2408,7 +2408,7 @@ $fn = 32;
       return { lat: latR * 180 / Math.PI, lon };
     }
 
-    // ── Tile fetching (AWS Terrarium — free, public, CORS-enabled) ─────────────
+    // â”€â”€ Tile fetching (AWS Terrarium â€” free, public, CORS-enabled) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _mapFetchTile(z, x, y) {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -2432,7 +2432,7 @@ $fn = 32;
       });
     }
 
-    // ── Stitch tiles into a height grid ──────────────────────────────────────
+    // â”€â”€ Stitch tiles into a height grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function _mapFetchRegion(lat, lon, zoom, tileCount, onProgress) {
       const center = _mapLatLonToTile(lat, lon, zoom);
       const half = Math.floor(tileCount / 2);
@@ -2477,7 +2477,7 @@ $fn = 32;
       return { data: stitched, width: totalW, height: totalH };
     }
 
-    // ── Downsample elevation grid ─────────────────────────────────────────────
+    // â”€â”€ Downsample elevation grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _mapDownsample(src, sW, sH, dW, dH) {
       const out = new Float32Array(dW * dH);
       for (let r = 0; r < dH; r++) {
@@ -2490,7 +2490,7 @@ $fn = 32;
       return out;
     }
 
-    // ── Build terrain mesh (Y = up, slab with terrain top + flat bottom) ──────
+    // â”€â”€ Build terrain mesh (Y = up, slab with terrain top + flat bottom) â”€â”€â”€â”€â”€â”€
     function _mapBuildTerrainMesh(heights, cols, rows, W, D, baseH, vertScaleMm) {
       const minH = Math.min(...heights);
       const N = cols * rows;
@@ -2542,7 +2542,7 @@ $fn = 32;
       return geo;
     }
 
-    // ── Main pipeline ─────────────────────────────────────────────────────────
+    // â”€â”€ Main pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function generateMap() {
       if (_mapCenterLat === null) {
         showToast('Search for a location first!'); return;
@@ -2574,14 +2574,14 @@ $fn = 32;
       try {
         // 1. Fetch terrain tiles
         const tileCount = preset.tiles;
-        if (progTxt) progTxt.textContent = `Fetching ${tileCount * tileCount} terrain tile(s)…`;
+        if (progTxt) progTxt.textContent = `Fetching ${tileCount * tileCount} terrain tile(s)â€¦`;
         const region = await _mapFetchRegion(
           _mapCenterLat, _mapCenterLon, preset.zoom, tileCount,
-          (done, total) => { if (progTxt) progTxt.textContent = `Tiles: ${done}/${total} loaded…`; }
+          (done, total) => { if (progTxt) progTxt.textContent = `Tiles: ${done}/${total} loadedâ€¦`; }
         );
 
         // 2. Downsample to mesh resolution
-        if (progTxt) progTxt.textContent = 'Building mesh…';
+        if (progTxt) progTxt.textContent = 'Building meshâ€¦';
         const meshCols = res, meshRows = Math.round(res * region.height / region.width);
         const heights  = _mapDownsample(region.data, region.width, region.height, meshCols, meshRows);
 
@@ -2630,10 +2630,10 @@ $fn = 32;
         // 7. Update UI
         if (expBtn) expBtn.style.display = '';
         const areaKm = (preset.areaM / 1000).toFixed(1);
-        if (info) info.textContent = `${areaKm} km × ${(areaKm * modelD / modelW).toFixed(1)} km · ${range.toFixed(0)} m elevation range · model ${modelW}×${modelD.toFixed(0)} mm`;
+        if (info) info.textContent = `${areaKm} km Ã— ${(areaKm * modelD / modelW).toFixed(1)} km Â· ${range.toFixed(0)} m elevation range Â· model ${modelW}Ã—${modelD.toFixed(0)} mm`;
         document.getElementById('mgDimLabel').textContent =
-          `${modelW} × ${modelD.toFixed(0)} mm · vert. scale ${vertScale.toFixed(2)} mm/m · ${meshCols}×${meshRows} pts`;
-        showToast('Terrain generated ✓ — loading buildings…');
+          `${modelW} Ã— ${modelD.toFixed(0)} mm Â· vert. scale ${vertScale.toFixed(2)} mm/m Â· ${meshCols}Ã—${meshRows} pts`;
+        showToast('Terrain generated âœ“ â€” loading buildingsâ€¦');
 
         // Auto-load buildings after terrain is ready
         addBuildings();
@@ -2647,7 +2647,7 @@ $fn = 32;
       }
     }
 
-    // ── Export STL (terrain + all buildings) ─────────────────────────────────
+    // â”€â”€ Export STL (terrain + all buildings) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function mapExportSTL() {
       if (!_mapMesh) { showToast('Generate a map first.'); return; }
       const meshes = [_mapMesh, ..._mapBuildingMeshes];
@@ -2656,16 +2656,16 @@ $fn = 32;
         ? `${_mapCenterLat.toFixed(3)}_${_mapCenterLon.toFixed(3)}`
         : 'terrain';
       _downloadSTL(buf, `layerforge-map-${_mapScale}-${loc}.stl`);
-      showToast(`STL exported ✓ (terrain + ${_mapBuildingMeshes.length} buildings)`);
+      showToast(`STL exported âœ“ (terrain + ${_mapBuildingMeshes.length} buildings)`);
     }
 
-    // ── Coordinate helpers ────────────────────────────────────────────────────
+    // â”€â”€ Coordinate helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _mapLatLonToModel(lat, lon) {
       if (!_mapBbox || !_mapCoordState) return null;
       const { modelW, modelD } = _mapCoordState;
       const { n, s, w, e } = _mapBbox;
       // Web-Mercator Y for accurate north/south mapping
-      const mercY = φ => Math.log(Math.tan(Math.PI / 4 + φ * Math.PI / 360));
+      const mercY = Ï† => Math.log(Math.tan(Math.PI / 4 + Ï† * Math.PI / 360));
       const mN = mercY(n), mS = mercY(s), mLat = mercY(lat);
       const v = (mN - mLat) / (mN - mS);    // 0=north, 1=south
       const u = (lon - w) / (e - w);         // 0=west,  1=east
@@ -2681,7 +2681,7 @@ $fn = 32;
       return baseH + (heights[r * cols + c] - minElev) * vertScaleMm;
     }
 
-    // ── Building extruded geometry ────────────────────────────────────────────
+    // â”€â”€ Building extruded geometry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _mapBuildingGeo(polyXZ, yBot, yTop) {
       // polyXZ = [{x, z}, ...] polygon vertices in model space
       // Returns a closed THREE.BufferGeometry (walls + top + bottom caps)
@@ -2706,7 +2706,7 @@ $fn = 32;
         const j = (i + 1) % n;
         idx.push(i, j, n + j,   i, n + j, n + i);
       }
-      // Top cap (CCW from above in XZ — ShapeUtils gives CCW for positive area)
+      // Top cap (CCW from above in XZ â€” ShapeUtils gives CCW for positive area)
       for (const [a, b, c] of tris) idx.push(n + a, n + b, n + c);
       // Bottom cap (reversed)
       for (const [a, b, c] of tris) idx.push(a, c, b);
@@ -2718,7 +2718,7 @@ $fn = 32;
       return geo;
     }
 
-    // ── OSM building height from tags ─────────────────────────────────────────
+    // â”€â”€ OSM building height from tags â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function _mapBuildingHeight(tags) {
       if (tags.height) {
         const h = parseFloat(tags.height);
@@ -2738,7 +2738,7 @@ $fn = 32;
       return 7;  // generic default
     }
 
-    // ── Main: fetch OSM buildings + build geometry ────────────────────────────
+    // â”€â”€ Main: fetch OSM buildings + build geometry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function addBuildings() {
       if (!_mapBbox || !_mapCoordState) {
         showToast('Generate terrain first.'); return;
@@ -2755,7 +2755,7 @@ $fn = 32;
       _mapBuildingMeshes.forEach(m => { _mapScene.remove(m); m.geometry.dispose(); m.material.dispose(); });
       _mapBuildingMeshes = [];
 
-      if (bldBtn) { bldBtn.disabled = true; bldBtn.textContent = '⏳ Loading…'; }
+      if (bldBtn) { bldBtn.disabled = true; bldBtn.textContent = 'â³ Loadingâ€¦'; }
       if (prog)   prog.style.display = '';
 
       const { n, s, w, e } = _mapBbox;
@@ -2766,7 +2766,7 @@ $fn = 32;
       const horizScale = modelW / preset.areaM;   // mm per meter (horizontal)
 
       try {
-        if (progTxt) progTxt.textContent = 'Fetching buildings from OpenStreetMap…';
+        if (progTxt) progTxt.textContent = 'Fetching buildings from OpenStreetMapâ€¦';
         const bbox = `${s.toFixed(6)},${w.toFixed(6)},${n.toFixed(6)},${e.toFixed(6)}`;
         const query = `[out:json][timeout:30];(way["building"](${bbox}););out geom;`;
         const url   = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
@@ -2777,7 +2777,7 @@ $fn = 32;
         const ways = data.elements?.filter(el => el.type === 'way' && el.geometry?.length >= 3) || [];
 
         if (!ways.length) {
-          showToast('No buildings found in this area — try a denser area or larger scale.');
+          showToast('No buildings found in this area â€” try a denser area or larger scale.');
           return;
         }
 
@@ -2785,7 +2785,7 @@ $fn = 32;
         const MAX_BLDS = 800;
         const limited  = ways.length > MAX_BLDS;
         const toRender = limited ? ways.slice(0, MAX_BLDS) : ways;
-        if (progTxt) progTxt.textContent = `Building ${toRender.length} structures…${limited ? ' (capped at ' + MAX_BLDS + ')' : ''}`;
+        if (progTxt) progTxt.textContent = `Building ${toRender.length} structuresâ€¦${limited ? ' (capped at ' + MAX_BLDS + ')' : ''}`;
 
         const mat = new THREE.MeshPhongMaterial({
           color: new THREE.Color(bldCol),
@@ -2819,14 +2819,14 @@ $fn = 32;
         }
 
         const suffix = limited ? ` (first ${MAX_BLDS} of ${ways.length} total)` : '';
-        if (info) info.textContent += `  ·  🏗️ ${built} buildings${suffix}`;
-        showToast(`${built} buildings added ✓`);
+        if (info) info.textContent += `  Â·  ðŸ—ï¸ ${built} buildings${suffix}`;
+        showToast(`${built} buildings added âœ“`);
 
       } catch (err) {
         showToast('Buildings failed: ' + (err.message || 'Check connection'));
         console.error(err);
       } finally {
-        if (bldBtn) { bldBtn.disabled = false; bldBtn.textContent = '🏗️ Refresh Buildings'; bldBtn.style.display = ''; }
+        if (bldBtn) { bldBtn.disabled = false; bldBtn.textContent = 'ðŸ—ï¸ Refresh Buildings'; bldBtn.style.display = ''; }
         if (prog)   prog.style.display = 'none';
       }
     }
@@ -2934,7 +2934,7 @@ $fn = 32;
       const s = getSession();
       if (!s) { location.href = 'index.html'; return; }
       const badge = document.getElementById('toolsUserBadge');
-      if (badge) badge.textContent = '👤 ' + s.username;
+      if (badge) badge.textContent = 'ðŸ‘¤ ' + s.username;
       const hash = location.hash.replace('#','');
       switchTab(TOOL_TABS.includes(hash) ? hash : 'studio');
     });

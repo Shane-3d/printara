@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Printara</title>
-  <link rel="icon" href="logo.png" />
-  <link rel="apple-touch-icon" href="logo.png" />
+  <title>Admin â€” Printara</title>
+  <link rel="icon" href="logo.svg" />
+  <link rel="apple-touch-icon" href="logo.svg" />
   <meta name="apple-mobile-web-app-title" content="Printara" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -20,7 +20,7 @@
   <!-- ===== LOGIN GATE ===== -->
   <div class="login-gate" id="loginGate">
     <div class="login-box">
-      <div class="login-logo"><img src="logo.png" alt="Printara" class="logo-img logo-img--login" /></div>
+      <div class="login-logo"><img src="logo.svg" alt="Printara" class="logo-img logo-img--login" /></div>
       <h2>Printara</h2>
 
       <!-- Tab switcher -->
@@ -47,7 +47,7 @@
             <input type="password" id="loginInput" placeholder="Enter password" autocomplete="current-password" required />
           </div>
           <div class="login-error" id="loginError"></div>
-          <button type="submit" class="btn-primary" style="width:100%;margin-top:4px;">Sign In →</button>
+          <button type="submit" class="btn-primary" style="width:100%;margin-top:4px;">Sign In â†’</button>
         </form>
         <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:14px;">
           No account? <a href="#" onclick="switchGateTab('signup');return false;" style="color:var(--accent);font-weight:600;">Sign up free</a>
@@ -74,7 +74,7 @@
             <input type="password" id="signupConfirm" placeholder="Re-enter password" autocomplete="new-password" required />
           </div>
           <div class="login-error" id="signupError"></div>
-          <button type="submit" class="btn-primary" style="width:100%;margin-top:4px;">Create Account →</button>
+          <button type="submit" class="btn-primary" style="width:100%;margin-top:4px;">Create Account â†’</button>
         </form>
         <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:14px;">
           Already have an account? <a href="#" onclick="switchGateTab('login');return false;" style="color:var(--accent);font-weight:600;">Sign in</a>
@@ -89,13 +89,13 @@
   <header class="header admin-content" id="adminHeader">
     <div class="header-inner">
       <a href="index.html" class="logo">
-        <img src="logo.png" alt="Printara" class="logo-img" />
+        <img src="logo.svg" alt="Printara" class="logo-img" />
       </a>
       <nav class="nav">
-        <a href="index.html" class="nav-link">← Home</a>
+        <a href="index.html" class="nav-link">â† Home</a>
       </nav>
       <span id="adminUserBadge" style="margin-left:auto; background:rgba(224,32,32,0.15); border:1px solid rgba(224,32,32,0.4); color:var(--accent); padding:5px 14px; border-radius:20px; font-size:13px; font-weight:600;">Admin</span>
-      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
+      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light/dark mode">ðŸŒ™</button>
     </div>
   </header>
 
@@ -104,21 +104,21 @@
     <div class="sidebar-group">
       <div class="sidebar-group-label">Admin</div>
       <button class="sidebar-item" id="sbi-users" onclick="switchTab('users')">
-        <span class="sidebar-item-icon">👥</span> Accounts
+        <span class="sidebar-item-icon">ðŸ‘¥</span> Accounts
       </button>
       <button class="sidebar-item" id="sbi-clockin" onclick="switchTab('clockin')">
-        <span class="sidebar-item-icon">⏱️</span> Hours
+        <span class="sidebar-item-icon">â±ï¸</span> Hours
       </button>
       <button class="sidebar-item" id="sbi-support" onclick="switchTab('support')">
-        <span class="sidebar-item-icon">💬</span> Support <span id="sbi-support-badge" style="display:none;background:var(--accent);color:#fff;border-radius:10px;font-size:11px;font-weight:700;padding:1px 7px;margin-left:4px;"></span>
+        <span class="sidebar-item-icon">ðŸ’¬</span> Support <span id="sbi-support-badge" style="display:none;background:var(--accent);color:#fff;border-radius:10px;font-size:11px;font-weight:700;padding:1px 7px;margin-left:4px;"></span>
       </button>
       <button class="sidebar-item" id="sbi-settings" onclick="switchTab('settings')">
-        <span class="sidebar-item-icon">⚙️</span> Settings
+        <span class="sidebar-item-icon">âš™ï¸</span> Settings
       </button>
     </div>
     <div class="sidebar-bottom">
       <a href="index.html" class="sidebar-item">
-        <span class="sidebar-item-icon">←</span> Home
+        <span class="sidebar-item-icon">â†</span> Home
       </a>
     </div>
   </aside>
@@ -126,16 +126,16 @@
   <!-- ===== MOBILE BOTTOM NAV ===== -->
   <nav class="admin-bottom-nav admin-content" id="adminBottomNav">
     <button class="admin-bottom-nav-item active" id="mni-users" onclick="switchTab('users')">
-      <span class="admin-bottom-nav-icon">👥</span>Accounts
+      <span class="admin-bottom-nav-icon">ðŸ‘¥</span>Accounts
     </button>
     <button class="admin-bottom-nav-item" id="mni-clockin" onclick="switchTab('clockin')">
-      <span class="admin-bottom-nav-icon">⏱️</span>Hours
+      <span class="admin-bottom-nav-icon">â±ï¸</span>Hours
     </button>
     <button class="admin-bottom-nav-item" id="mni-support" onclick="switchTab('support')">
-      <span class="admin-bottom-nav-icon">💬</span>Support
+      <span class="admin-bottom-nav-icon">ðŸ’¬</span>Support
     </button>
     <button class="admin-bottom-nav-item" id="mni-settings" onclick="switchTab('settings')">
-      <span class="admin-bottom-nav-icon">⚙️</span>Settings
+      <span class="admin-bottom-nav-icon">âš™ï¸</span>Settings
     </button>
   </nav>
 
@@ -147,13 +147,13 @@
     </div>
 
     <div class="admin-tabs">
-      <button class="tab-btn active" onclick="switchTab('studio')">🖨️ 3D Studio</button>
-      <button class="tab-btn" onclick="switchTab('statue')">🗿 Statue Generator</button>
-      <button class="tab-btn" onclick="switchTab('litho')">🖼️ Lithophane</button>
-      <button class="tab-btn" onclick="switchTab('map')">🗺️ Map Generator</button>
+      <button class="tab-btn active" onclick="switchTab('studio')">ðŸ–¨ï¸ 3D Studio</button>
+      <button class="tab-btn" onclick="switchTab('statue')">ðŸ—¿ Statue Generator</button>
+      <button class="tab-btn" onclick="switchTab('litho')">ðŸ–¼ï¸ Lithophane</button>
+      <button class="tab-btn" onclick="switchTab('map')">ðŸ—ºï¸ Map Generator</button>
       <button class="tab-btn" onclick="switchTab('users')">Accounts <span id="usersBadge"></span></button>
-      <button class="tab-btn" onclick="switchTab('clockin')">⏱️ Hours</button>
-      <button class="tab-btn" onclick="switchTab('support')">💬 Support <span id="supportTabBadge" style="display:none;background:var(--accent);color:#fff;border-radius:10px;font-size:11px;font-weight:700;padding:0 6px;margin-left:2px;"></span></button>
+      <button class="tab-btn" onclick="switchTab('clockin')">â±ï¸ Hours</button>
+      <button class="tab-btn" onclick="switchTab('support')">ðŸ’¬ Support <span id="supportTabBadge" style="display:none;background:var(--accent);color:#fff;border-radius:10px;font-size:11px;font-weight:700;padding:0 6px;margin-left:2px;"></span></button>
       <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
     </div>
 
@@ -164,11 +164,11 @@
         <!-- PHOTO -->
         <div class="photo-upload-area" id="aiPhotoArea" onclick="document.getElementById('aiPhotoInput').click()" style="margin-bottom:16px;">
           <div class="photo-upload-placeholder" id="aiPhotoPlaceholder">
-            <div class="photo-upload-icon">📷</div>
+            <div class="photo-upload-icon">ðŸ“·</div>
             <div class="photo-upload-text">Add a photo</div>
           </div>
           <img id="aiPhotoPreview" class="photo-preview-img" style="display:none;" alt="Product photo" />
-          <button type="button" class="photo-remove-btn" id="aiPhotoRemoveBtn" style="display:none;" onclick="removeAiPhoto(event)">✕</button>
+          <button type="button" class="photo-remove-btn" id="aiPhotoRemoveBtn" style="display:none;" onclick="removeAiPhoto(event)">âœ•</button>
         </div>
         <input type="file" id="aiPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleAiPhoto(event)" />
         <input type="hidden" name="imageUrl" id="imageUrlInput" value="" />
@@ -187,15 +187,15 @@
         <input type="hidden" name="material"    value="" />
         <input type="hidden" name="printTime"   value="" />
         <input type="hidden" name="dimensions"  value="" />
-        <input type="hidden" name="emoji"       value="📦" />
+        <input type="hidden" name="emoji"       value="ðŸ“¦" />
         <input type="hidden" name="inStock"     value="true" />
 
-        <button type="submit" class="btn-primary btn-full">Add to Shop →</button>
+        <button type="submit" class="btn-primary btn-full">Add to Shop â†’</button>
 
-        <!-- OPTIONAL extras — collapsed -->
+        <!-- OPTIONAL extras â€” collapsed -->
         <button type="button" onclick="toggleListingDetails()"
           style="margin-top:14px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:0;display:flex;align-items:center;gap:6px;">
-          <span id="toggleDetailsArrow">▶</span> Add more details
+          <span id="toggleDetailsArrow">â–¶</span> Add more details
         </button>
         <div id="listingDetails" style="display:none;margin-top:14px;display:none;">
           <div class="form-row">
@@ -211,7 +211,7 @@
             </div>
             <div class="form-group">
               <label>Material</label>
-              <input type="text" id="detailMaterial" placeholder="PLA, PETG…" list="materialList" oninput="document.querySelector('[name=material]').value=this.value" />
+              <input type="text" id="detailMaterial" placeholder="PLA, PETGâ€¦" list="materialList" oninput="document.querySelector('[name=material]').value=this.value" />
               <datalist id="materialList">
                 <option value="PLA" /><option value="PETG" /><option value="ASA" />
                 <option value="ABS" /><option value="TPU" /><option value="Resin" />
@@ -220,7 +220,7 @@
           </div>
           <div class="form-group">
             <label>Description</label>
-            <textarea id="detailDescription" rows="3" placeholder="What is it, what's it for…" oninput="document.querySelector('[name=description]').value=this.value"></textarea>
+            <textarea id="detailDescription" rows="3" placeholder="What is it, what's it forâ€¦" oninput="document.querySelector('[name=description]').value=this.value"></textarea>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -229,13 +229,13 @@
             </div>
             <div class="form-group">
               <label>Dimensions</label>
-              <input type="text" id="detailDimensions" placeholder="50×50×80 mm" oninput="document.querySelector('[name=dimensions]').value=this.value" />
+              <input type="text" id="detailDimensions" placeholder="50Ã—50Ã—80 mm" oninput="document.querySelector('[name=dimensions]').value=this.value" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>Emoji</label>
-              <input type="text" id="detailEmoji" placeholder="📦" maxlength="4" oninput="document.querySelector('[name=emoji]').value=this.value||'📦'" />
+              <input type="text" id="detailEmoji" placeholder="ðŸ“¦" maxlength="4" oninput="document.querySelector('[name=emoji]').value=this.value||'ðŸ“¦'" />
             </div>
             <div class="form-group" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
               <label class="toggle-switch" style="margin:0;">
@@ -254,7 +254,7 @@
     <div class="tab-panel" id="tab-manage">
       <div class="manage-list" id="manageList"></div>
       <div id="manageEmpty" style="display:none;" class="empty-state">
-        <div class="empty-icon">📦</div>
+        <div class="empty-icon">ðŸ“¦</div>
         <h3>No products yet</h3>
         <p>Add your first product using the "Add Product" tab.</p>
       </div>
@@ -264,7 +264,7 @@
     <div class="tab-panel" id="tab-orders">
       <div class="orders-list" id="ordersList"></div>
       <div id="ordersEmpty" style="display:none;" class="empty-state">
-        <div class="empty-icon">📋</div>
+        <div class="empty-icon">ðŸ“‹</div>
         <h3>No orders yet</h3>
         <p>Orders will appear here once customers check out.</p>
       </div>
@@ -274,7 +274,7 @@
     <div class="tab-panel" id="tab-custom">
       <div class="custom-requests-list" id="customList"></div>
       <div id="customEmpty" style="display:none;" class="empty-state">
-        <div class="empty-icon">🖨️</div>
+        <div class="empty-icon">ðŸ–¨ï¸</div>
         <h3>No custom requests yet</h3>
         <p>When customers request custom parts, they'll appear here.</p>
       </div>
@@ -284,7 +284,7 @@
     <div class="tab-panel" id="tab-users">
       <div class="users-list" id="usersList"></div>
       <div id="usersEmpty" style="display:none;" class="empty-state">
-        <div class="empty-icon">👤</div>
+        <div class="empty-icon">ðŸ‘¤</div>
         <h3>No accounts yet</h3>
         <p>Customer accounts will appear here once someone signs up.</p>
       </div>
@@ -296,7 +296,7 @@
       <p style="color:var(--text2);font-size:14px;margin-bottom:20px;">Enter a sale price below to show it in the shop with a badge and strikethrough. Leave blank or delete to remove the sale.</p>
       <div class="sales-list" id="salesList"></div>
       <div id="salesEmpty" style="display:none;" class="empty-state">
-        <div class="empty-icon">🏷️</div>
+        <div class="empty-icon">ðŸ·ï¸</div>
         <p>No products yet. Add products first.</p>
       </div>
     </div>
@@ -311,7 +311,7 @@
       <h4 style="margin-top:28px;margin-bottom:12px;font-size:15px;">Completed Orders</h4>
       <div id="revenueOrderList"></div>
       <div id="revenueEmpty" style="display:none;" class="empty-state">
-        <div class="empty-icon">💰</div>
+        <div class="empty-icon">ðŸ’°</div>
         <p>No completed orders yet.</p>
       </div>
     </div>
@@ -328,7 +328,7 @@
       <div id="ciSectionMine">
         <div class="clockin-top">
           <div class="clockin-status-card" id="clockinStatusCard">
-            <div class="clockin-clock-icon">⏱️</div>
+            <div class="clockin-clock-icon">â±ï¸</div>
             <div class="clockin-status-label" id="clockinStatusLabel">Clocked Out</div>
             <div class="clockin-elapsed" id="clockinElapsed" style="display:none;"></div>
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
@@ -348,7 +348,7 @@
         <div class="clockin-log" id="clockinLog"></div>
         <div id="clockinLogEmpty" style="display:none;color:var(--text3);font-size:14px;text-align:center;padding:30px 0;">No sessions recorded yet.</div>
         <div style="margin-top:18px;">
-          <button class="delete-btn" onclick="clearAllSessions()" style="font-size:13px;">🗑️ Clear My Log</button>
+          <button class="delete-btn" onclick="clearAllSessions()" style="font-size:13px;">ðŸ—‘ï¸ Clear My Log</button>
         </div>
       </div>
 
@@ -384,7 +384,7 @@
         </form>
       </div>
 
-      <!-- Admin Accounts (owner only — shown/hidden by JS) -->
+      <!-- Admin Accounts (owner only â€” shown/hidden by JS) -->
       <div class="pwd-section" id="adminAccountsSection" style="display:none;margin-top:20px;">
         <h3>Admin Accounts</h3>
         <p>Add staff accounts and control which pages they can access.</p>
@@ -428,18 +428,18 @@
             </div>
           </div>
           <div class="login-error" id="newAcctError"></div>
-          <button type="submit" class="btn-primary" style="align-self:flex-start;">Create Account →</button>
+          <button type="submit" class="btn-primary" style="align-self:flex-start;">Create Account â†’</button>
         </form>
       </div>
 
       <div class="pwd-section" style="margin-top:20px;">
-        <h3>🎨 Appearance</h3>
+        <h3>ðŸŽ¨ Appearance</h3>
         <p>Customize the look of your admin panel. Colors are saved to this device.</p>
         <div style="display:flex;flex-direction:column;gap:16px;margin-top:16px;max-width:480px;">
 
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <span style="font-size:14px;font-weight:600;">Dark / Light Mode</span>
-            <button class="theme-toggle" id="themeToggleSettings" onclick="toggleTheme()" style="width:auto;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;width:110px;">🌙 Dark</button>
+            <button class="theme-toggle" id="themeToggleSettings" onclick="toggleTheme()" style="width:auto;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;width:110px;">ðŸŒ™ Dark</button>
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -477,7 +477,7 @@
             <button class="btn-primary" style="align-self:flex-start;" onclick="saveCustomColors()">Save Colors</button>
             <button class="tab-btn" onclick="resetCustomColors()">Reset to Default</button>
           </div>
-          <div id="colorStatus" style="font-size:13px;color:var(--green);display:none;">Colors saved ✓</div>
+          <div id="colorStatus" style="font-size:13px;color:var(--green);display:none;">Colors saved âœ“</div>
         </div>
       </div>
 
@@ -488,41 +488,41 @@
       </div>
 
       <div class="pwd-section" style="margin-top:20px;">
-        <h3>💳 Stripe Payments</h3>
+        <h3>ðŸ’³ Stripe Payments</h3>
         <p>Accept card payments online. Requires a free <a href="https://dashboard.stripe.com/register" target="_blank" rel="noopener">Stripe account</a> and deployment on Netlify.</p>
         <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;margin-top:14px;">
           <div class="form-group">
             <label>Stripe Publishable Key</label>
             <input type="text" id="stripeKeyInput" placeholder="pk_live_... or pk_test_..." autocomplete="off" />
-            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in Stripe Dashboard → Developers → API Keys. Also add this to config.js as <code>stripeKey</code>.</span>
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in Stripe Dashboard â†’ Developers â†’ API Keys. Also add this to config.js as <code>stripeKey</code>.</span>
           </div>
           <div class="form-group">
             <label>Stripe Secret Key</label>
             <input type="password" id="stripeSecretNote" placeholder="sk_live_... (Netlify env var only)" autocomplete="off" disabled style="opacity:0.5;cursor:not-allowed;" />
-            <span style="font-size:12px;color:var(--text3);margin-top:4px;">⚠️ Never paste here. Add <code>STRIPE_SECRET_KEY</code> in Netlify → Site → Environment Variables.</span>
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">âš ï¸ Never paste here. Add <code>STRIPE_SECRET_KEY</code> in Netlify â†’ Site â†’ Environment Variables.</span>
           </div>
           <button class="btn-primary" style="align-self:flex-start;" onclick="saveStripeKey()">Save Publishable Key</button>
-          <div id="stripeKeySaved" style="font-size:13px;color:var(--green);display:none;">Key saved ✓ — refresh the shop page to activate card payments.</div>
+          <div id="stripeKeySaved" style="font-size:13px;color:var(--green);display:none;">Key saved âœ“ â€” refresh the shop page to activate card payments.</div>
         </div>
       </div>
 
       <div class="pwd-section" style="margin-top:20px;">
-        <h3>☁️ Cloud Sync</h3>
+        <h3>â˜ï¸ Cloud Sync</h3>
         <p>Enter your <a href="https://jsonbin.io" target="_blank" rel="noopener">JSONBin.io</a> credentials to sync products, orders, and accounts across all devices automatically.</p>
         <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;margin-top:14px;">
           <div class="form-group">
             <label>Master Key</label>
             <input type="password" id="cloudKeyInput" placeholder="$2a$10$..." autocomplete="off" />
-            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in JSONBin → Account → API Keys → Master Key.</span>
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in JSONBin â†’ Account â†’ API Keys â†’ Master Key.</span>
           </div>
           <div class="form-group">
             <label>Bin ID</label>
             <input type="text" id="cloudBinInput" placeholder="64a3f2c8e1b2a3c4d5e6f7a8" autocomplete="off" maxlength="32" />
-            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in JSONBin → your bin URL. Create a new bin if you don't have one.</span>
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in JSONBin â†’ your bin URL. Create a new bin if you don't have one.</span>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn-primary" style="align-self:flex-start;" onclick="saveCloudSettings()">Save &amp; Connect</button>
-            <button class="tab-btn" onclick="manualSync()">↺ Sync Now</button>
+            <button class="tab-btn" onclick="manualSync()">â†º Sync Now</button>
           </div>
           <div id="cloudSyncStatus" style="font-size:13px;display:none;"></div>
         </div>
@@ -544,13 +544,13 @@
             <option value="open">Open</option>
             <option value="resolved">Resolved</option>
           </select>
-          <button class="tab-btn" onclick="loadSupportTickets()" style="padding:8px 14px;">↺ Refresh</button>
+          <button class="tab-btn" onclick="loadSupportTickets()" style="padding:8px 14px;">â†º Refresh</button>
         </div>
       </div>
 
       <div id="supportList"></div>
       <div id="supportEmpty" style="display:none;" class="empty-state">
-        <div class="empty-icon">💬</div>
+        <div class="empty-icon">ðŸ’¬</div>
         <h3>No support tickets yet</h3>
         <p>When visitors use the chat widget to report problems, they'll appear here.</p>
       </div>
@@ -565,7 +565,7 @@
           <div style="display:flex;gap:8px;align-items:center;">
             <span id="drawerStatus" style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;"></span>
             <button id="drawerResolveBtn" class="btn-primary" style="padding:6px 14px;font-size:13px;" onclick="resolveTicket()">Mark Resolved</button>
-            <button onclick="closeSupportDrawer()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;">✕</button>
+            <button onclick="closeSupportDrawer()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;">âœ•</button>
           </div>
         </div>
         <div id="drawerMessages" style="padding:16px;display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;"></div>
@@ -591,7 +591,7 @@
       const bin = document.getElementById('cloudBinInput')?.value.trim();
       const status = document.getElementById('cloudSyncStatus');
       if (!key || !bin) {
-        status.textContent = '⚠️ Both Master Key and Bin ID are required.';
+        status.textContent = 'âš ï¸ Both Master Key and Bin ID are required.';
         status.style.color = 'var(--accent3)';
         status.style.display = 'block';
         return;
@@ -604,18 +604,18 @@
       window.PROFAB_CONFIG.cloudKey = key;
       window.PROFAB_CONFIG.cloudBin = bin;
 
-      status.textContent = 'Testing connection…';
+      status.textContent = 'Testing connectionâ€¦';
       status.style.color = 'var(--text2)';
       status.style.display = 'block';
 
       const data = await cloudPull();
       if (data === null) {
-        status.textContent = '❌ Could not connect. Check your Master Key and Bin ID.';
+        status.textContent = 'âŒ Could not connect. Check your Master Key and Bin ID.';
         status.style.color = 'var(--accent3)';
       } else {
         // Push current local data up so other devices get it
         await cloudPush();
-        status.textContent = '✅ Connected and synced!';
+        status.textContent = 'âœ… Connected and synced!';
         status.style.color = 'var(--green)';
       }
     }
@@ -717,11 +717,11 @@
       return Math.ceil((LOCKOUT_DURATION - (Date.now() - getAttempts().last)) / 60000);
     }
 
-    // First-run: no accounts yet — create owner account
+    // First-run: no accounts yet â€” create owner account
     function showSetupMode() {
       document.getElementById('loginGate').innerHTML = `
         <div class="login-box">
-          <div class="login-logo"><img src="logo.png" alt="Printara" class="logo-img logo-img--login" /></div>
+          <div class="login-logo"><img src="logo.svg" alt="Printara" class="logo-img logo-img--login" /></div>
           <h2>Set Up Admin Access</h2>
           <p>Create the owner account for this admin panel.</p>
           <form onsubmit="setupOwner(event)">
@@ -735,7 +735,7 @@
               <input type="password" id="setupPwd2" required autocomplete="new-password" placeholder="Repeat password" />
             </div>
             <div class="login-error" id="setupError"></div>
-            <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:8px;">Create Owner Account →</button>
+            <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:8px;">Create Owner Account â†’</button>
           </form>
         </div>`;
     }
@@ -846,7 +846,7 @@
       document.getElementById('loginGate').style.display = 'none';
       document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
       initAdmin();
-      showToast('Account created — welcome, ' + (name || username) + '!');
+      showToast('Account created â€” welcome, ' + (name || username) + '!');
     }
 
     function logout() {
@@ -882,7 +882,7 @@
       _dbPut('/.netlify/functions/admin-accounts', { id: account.id, salt: account.salt, hash: account.hash });
       err.classList.remove('visible');
       e.target.reset();
-      showToast('Password updated ✓');
+      showToast('Password updated âœ“');
     }
 
     // ===== ADMIN ACCOUNTS MANAGEMENT (owner only) =====
@@ -924,7 +924,7 @@
       else { account.permissions = account.permissions.filter(t => t !== tab); }
       saveAdminAccounts(accounts);
       _dbPut('/.netlify/functions/admin-accounts', { id: accountId, permissions: account.permissions });
-      showToast('Permissions updated ✓');
+      showToast('Permissions updated âœ“');
     }
 
     function deleteAdminAccount(accountId) {
@@ -935,7 +935,7 @@
       saveAdminAccounts(getAdminAccounts().filter(a => a.id !== accountId));
       _dbDelete(`/.netlify/functions/admin-accounts?id=${encodeURIComponent(accountId)}`);
       renderAdminAccounts();
-      showToast('Account removed ✓');
+      showToast('Account removed âœ“');
     }
 
     async function addAdminAccount(e) {
@@ -962,7 +962,7 @@
       toggleNewAcctPerms();
       err.classList.remove('visible');
       renderAdminAccounts();
-      showToast(`Account "${username}" created ✓`);
+      showToast(`Account "${username}" created âœ“`);
     }
 
     function toggleNewAcctPerms() {
@@ -973,7 +973,7 @@
 
     // ===== TABS =====
     function switchTab(tab) {
-      // Permission guard — redirect to first allowed tab if blocked
+      // Permission guard â€” redirect to first allowed tab if blocked
       if (isAuthenticated() && !hasPermission(tab)) {
         const fallback = ALL_TABS.find(t => hasPermission(t));
         if (fallback && fallback !== tab) { switchTab(fallback); return; }
@@ -1018,10 +1018,10 @@
           <div class="sale-row" id="sale-row-${p.id}">
             <div class="sale-row-name">${p.name}</div>
             <div class="sale-row-price">Regular: $${Number(p.price).toFixed(2)}</div>
-            ${onSale ? `<span class="sale-active-badge">🏷️ On Sale: $${Number(p.salePrice).toFixed(2)}</span>` : ''}
+            ${onSale ? `<span class="sale-active-badge">ðŸ·ï¸ On Sale: $${Number(p.salePrice).toFixed(2)}</span>` : ''}
             <input class="sale-row-input" type="number" min="0" step="0.01"
               id="sale-input-${p.id}"
-              placeholder="Sale price…"
+              placeholder="Sale priceâ€¦"
               value="${onSale ? Number(p.salePrice).toFixed(2) : ''}" />
             <button class="btn-primary" style="padding:6px 14px;font-size:13px;" onclick="setSale('${p.id}')">Set Sale</button>
             ${onSale ? `<button class="delete-btn" onclick="clearSale('${p.id}')">Clear</button>` : ''}
@@ -1040,7 +1040,7 @@
       p.salePrice = val;
       saveProducts(products);
       dbUpdateProduct({ id, salePrice: val });
-      showToast(`Sale set: ${p.name} → $${val.toFixed(2)} ✓`);
+      showToast(`Sale set: ${p.name} â†’ $${val.toFixed(2)} âœ“`);
       renderSales();
     }
 
@@ -1088,11 +1088,11 @@
           <div style="font-size:28px;font-weight:800;color:var(--text);">${totalOrders}</div>
         </div>
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">💵 Cash</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">ðŸ’µ Cash</div>
           <div style="font-size:28px;font-weight:800;color:var(--text);">$${cashRevenue.toFixed(2)}</div>
         </div>
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">⭐ Merits</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">â­ Merits</div>
           <div style="font-size:28px;font-weight:800;color:var(--text);">$${meritsRevenue.toFixed(2)}</div>
         </div>`;
 
@@ -1126,11 +1126,11 @@
           <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
             <div>
               <div style="font-weight:700;font-size:14px;color:var(--text);">${o.customer?.name || 'Customer'}</div>
-              <div style="font-size:12px;color:var(--text2);">${date} · ${o.id}</div>
+              <div style="font-size:12px;color:var(--text2);">${date} Â· ${o.id}</div>
             </div>
             <div style="text-align:right;">
               <div style="font-size:18px;font-weight:800;color:var(--accent);">$${Number(o.total).toFixed(2)}</div>
-              <div style="font-size:11px;color:var(--text3);">${o.paymentMethod === 'merits' ? '⭐ Merits' : '💵 Cash'}</div>
+              <div style="font-size:11px;color:var(--text3);">${o.paymentMethod === 'merits' ? 'â­ Merits' : 'ðŸ’µ Cash'}</div>
             </div>
           </div>`;
       }).join('');
@@ -1162,20 +1162,20 @@
             </div>
             <div class="order-customer">
               ${r.customer.name}
-              <span class="order-payment-badge order-payment-badge--${r.paymentMethod || 'cash'}">${isMerits ? '⭐ Merits' : '💵 Cash'}</span>
+              <span class="order-payment-badge order-payment-badge--${r.paymentMethod || 'cash'}">${isMerits ? 'â­ Merits' : 'ðŸ’µ Cash'}</span>
             </div>
             <div class="order-customer-detail">
-              ${r.customer.email}${r.customer.phone ? ' · ' + r.customer.phone : ''}
+              ${r.customer.email}${r.customer.phone ? ' Â· ' + r.customer.phone : ''}
             </div>
             <div class="custom-description">${r.description}</div>
             ${r.photo ? `<img src="${r.photo}" class="custom-request-photo" alt="Reference photo" />` : ''}
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
               ${r.status === 'Complete'
-                ? '<span class="order-complete-label">✓ Completed</span>'
+                ? '<span class="order-complete-label">âœ“ Completed</span>'
                 : r.status === 'Rejected'
-                  ? '<span style="font-size:12px;font-weight:600;color:#ef5350;padding:6px 0;">✕ Rejected</span>'
-                  : `<button class="complete-btn" onclick="completeCustom('${r.id}')">✓ Mark Complete</button>
-                     <button class="reject-btn" onclick="rejectCustom('${r.id}')">✕ Reject</button>`}
+                  ? '<span style="font-size:12px;font-weight:600;color:#ef5350;padding:6px 0;">âœ• Rejected</span>'
+                  : `<button class="complete-btn" onclick="completeCustom('${r.id}')">âœ“ Mark Complete</button>
+                     <button class="reject-btn" onclick="rejectCustom('${r.id}')">âœ• Reject</button>`}
             </div>
           </div>`;
       }).join('');
@@ -1193,7 +1193,7 @@
       list.innerHTML = users.map(u => {
         const date = u.registeredAt
           ? new Date(u.registeredAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-          : '—';
+          : 'â€”';
         const orderCount = getOrders().filter(o => o.userId === u.id && o.type !== 'custom').length;
         const customCount = getOrders().filter(o => o.userId === u.id && o.type === 'custom').length;
         return `
@@ -1201,8 +1201,8 @@
             <div class="user-card-avatar">${u.name.charAt(0).toUpperCase()}</div>
             <div class="user-card-info">
               <div class="user-card-name">${u.name}</div>
-              <div class="user-card-email">${u.email}${u.profile?.phone ? ' · ' + u.profile.phone : ''}</div>
-              <div class="user-card-meta">Joined ${date} · ${orderCount} order${orderCount!==1?'s':''} · ${customCount} custom request${customCount!==1?'s':''}</div>
+              <div class="user-card-email">${u.email}${u.profile?.phone ? ' Â· ' + u.profile.phone : ''}</div>
+              <div class="user-card-meta">Joined ${date} Â· ${orderCount} order${orderCount!==1?'s':''} Â· ${customCount} custom request${customCount!==1?'s':''}</div>
             </div>
             <button class="delete-btn" onclick="deleteUser('${u.id}')">Remove</button>
           </div>`;
@@ -1224,9 +1224,9 @@
         r.status = 'Complete';
         saveOrders(orders);
         _dbPut('/.netlify/functions/orders', { id, status: 'Complete' });
-        addNotification(r.userId, 'custom_complete', r.id, `Your custom request ${r.id} is complete! We'll be in touch. ✓`);
+        addNotification(r.userId, 'custom_complete', r.id, `Your custom request ${r.id} is complete! We'll be in touch. âœ“`);
         renderCustom();
-        showToast('Marked complete ✓');
+        showToast('Marked complete âœ“');
       }
     }
 
@@ -1250,7 +1250,7 @@
       const arrow = document.getElementById('toggleDetailsArrow');
       const open = panel.style.display === 'none';
       panel.style.display = open ? 'block' : 'none';
-      arrow.textContent = open ? '▼' : '▶';
+      arrow.textContent = open ? 'â–¼' : 'â–¶';
     }
 
     async function addProduct(e) {
@@ -1267,7 +1267,7 @@
         printTime: data.printTime || '',
         dimensions: data.dimensions || '',
         image: _aiPhotoData || data.imageUrl || '',
-        emoji: data.emoji || '📦',
+        emoji: data.emoji || 'ðŸ“¦',
         inStock: data.inStock === 'true'
       };
       const products = getProducts();
@@ -1283,9 +1283,9 @@
       if (toggle) { toggle.checked = true; document.querySelector('[name=inStock]').value = 'true'; const lbl = document.getElementById('inStockLabel'); if(lbl) lbl.textContent = 'Visible'; }
       // Collapse details
       document.getElementById('listingDetails').style.display = 'none';
-      document.getElementById('toggleDetailsArrow').textContent = '▶';
+      document.getElementById('toggleDetailsArrow').textContent = 'â–¶';
       removeAiPhoto({ stopPropagation: () => {} });
-      showToast('Product added! ✓');
+      showToast('Product added! âœ“');
       switchTab('manage');
     }
 
@@ -1325,8 +1325,8 @@
             <div class="edit-card-img-wrap">
               ${imgSrc
                 ? `<img src="${imgSrc}" class="edit-card-img" id="edit-img-preview-${safeId}" alt="${p.name}" />`
-                : `<div class="edit-card-img-placeholder" id="edit-img-preview-${safeId}">${p.emoji || '📦'}</div>`}
-              <button type="button" class="edit-img-btn" onclick="document.getElementById('edit-img-input-${safeId}').click()">📷 Change</button>
+                : `<div class="edit-card-img-placeholder" id="edit-img-preview-${safeId}">${p.emoji || 'ðŸ“¦'}</div>`}
+              <button type="button" class="edit-img-btn" onclick="document.getElementById('edit-img-input-${safeId}').click()">ðŸ“· Change</button>
               <input type="file" id="edit-img-input-${safeId}" accept="image/*" style="display:none;"
                 onchange="handleEditPhoto('${safeId}', this)" />
             </div>
@@ -1350,7 +1350,7 @@
                 </div>
                 <div class="edit-field">
                   <label>Material</label>
-                  <input id="ef-mat-${safeId}" value="${escHtml(p.material || '')}" placeholder="PLA, PETG…" list="materialList" />
+                  <input id="ef-mat-${safeId}" value="${escHtml(p.material || '')}" placeholder="PLA, PETGâ€¦" list="materialList" />
                 </div>
               </div>
               <div class="edit-field">
@@ -1364,14 +1364,14 @@
                 </div>
                 <div class="edit-field">
                   <label>Dimensions</label>
-                  <input id="ef-dim-${safeId}" value="${escHtml(p.dimensions || '')}" placeholder="50×50×80 mm" />
+                  <input id="ef-dim-${safeId}" value="${escHtml(p.dimensions || '')}" placeholder="50Ã—50Ã—80 mm" />
                 </div>
               </div>
 
               <!-- ACTIONS -->
               <div class="edit-card-actions">
                 <button class="btn-primary" onclick="saveProductEdit('${p.id}')">Save</button>
-                <button class="tab-btn" onclick="toggleStock('${p.id}')">${p.inStock ? '🔴 Hide' : '✅ Show'}</button>
+                <button class="tab-btn" onclick="toggleStock('${p.id}')">${p.inStock ? 'ðŸ”´ Hide' : 'âœ… Show'}</button>
                 <button class="delete-btn btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
               </div>
             </div>
@@ -1438,7 +1438,7 @@
 
       saveProducts(products);
       await dbUpdateProduct({ id: p.id, name: p.name, price: p.price, category: p.category, material: p.material, description: p.description, printTime: p.printTime, dimensions: p.dimensions, image: p.image });
-      showToast(`${p.name} saved ✓`);
+      showToast(`${p.name} saved âœ“`);
       renderManage();
     }
 
@@ -1459,7 +1459,7 @@
       list.innerHTML = orders.map(o => {
         const date = new Date(o.date).toLocaleString();
         const itemLines = o.items.map(i =>
-          `<div>• ${i.name} × ${i.qty} — $${(i.price * i.qty).toFixed(2)}</div>`
+          `<div>â€¢ ${i.name} Ã— ${i.qty} â€” $${(i.price * i.qty).toFixed(2)}</div>`
         ).join('');
         return `
           <div class="order-card">
@@ -1468,17 +1468,17 @@
               <span class="order-id">${o.id}</span>
               <span class="order-date">${date}</span>
             </div>
-            <div class="order-customer">${o.customer.name} <span class="order-payment-badge order-payment-badge--${o.paymentMethod || 'cash'}">${o.paymentMethod === 'merits' ? '⭐ Merits' : '💵 Cash'}</span></div>
+            <div class="order-customer">${o.customer.name} <span class="order-payment-badge order-payment-badge--${o.paymentMethod || 'cash'}">${o.paymentMethod === 'merits' ? 'â­ Merits' : 'ðŸ’µ Cash'}</span></div>
             <div class="order-customer-detail">
-              ${o.customer.email}${o.customer.phone ? ' · ' + o.customer.phone : ''}
+              ${o.customer.email}${o.customer.phone ? ' Â· ' + o.customer.phone : ''}
             </div>
             ${o.notes ? `<div style="font-size:13px;color:var(--text2);margin-bottom:12px;font-style:italic;">Notes: ${o.notes}</div>` : ''}
             ${o.photo ? `<div style="margin-bottom:12px;"><img src="${o.photo}" alt="Order reference photo" style="max-width:100%;max-height:220px;border-radius:10px;object-fit:cover;border:1px solid var(--border);" /></div>` : ''}
             <div class="order-items-list">${itemLines}</div>
             <div class="order-total-line">Total: $${Number(o.total).toFixed(2)}</div>
             <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-              ${o.status !== 'Complete' ? `<button class="complete-btn" onclick="completeOrder('${o.id}')">✓ Mark Complete</button>` : '<span class="order-complete-label">✓ Completed</span>'}
-              <button class="tab-btn" onclick="printReceipt(${JSON.stringify(o).replace(/"/g,'&quot;')})" style="font-size:12px;padding:6px 14px;">🖨️ Print Receipt</button>
+              ${o.status !== 'Complete' ? `<button class="complete-btn" onclick="completeOrder('${o.id}')">âœ“ Mark Complete</button>` : '<span class="order-complete-label">âœ“ Completed</span>'}
+              <button class="tab-btn" onclick="printReceipt(${JSON.stringify(o).replace(/"/g,'&quot;')})" style="font-size:12px;padding:6px 14px;">ðŸ–¨ï¸ Print Receipt</button>
             </div>
           </div>`;
       }).join('');
@@ -1492,9 +1492,9 @@
         o.status = 'Complete';
         saveOrders(orders);
         _dbPut('/.netlify/functions/orders', { id, status: 'Complete' });
-        addNotification(o.userId, 'order_complete', o.id, `Your order ${o.id} is ready! 🎉`);
+        addNotification(o.userId, 'order_complete', o.id, `Your order ${o.id} is ready! ðŸŽ‰`);
         renderOrders();
-        showToast('Order marked as complete ✓');
+        showToast('Order marked as complete âœ“');
       }
     }
 
@@ -1557,7 +1557,7 @@
       saveMyActive(active);
       _dbPost('/.netlify/functions/clock-sessions?active=1', active);
       renderClockIn();
-      showToast('Clocked in ✓');
+      showToast('Clocked in âœ“');
     }
 
     function clockOut() {
@@ -1576,7 +1576,7 @@
       clearInterval(ciTimer);
       ciTimer = null;
       renderClockIn();
-      showToast(`Clocked out — ${fmtDuration(ms)} logged ✓`);
+      showToast(`Clocked out â€” ${fmtDuration(ms)} logged âœ“`);
     }
 
     function clearAllSessions() {
@@ -1671,7 +1671,7 @@
           ${rows.map(r => {
             const inT  = new Date(r.start).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             const outT = new Date(r.end).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-            return `<div class="ci-row"><span class="ci-row-time">${inT} → ${outT}</span><span class="ci-row-dur">${fmtDuration(r.ms)}</span></div>`;
+            return `<div class="ci-row"><span class="ci-row-time">${inT} â†’ ${outT}</span><span class="ci-row-dur">${fmtDuration(r.ms)}</span></div>`;
           }).join('')}
         </div>`;
       }).join('');
@@ -1737,7 +1737,7 @@
           <div style="padding:16px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);">
             <div style="display:flex;align-items:center;gap:10px;">
               <span style="font-size:16px;font-weight:800;color:var(--text);">${username}</span>
-              ${isClockedIn ? `<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(76,175,80,0.15);color:#66bb6a;">● Live — ${fmtDuration(liveMs)}</span>` : ''}
+              ${isClockedIn ? `<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(76,175,80,0.15);color:#66bb6a;">â— Live â€” ${fmtDuration(liveMs)}</span>` : ''}
             </div>
             <div style="display:flex;gap:14px;flex-wrap:wrap;">
               <div style="text-align:center;"><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Today</div><div style="font-size:15px;font-weight:700;color:var(--text);">${fmtDurationHM(msToday)}</div></div>
@@ -1749,7 +1749,7 @@
           ${sessions.length > 0 ? `
           <details style="padding:0;">
             <summary style="padding:10px 18px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;">
-              ▸ View time log (${sessions.length} session${sessions.length===1?'':'s'})
+              â–¸ View time log (${sessions.length} session${sessions.length===1?'':'s'})
             </summary>
             <div style="padding:0 18px 14px;">
               ${Object.entries(groups).map(([date, rows]) => {
@@ -1759,7 +1759,7 @@
                   ${rows.map(r => {
                     const inT  = new Date(r.start).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                     const outT = new Date(r.end).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-                    return `<div class="ci-row"><span class="ci-row-time">${inT} → ${outT}</span><span class="ci-row-dur">${fmtDuration(r.ms)}</span></div>`;
+                    return `<div class="ci-row"><span class="ci-row-time">${inT} â†’ ${outT}</span><span class="ci-row-dur">${fmtDuration(r.ms)}</span></div>`;
                   }).join('')}
                 </div>`;
               }).join('')}
@@ -1781,21 +1781,21 @@
     }
 
     function fireOrderNotification(order) {
-      const title = `New Order — ${order.id}`;
-      const body  = `${order.customer?.name || 'Customer'} · $${Number(order.total).toFixed(2)} · ${order.paymentMethod === 'merits' ? '⭐ Merits' : '💵 Cash'}`;
+      const title = `New Order â€” ${order.id}`;
+      const body  = `${order.customer?.name || 'Customer'} Â· $${Number(order.total).toFixed(2)} Â· ${order.paymentMethod === 'merits' ? 'â­ Merits' : 'ðŸ’µ Cash'}`;
       // Browser notification (works when tab is in background)
       if (Notification.permission === 'granted') {
         const n = new Notification(title, {
           body,
-          icon: 'logo.png',
-          badge: 'logo.png',
+          icon: 'logo.svg',
+          badge: 'logo.svg',
           tag: order.id,
           requireInteraction: true
         });
         n.onclick = () => { window.focus(); switchTab('orders'); n.close(); };
       }
       // Always show on-screen toast too
-      showToast(`🛒 New order: ${order.customer?.name || 'Customer'} — $${Number(order.total).toFixed(2)}`);
+      showToast(`ðŸ›’ New order: ${order.customer?.name || 'Customer'} â€” $${Number(order.total).toFixed(2)}`);
     }
 
     async function pollForNewOrders() {
@@ -1803,7 +1803,7 @@
       await syncAllFromDB();
       const current = getOrders().filter(o => o.type !== 'custom').map(o => o.id);
       if (_knownOrderIds === null) {
-        // First poll after init — just record baseline, no notification
+        // First poll after init â€” just record baseline, no notification
         _knownOrderIds = new Set(current);
         return;
       }
@@ -1877,7 +1877,7 @@
       startOrderPolling();
     }
 
-    // On load — check session IMMEDIATELY (no cloud delay)
+    // On load â€” check session IMMEDIATELY (no cloud delay)
     document.addEventListener('DOMContentLoaded', async () => {
       loadCloudSettingsUI(); // inject saved cloud credentials before any sync
       if (isAuthenticated()) {
@@ -1966,7 +1966,7 @@
       const filter = document.getElementById('supportFilter')?.value || 'all';
       const list = document.getElementById('supportList');
       const empty = document.getElementById('supportEmpty');
-      list.innerHTML = '<p style="color:var(--text3);font-size:14px;">Loading…</p>';
+      list.innerHTML = '<p style="color:var(--text3);font-size:14px;">Loadingâ€¦</p>';
       empty.style.display = 'none';
 
       try {
@@ -1992,7 +1992,7 @@
           const badge = isOpen
             ? `<span style="background:rgba(224,32,32,.2);color:var(--accent);border:1px solid rgba(224,32,32,.3);border-radius:10px;font-size:11px;font-weight:700;padding:2px 8px;">Open</span>`
             : `<span style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25);border-radius:10px;font-size:11px;font-weight:700;padding:2px 8px;">Resolved</span>`;
-          const preview = (s.first_message || '').slice(0, 90) + ((s.first_message || '').length > 90 ? '…' : '');
+          const preview = (s.first_message || '').slice(0, 90) + ((s.first_message || '').length > 90 ? 'â€¦' : '');
           return `<div onclick="openSupportDrawer('${s.session_id}')"
             style="border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer;background:var(--surface2);transition:border-color .15s;"
             onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
@@ -2041,7 +2041,7 @@
 
       const drawer = document.getElementById('supportDrawer');
       drawer.style.display = 'block';
-      document.getElementById('drawerMessages').innerHTML = '<p style="color:var(--text3);font-size:13px;">Loading…</p>';
+      document.getElementById('drawerMessages').innerHTML = '<p style="color:var(--text3);font-size:13px;">Loadingâ€¦</p>';
 
       try {
         const res = await fetch(`/.netlify/functions/support-chat?session=${sessionId}`);
@@ -2054,7 +2054,7 @@
               padding:9px 13px;border-radius:${isBot ? '14px 14px 14px 4px' : '14px 14px 4px 14px'};font-size:13.5px;line-height:1.45;">
               ${m.message}
             </div>
-            <span style="font-size:11px;color:var(--text3);margin-top:3px;">${isBot ? 'Support Bot' : m.name} · ${time}</span>
+            <span style="font-size:11px;color:var(--text3);margin-top:3px;">${isBot ? 'Support Bot' : m.name} Â· ${time}</span>
           </div>`;
         }).join('');
       } catch {
@@ -2097,3 +2097,4 @@
   </script>
 </body>
 </html>
+

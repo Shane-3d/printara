@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Printara — Dashboard</title>
-  <link rel="icon" href="logo.png" />
+  <title>Printara â€” Dashboard</title>
+  <link rel="icon" href="logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/mqtt@5/dist/mqtt.min.js"></script>
@@ -21,8 +21,9 @@
 
     /* topbar */
     #topbar { display:flex; align-items:center; gap:12px; padding:0 20px; height:54px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
-    #topbar a { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:800; font-size:15px; }
-    #topbar a svg { color:var(--accent); }
+    #topbar a { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:800; font-size:15px; font-family:'Inter',sans-serif; letter-spacing:.02em; }
+    #topbar a img { filter:drop-shadow(0 0 6px rgba(220,40,40,.45)); transition:filter .2s,transform .2s; }
+    #topbar a:hover img { filter:drop-shadow(0 0 14px rgba(255,60,60,.8)); transform:scale(1.1); }
     .spacer { flex:1; }
 
     /* dashboard grid */
@@ -149,7 +150,7 @@
     .ams-sel-chip { display:flex; align-items:center; gap:4px; background:var(--surface2); border:1px solid var(--border); border-radius:20px; padding:3px 8px 3px 6px; font-size:11px; color:var(--text2); }
     .ams-sel-dot { width:10px; height:10px; border-radius:50%; border:1px solid rgba(255,255,255,.2); flex-shrink:0; }
 
-    /* ── Send / color dialog ── */
+    /* â”€â”€ Send / color dialog â”€â”€ */
     .color-count-row { display:flex; gap:5px; }
     .color-count-btn { flex:1; padding:7px 4px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; font-size:11px; font-weight:700; color:var(--text2); cursor:pointer; transition:all .15s; }
     .color-count-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
@@ -160,7 +161,7 @@
     .slot-color-swatch:hover { transform:scale(1.12); border-color:rgba(255,255,255,.55); }
     #send-preview { width:100%; height:130px; border-radius:8px; background:#070712; display:block; margin-bottom:14px; }
 
-    /* ── Part preview in manage panel ── */
+    /* â”€â”€ Part preview in manage panel â”€â”€ */
     #part-preview-section { background:#060610; border-bottom:1px solid var(--border); flex-shrink:0; }
     #part-preview-canvas { width:100%; height:140px; display:block; }
     #part-preview-label { font-size:10px; color:var(--text3); text-align:center; padding:4px 14px 8px; }
@@ -178,7 +179,7 @@
 
 <header id="topbar">
   <a href="index.html">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
+    <img src="logo.svg" alt="Printara" style="width:28px;height:28px;object-fit:contain;" />
     Printara
   </a>
   <span style="color:var(--text3);margin:0 2px">/</span>
@@ -204,7 +205,7 @@
 <!-- Add Printer Modal -->
 <div id="add-modal" class="modal-bg hidden" onclick="if(event.target===this)closeAdd()">
   <div class="modal">
-    <button class="mclose" onclick="closeAdd()">×</button>
+    <button class="mclose" onclick="closeAdd()">Ã—</button>
     <h2>Add Printer</h2>
     <div class="field">
       <label>Printer Name</label>
@@ -221,19 +222,19 @@
         <div class="field">
           <label>Serial Port</label>
           <div style="display:flex;gap:6px">
-            <select id="add-port" style="flex:1;padding:9px 11px;font-size:13px;font-family:inherit;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none"><option value="">No ports found — click Scan</option></select>
+            <select id="add-port" style="flex:1;padding:9px 11px;font-size:13px;font-family:inherit;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none"><option value="">No ports found â€” click Scan</option></select>
             <button class="btn-secondary btn-sm" onclick="scanPorts()" style="padding:9px 12px;flex-shrink:0">Scan</button>
           </div>
         </div>
       </div>
       <div id="usb-web-ui">
-        <p style="font-size:11px;color:var(--text3);margin-bottom:12px">A port picker will open. Only works in Chrome/Edge — or <a href="download.html" style="color:var(--accent)">install the desktop app</a> for auto-detect.</p>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:12px">A port picker will open. Only works in Chrome/Edge â€” or <a href="download.html" style="color:var(--accent)">install the desktop app</a> for auto-detect.</p>
       </div>
       <div class="field">
         <label>Baud Rate</label>
         <select id="add-baud">
-          <option value="115200" selected>115200 — most printers</option>
-          <option value="250000">250000 — some Marlin</option>
+          <option value="115200" selected>115200 â€” most printers</option>
+          <option value="250000">250000 â€” some Marlin</option>
           <option value="57600">57600</option>
           <option value="9600">9600</option>
         </select>
@@ -245,15 +246,15 @@
         <input type="text" id="add-ip" placeholder="192.168.1.100" spellcheck="false" autocomplete="off" />
       </div>
       <div class="field" id="add-key-wrap">
-        <label>API Key <span style="color:var(--text3);font-size:10px">(OctoPrint → Settings → API)</span></label>
-        <input type="password" id="add-key" placeholder="Paste API key…" spellcheck="false" />
+        <label>API Key <span style="color:var(--text3);font-size:10px">(OctoPrint â†’ Settings â†’ API)</span></label>
+        <input type="password" id="add-key" placeholder="Paste API keyâ€¦" spellcheck="false" />
       </div>
       <div class="field hidden" id="add-pin-wrap">
-        <label>Access Code <span style="color:var(--text3);font-size:10px">(printer screen → Settings → LAN)</span></label>
+        <label>Access Code <span style="color:var(--text3);font-size:10px">(printer screen â†’ Settings â†’ LAN)</span></label>
         <input type="password" id="add-pin" placeholder="8-character code" spellcheck="false" maxlength="8" />
       </div>
     </div>
-    <button class="btn-primary" id="add-btn" onclick="doAdd()" style="width:100%;padding:11px;font-size:14px;margin-top:4px">⚡ Connect</button>
+    <button class="btn-primary" id="add-btn" onclick="doAdd()" style="width:100%;padding:11px;font-size:14px;margin-top:4px">âš¡ Connect</button>
   </div>
 </div>
 
@@ -262,7 +263,7 @@
   <div class="ptopbar">
     <select id="printer-select" onchange="switchPrinter(this.value)"></select>
     <button class="btn-danger btn-sm" onclick="disconnectManaged()">Disconnect</button>
-    <button class="btn-secondary btn-sm" onclick="closeManage()">✕</button>
+    <button class="btn-secondary btn-sm" onclick="closeManage()">âœ•</button>
   </div>
   <div class="pcam" id="pcam">
     <div class="no-cam" id="pnc">
@@ -270,7 +271,7 @@
       No camera
     </div>
     <img id="pcam-img" class="hidden" src="" alt="" />
-    <div class="live-badge hidden" id="plive">● LIVE</div>
+    <div class="live-badge hidden" id="plive">â— LIVE</div>
   </div>
   <!-- Part / toolpath preview -->
   <div id="part-preview-section" style="display:none">
@@ -287,16 +288,16 @@
         <span id="ppsub"></span><span id="pppct" style="color:var(--accent);font-weight:700"></span>
       </div>
       <div style="display:flex;gap:6px;margin-top:8px">
-        <button class="btn-secondary btn-sm" id="p-pause"  disabled onclick="pPause()">⏸ Pause</button>
-        <button class="btn-secondary btn-sm hidden" id="p-resume" onclick="pResume()">▶ Resume</button>
-        <button class="btn-danger btn-sm"    id="p-cancel" disabled onclick="pCancel()">✕ Cancel</button>
+        <button class="btn-secondary btn-sm" id="p-pause"  disabled onclick="pPause()">â¸ Pause</button>
+        <button class="btn-secondary btn-sm hidden" id="p-resume" onclick="pResume()">â–¶ Resume</button>
+        <button class="btn-danger btn-sm"    id="p-cancel" disabled onclick="pCancel()">âœ• Cancel</button>
       </div>
     </div>
     <!-- Bambu direct LAN upload (shown only for Bambu printers) -->
     <div id="bambu-lan-section" style="display:none">
       <div class="stitle">Send to Printer via LAN</div>
-      <button class="btn-primary" id="bambu-lan-btn" onclick="openSendDialog()" style="width:100%;padding:9px;font-size:13px">⬆ Choose File &amp; Colors…</button>
-      <div style="font-size:10px;color:var(--text3);margin-top:6px">Upload .gcode or .3mf directly over your local network — choose filament colors and preview the toolpath first.</div>
+      <button class="btn-primary" id="bambu-lan-btn" onclick="openSendDialog()" style="width:100%;padding:9px;font-size:13px">â¬† Choose File &amp; Colorsâ€¦</button>
+      <div style="font-size:10px;color:var(--text3);margin-top:6px">Upload .gcode or .3mf directly over your local network â€” choose filament colors and preview the toolpath first.</div>
     </div>
     <!-- Queue -->
     <div>
@@ -304,9 +305,9 @@
         <div class="stitle" style="margin:0;flex:1">Queue</div>
         <button class="btn-secondary btn-sm" onclick="pClearDone()" style="margin-right:4px">Clear done</button>
         <button class="btn-secondary btn-sm" onclick="pAddFiles()">+ Add</button>
-        <button class="btn-primary btn-sm" id="p-start" disabled onclick="pStart()" style="margin-left:6px">▶ Start</button>
+        <button class="btn-primary btn-sm" id="p-start" disabled onclick="pStart()" style="margin-left:6px">â–¶ Start</button>
       </div>
-      <!-- AMS color slots — shown only for Bambu printers -->
+      <!-- AMS color slots â€” shown only for Bambu printers -->
       <div id="ams-section" style="display:none;margin-bottom:10px;">
         <div class="stitle" style="margin-bottom:6px;">Filament / AMS Colors</div>
         <div class="ams-slots" id="ams-slots"></div>
@@ -318,8 +319,8 @@
     <div>
       <div class="stitle">Temperature</div>
       <div class="temps">
-        <div class="tchip"><div class="lbl">Hotend</div><div class="val" id="pt-hotend">—</div><div class="tgt" id="pt-hotend-tgt"></div></div>
-        <div class="tchip"><div class="lbl">Bed</div><div class="val" id="pt-bed">—</div><div class="tgt" id="pt-bed-tgt"></div></div>
+        <div class="tchip"><div class="lbl">Hotend</div><div class="val" id="pt-hotend">â€”</div><div class="tgt" id="pt-hotend-tgt"></div></div>
+        <div class="tchip"><div class="lbl">Bed</div><div class="val" id="pt-bed">â€”</div><div class="tgt" id="pt-bed-tgt"></div></div>
       </div>
     </div>
     <!-- Commands -->
@@ -342,7 +343,7 @@
       </div>
       <div id="pcon"></div>
       <div class="cin-row">
-        <input id="pcin" type="text" placeholder="G-code command…" autocomplete="off" spellcheck="false" />
+        <input id="pcin" type="text" placeholder="G-code commandâ€¦" autocomplete="off" spellcheck="false" />
         <button class="btn-primary btn-sm" onclick="pSendCon()">Send</button>
       </div>
     </div>
@@ -352,14 +353,14 @@
 <!-- ===== SEND / COLOR DIALOG ===== -->
 <div id="send-dialog" class="modal-bg hidden" onclick="if(event.target===this)closeSendDialog()">
   <div class="modal" style="max-width:360px">
-    <button class="mclose" onclick="closeSendDialog()">×</button>
+    <button class="mclose" onclick="closeSendDialog()">Ã—</button>
     <h2 style="margin-bottom:14px">Send to Printer via LAN</h2>
 
     <!-- File picker -->
     <div class="field">
       <label>File</label>
       <div style="display:flex;gap:6px">
-        <input type="text" id="send-fname" placeholder="No file chosen…" readonly style="flex:1;cursor:pointer;font-size:12px" onclick="pickSendFile()" />
+        <input type="text" id="send-fname" placeholder="No file chosenâ€¦" readonly style="flex:1;cursor:pointer;font-size:12px" onclick="pickSendFile()" />
         <button class="btn-secondary btn-sm" onclick="pickSendFile()" style="padding:9px 12px;flex-shrink:0">Browse</button>
       </div>
     </div>
@@ -384,13 +385,13 @@
       <div id="send-slot-list"></div>
     </div>
 
-    <button class="btn-primary" id="send-do-btn" onclick="doSendLan()" style="width:100%;padding:11px;font-size:14px;margin-top:4px" disabled>⬆ Upload &amp; Print</button>
+    <button class="btn-primary" id="send-do-btn" onclick="doSendLan()" style="width:100%;padding:11px;font-size:14px;margin-top:4px" disabled>â¬† Upload &amp; Print</button>
   </div>
 </div>
 
 <div id="toasts"></div>
 <script>
-// ── Auth guard (runs first, before everything else) ───────────────────────────
+// â”€â”€ Auth guard (runs first, before everything else) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ;(function() {
   try {
     const raw = sessionStorage.getItem('printara_session');
@@ -405,19 +406,19 @@
   }
 })();
 
-// ── State ──────────────────────────────────────────────────────────────────────
+// â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const printers = new Map();
 let managedId = null;
 let addType = 'usb';
 
-// Async probe — resolves true if server.js proxy endpoints are reachable.
-// Works from https://printara.test (Herd → nginx → server.js) AND http://IP:3000 (direct).
+// Async probe â€” resolves true if server.js proxy endpoints are reachable.
+// Works from https://printara.test (Herd â†’ nginx â†’ server.js) AND http://IP:3000 (direct).
 const _serverProbe = fetch('/server.json', { signal: AbortSignal.timeout(1500), cache: 'no-store' })
   .then(r => r.ok ? r.json() : null)
   .then(d => !!(d && d.printara))
   .catch(() => false);
 
-// ── Printer factory ────────────────────────────────────────────────────────────
+// â”€â”€ Printer factory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function mkP(o = {}) {
   return {
     id: o.id || uid(), name: o.name || 'Printer',
@@ -442,10 +443,10 @@ function mkP(o = {}) {
   };
 }
 
-// ── Add modal ──────────────────────────────────────────────────────────────────
+// â”€â”€ Add modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openAdd() { document.getElementById('add-modal').classList.remove('hidden'); document.getElementById('add-name').focus(); }
 function closeAdd() { document.getElementById('add-modal').classList.add('hidden'); resetAddBtn(); }
-function resetAddBtn() { const b = document.getElementById('add-btn'); b.disabled = false; b.textContent = '⚡ Connect'; }
+function resetAddBtn() { const b = document.getElementById('add-btn'); b.disabled = false; b.textContent = 'âš¡ Connect'; }
 
 function setAT(t) {
   addType = t;
@@ -465,7 +466,7 @@ function setAT(t) {
 async function doAdd() {
   const name = document.getElementById('add-name').value.trim() || 'My Printer';
   const btn = document.getElementById('add-btn');
-  btn.disabled = true; btn.textContent = 'Connecting…';
+  btn.disabled = true; btn.textContent = 'Connectingâ€¦';
   const p = mkP({
     name, type: addType,
     ip:      (document.getElementById('add-ip')  ?.value.trim()) || '',
@@ -488,7 +489,7 @@ async function doAdd() {
   }
 }
 
-// ── Connect dispatcher ─────────────────────────────────────────────────────────
+// â”€â”€ Connect dispatcher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function connectP(p) {
   p.connecting = true; renderCard(p);
   if (p.type === 'usb')       await connectUSB(p);
@@ -496,18 +497,18 @@ async function connectP(p) {
   else                         await connectHttp(p);
 }
 
-// ── USB (Electron serialBridge OR Web Serial fallback) ────────────────────────
+// â”€â”€ USB (Electron serialBridge OR Web Serial fallback) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let bridgePrinter = null;
 
 async function scanPorts() {
   if (!window.serialBridge) return;
   const btn = document.querySelector('#usb-bridge-ui button');
-  if (btn) { btn.textContent = '…'; btn.disabled = true; }
+  if (btn) { btn.textContent = 'â€¦'; btn.disabled = true; }
   try {
     const ports = await window.serialBridge.list();
     const sel = document.getElementById('add-port');
     sel.innerHTML = ports.length
-      ? ports.map(pt => `<option value="${pt.path}">${pt.path}${pt.manufacturer ? ' — ' + pt.manufacturer : ''}</option>`).join('')
+      ? ports.map(pt => `<option value="${pt.path}">${pt.path}${pt.manufacturer ? ' â€” ' + pt.manufacturer : ''}</option>`).join('')
       : '<option value="">No ports found</option>';
   } finally {
     if (btn) { btn.textContent = 'Scan'; btn.disabled = false; }
@@ -517,12 +518,12 @@ async function scanPorts() {
 async function connectUSB(p) {
   if (window.serialBridge) {
     const portPath = document.getElementById('add-port')?.value;
-    if (!portPath) throw new Error('No port selected — click Scan first');
+    if (!portPath) throw new Error('No port selected â€” click Scan first');
     await window.serialBridge.connect(portPath, p.baudRate);
     p.usesBridge = true;
     bridgePrinter = p;
   } else {
-    if (!navigator.serial) throw new Error('Web Serial not supported — use Chrome/Edge or install the desktop app');
+    if (!navigator.serial) throw new Error('Web Serial not supported â€” use Chrome/Edge or install the desktop app');
     const port = await navigator.serial.requestPort();
     await port.open({ baudRate: p.baudRate });
     p.serialPort = port;
@@ -616,7 +617,7 @@ function discUSB(p) {
   p.connected = false; p.status = 'idle'; renderCard(p);
 }
 
-// ── HTTP (OctoPrint / Moonraker) ───────────────────────────────────────────────
+// â”€â”€ HTTP (OctoPrint / Moonraker) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function connectHttp(p) {
   if (!p.ip) throw new Error('Enter the printer IP');
   const ip = p.ip.replace(/^https?:\/\//, '');
@@ -637,7 +638,7 @@ async function connectHttp(p) {
   } else {
     const r = await ft(p.baseUrl + '/printer/info', {}, 5000).then(r => r.json());
     if (!r.result) throw new Error('Not a Moonraker server');
-    plog(p, 'Moonraker — ' + r.result.state, 'info');
+    plog(p, 'Moonraker â€” ' + r.result.state, 'info');
     try {
       const wc = await ft(p.baseUrl + '/server/webcams/list', {}, 3000).then(r => r.json());
       const cams = wc.result?.webcams || [];
@@ -696,7 +697,7 @@ async function pollStatus(p) {
 
 function discHttp(p) { stopPoll(p); p.connected = false; p.status = 'idle'; p.isPrinting = false; renderCard(p); }
 
-// ── Bambu Lab ──────────────────────────────────────────────────────────────────
+// â”€â”€ Bambu Lab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Electron: native TLS MQTT via mqttBridge (mqtts://ip:8883, rejectUnauthorized:false)
 // Browser:  WebSocket MQTT fallback (ws://ip:2883)
 async function connectBambu(p) {
@@ -729,11 +730,11 @@ async function connectBambu(p) {
     });
 
     // connect() resolves once the MQTT broker accepts the connection and the
-    // subscription to device/+/report is confirmed — no need to wait for a message
+    // subscription to device/+/report is confirmed â€” no need to wait for a message
     await window.mqttBridge.connect(p.id, ip, p.pin);
     p.connected = true; p.connecting = false; p.status = 'idle';
     renderCard(p);
-    plog(p, 'Connected via MQTT — waiting for status…', 'info');
+    plog(p, 'Connected via MQTT â€” waiting for statusâ€¦', 'info');
     return;
   }
 
@@ -758,7 +759,7 @@ function connectBambuProxy(p, ip) {
         p._proxySocket = ws;
         if (!ok) {
           ok = true; p.connected = true; p.connecting = false; p.status = 'idle';
-          renderCard(p); plog(p, 'Connected via proxy — waiting for status…', 'info'); res();
+          renderCard(p); plog(p, 'Connected via proxy â€” waiting for statusâ€¦', 'info'); res();
         }
       } else if (msg.type === 'message') {
         if (!p.bambuSerial) {
@@ -780,7 +781,7 @@ function connectBambuProxy(p, ip) {
   });
 }
 
-// Direct WebSocket MQTT on port 2883 — Bambu's plain WebSocket MQTT endpoint
+// Direct WebSocket MQTT on port 2883 â€” Bambu's plain WebSocket MQTT endpoint
 // Works when the browser is on the same local network and served over HTTP (not HTTPS)
 function connectBambuWs(p, ip) {
   return new Promise((res, rej) => {
@@ -791,7 +792,7 @@ function connectBambuWs(p, ip) {
     let ok = false;
     p.mqttClient.on('connect', () => {
       p.mqttClient.subscribe('device/+/report', () => {
-        if (!ok) { ok = true; p.connected = true; p.connecting = false; p.status = 'idle'; renderCard(p); plog(p, 'Connected — waiting for status…', 'info'); res(); }
+        if (!ok) { ok = true; p.connected = true; p.connecting = false; p.status = 'idle'; renderCard(p); plog(p, 'Connected â€” waiting for statusâ€¦', 'info'); res(); }
       });
     });
     p.mqttClient.on('message', (topic, raw) => {
@@ -843,14 +844,14 @@ function discBambu(p) {
   p.bambuSerial = ''; p.bambuLast = ''; p.connected = false; p.status = 'idle'; renderCard(p);
 }
 
-// ── Generic disconnect ─────────────────────────────────────────────────────────
+// â”€â”€ Generic disconnect â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function discP(p) {
   if (p.type === 'usb') discUSB(p);
   else if (p.type === 'bambu') discBambu(p);
   else discHttp(p);
 }
 
-// ── Send G-code ────────────────────────────────────────────────────────────────
+// â”€â”€ Send G-code â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function sendCmd(p, cmd) {
   if (!p.connected) return;
   plog(p, cmd, 'sent');
@@ -861,14 +862,14 @@ async function sendCmd(p, cmd) {
   else                        await fetch(p.baseUrl + '/printer/gcode/script',  { method: 'POST', headers: h, body: JSON.stringify({ script: cmd }) });
 }
 
-// ── Print flow ─────────────────────────────────────────────────────────────────
+// â”€â”€ Print flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function onDone(p) {
   if (p.currentItem) p.currentItem.status = 'done';
   const done = p.currentItem;
   p.currentItem = null; p.isPrinting = false; p.isPaused = false;
   p.status = 'idle'; p.progress = 100;
   renderCard(p); renderPQ();
-  toast('Print complete: ' + (done?.name || '') + ' ✓', 'success');
+  toast('Print complete: ' + (done?.name || '') + ' âœ“', 'success');
   setTimeout(() => {
     const next = p.queue.find(i => i.status === 'queued');
     if (next) startPrint(p, next); else { p.progress = 0; renderCard(p); }
@@ -893,7 +894,7 @@ async function startPrint(p, item) {
     const ext = item.name.split('.').pop().toLowerCase();
     const canFtp = !!(window.ftpBridge || await _serverProbe);
     if (ext === '3mf' && !canFtp) {
-      // .3mf is binary — can't be streamed line-by-line over MQTT. Need FTP (Electron or server.js).
+      // .3mf is binary â€” can't be streamed line-by-line over MQTT. Need FTP (Electron or server.js).
       toast('Run "node server.js" locally to upload .3mf files to your Bambu printer via LAN.', 'error');
       item.status = 'queued'; p.isPrinting = false; p.status = 'idle'; renderCard(p); renderPQ(); updatePanelProg(p);
       return;
@@ -922,8 +923,8 @@ async function startPrint(p, item) {
 }
 
 // Build the correct MQTT print command for the file type.
-// .3mf → project_file (gcode lives inside the zip at Metadata/plate_1.gcode)
-// .gcode / anything else → gcode_file (file is already sliced gcode on SD card)
+// .3mf â†’ project_file (gcode lives inside the zip at Metadata/plate_1.gcode)
+// .gcode / anything else â†’ gcode_file (file is already sliced gcode on SD card)
 function bambuPrintCmd(ip, item, amsMapping) {
   const ext = item.name.split('.').pop().toLowerCase();
   if (ext === '3mf') {
@@ -939,7 +940,7 @@ function bambuPrintCmd(ip, item, amsMapping) {
       },
     };
   }
-  // Plain gcode — stream directly from SD card path
+  // Plain gcode â€” stream directly from SD card path
   return {
     print: {
       sequence_id: '0', command: 'gcode_file',
@@ -955,11 +956,11 @@ function bambuPrintCmd(ip, item, amsMapping) {
 async function startBambuFtp(p, item) {
   try {
     item.status = 'uploading'; renderPQ();
-    toast('Uploading to printer via LAN…', 'info');
+    toast('Uploading to printer via LANâ€¦', 'info');
     const ip  = p.ip.replace(/^https?:\/\//, '');
     const buf = await item.file.arrayBuffer();
     await window.ftpBridge.upload(ip, p.pin, item.name, buf);
-    toast('Upload done — starting print', 'success');
+    toast('Upload done â€” starting print', 'success');
     item.status = 'printing'; renderPQ();
     const amsMapping = (item.colors || p.filamentColors || []).map((_, i) => ({ ams: 0, slot: i }));
     bPub(p, bambuPrintCmd(ip, item, amsMapping));
@@ -973,7 +974,7 @@ async function startBambuFtp(p, item) {
 async function startBambuServerFtp(p, item) {
   try {
     item.status = 'uploading'; renderPQ();
-    toast('Uploading to printer via LAN…', 'info');
+    toast('Uploading to printer via LANâ€¦', 'info');
     const ip  = p.ip.replace(/^https?:\/\//, '');
     const buf = await item.file.arrayBuffer();
     const r   = await fetch(
@@ -981,7 +982,7 @@ async function startBambuServerFtp(p, item) {
       { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: buf }
     );
     if (!r.ok) { const t = await r.text(); throw new Error(t); }
-    toast('Upload done — starting print', 'success');
+    toast('Upload done â€” starting print', 'success');
     item.status = 'printing'; renderPQ();
     const amsMapping = (item.colors || p.filamentColors || []).map((_, i) => ({ ams: 0, slot: i }));
     bPub(p, bambuPrintCmd(ip, item, amsMapping));
@@ -1050,7 +1051,7 @@ async function cancelPrint(p) {
   renderCard(p); renderPQ(); updatePanelProg(p);
 }
 
-// ── Manage panel ───────────────────────────────────────────────────────────────
+// â”€â”€ Manage panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openManage(id) {
   managedId = id;
   const p = printers.get(id); if (!p) return;
@@ -1084,7 +1085,7 @@ function openManage(id) {
 
   renderPQ(); updatePanelProg(p); updatePanelTemps(p); updatePartPreview(p);
   const con = document.getElementById('pcon'); con.innerHTML = '';
-  for (const m of p.logs) { const d = document.createElement('div'); d.className = 'cl ' + (m.t||''); d.textContent = ({sent:'→ ',info:'◉ ',err:'✗ '}[m.t]||'← ') + m.s; con.appendChild(d); }
+  for (const m of p.logs) { const d = document.createElement('div'); d.className = 'cl ' + (m.t||''); d.textContent = ({sent:'â†’ ',info:'â—‰ ',err:'âœ— '}[m.t]||'â† ') + m.s; con.appendChild(d); }
   con.scrollTop = con.scrollHeight;
 }
 
@@ -1146,7 +1147,7 @@ function disconnectManaged() { const p = printers.get(managedId); if (p) discP(p
 
 function updatePanelProg(p) {
   if (managedId !== p.id) return;
-  document.getElementById('ppfile').textContent = p.currentFile || (p.isPrinting ? 'Printing…' : 'Nothing printing');
+  document.getElementById('ppfile').textContent = p.currentFile || (p.isPrinting ? 'Printingâ€¦' : 'Nothing printing');
   document.getElementById('ppfill').style.width = p.progress + '%';
   document.getElementById('pppct').textContent  = p.isPrinting ? p.progress + '%' : '';
   document.getElementById('p-pause').disabled   = !p.isPrinting;
@@ -1157,13 +1158,13 @@ function updatePanelProg(p) {
 function updatePanelTemps(p) {
   if (managedId !== p.id) return;
   const fmtV = (v, el, cls) => {
-    el.textContent = v.actual.toFixed(1) + '°';
+    el.textContent = v.actual.toFixed(1) + 'Â°';
     el.className = 'val' + (v.actual > (cls === 'h' ? 60 : 50) ? ' hot' : v.actual > (cls === 'h' ? 35 : 30) ? ' warm' : '');
   };
   fmtV(p.hotend, document.getElementById('pt-hotend'), 'h');
   fmtV(p.bed,    document.getElementById('pt-bed'),    'b');
-  document.getElementById('pt-hotend-tgt').textContent = p.hotend.target > 0 ? '→ ' + p.hotend.target + '°' : '';
-  document.getElementById('pt-bed-tgt').textContent    = p.bed.target    > 0 ? '→ ' + p.bed.target    + '°' : '';
+  document.getElementById('pt-hotend-tgt').textContent = p.hotend.target > 0 ? 'â†’ ' + p.hotend.target + 'Â°' : '';
+  document.getElementById('pt-bed-tgt').textContent    = p.bed.target    > 0 ? 'â†’ ' + p.bed.target    + 'Â°' : '';
 }
 
 function renderPQ() {
@@ -1178,8 +1179,8 @@ function renderPQ() {
     const colorCols = (item.colors || [item.color, item.color2].filter(Boolean)).filter(Boolean);
     const dots = colorCols.map((c, i) => `<span class="fil-dot" style="background:${c}" title="Slot ${i+1}: ${c}"></span>`).join('');
     const previewBtn = (item.file && item !== p.currentItem && item.status === 'queued')
-      ? `<button class="qi-rm" title="Preview" onclick="previewQueueItem('${p.id}','${item.id}')">👁</button>` : '';
-    d.innerHTML = `<div style="display:flex;gap:3px;align-items:center;flex-shrink:0">${dots}</div><div class="qname" title="${item.name}">${item.name}</div><div class="qbadge badge-${item.status}">${item.status}</div>${previewBtn}${canRm?`<button class="qi-rm" onclick="rmQI('${p.id}','${item.id}')">✕</button>`:''}`;
+      ? `<button class="qi-rm" title="Preview" onclick="previewQueueItem('${p.id}','${item.id}')">ðŸ‘</button>` : '';
+    d.innerHTML = `<div style="display:flex;gap:3px;align-items:center;flex-shrink:0">${dots}</div><div class="qname" title="${item.name}">${item.name}</div><div class="qbadge badge-${item.status}">${item.status}</div>${previewBtn}${canRm?`<button class="qi-rm" onclick="rmQI('${p.id}','${item.id}')">âœ•</button>`:''}`;
     el.appendChild(d);
   }
   document.getElementById('p-start').disabled = !p.connected || p.isPrinting || !p.queue.some(i=>i.status==='queued');
@@ -1223,7 +1224,7 @@ function pAddFiles() {
   inp.click();
 }
 
-// ── Send dialog ────────────────────────────────────────────────────────────────
+// â”€â”€ Send dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _sdFile = null, _sdColorCount = 1, _sdColors = ['#00aaff','#ff5500','#22c55e','#a855f7'];
 
 async function openSendDialog() {
@@ -1261,7 +1262,7 @@ function _renderSendSlots() {
     const row = document.createElement('div'); row.className = 'slot-row';
     row.innerHTML = `
       <div class="slot-num-badge">${i + 1}</div>
-      <label class="slot-color-swatch" style="background:${_sdColors[i]}" title="AMS Slot ${i + 1} — click to change">
+      <label class="slot-color-swatch" style="background:${_sdColors[i]}" title="AMS Slot ${i + 1} â€” click to change">
         <input type="color" value="${_sdColors[i]}" style="opacity:0;position:absolute;width:1px;height:1px"
           onchange="setSendSlotColor(${i},this.value)">
       </label>
@@ -1321,7 +1322,7 @@ async function doSendLan() {
   if (!p.isPrinting) startPrint(p, item);
 }
 
-// ── G-code toolpath preview ────────────────────────────────────────────────────
+// â”€â”€ G-code toolpath preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderGcodePreview(canvas, gcode, colors) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const W = canvas.clientWidth || canvas.parentElement?.clientWidth || 320;
@@ -1398,12 +1399,12 @@ function _draw3mfPlaceholder(canvas, name) {
   ctx.fillStyle = '#0a0a12'; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = 'rgba(255,107,53,0.12)'; ctx.fillRect(0, 0, W, H);
   ctx.font = 'bold 13px Inter,sans-serif'; ctx.textAlign = 'center';
-  ctx.fillStyle = '#ff6b35'; ctx.fillText('.3mf — binary preview not available', W / 2, H / 2 - 8);
+  ctx.fillStyle = '#ff6b35'; ctx.fillText('.3mf â€” binary preview not available', W / 2, H / 2 - 8);
   ctx.font = '11px Inter,sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.fillText(name, W / 2, H / 2 + 12);
 }
 
-// ── Part preview in manage panel ──────────────────────────────────────────────
+// â”€â”€ Part preview in manage panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function updatePartPreview(p) {
   const section = document.getElementById('part-preview-section');
   const canvas  = document.getElementById('part-preview-canvas');
@@ -1432,7 +1433,7 @@ function pCmd(cmd)  { const p = printers.get(managedId); if (p && p.connected) s
 function pSendCon() { const i = document.getElementById('pcin'); const v = i.value.trim(); if (!v) return; pCmd(v); i.value = ''; }
 function clearCon() { const p = printers.get(managedId); if (p) { p.logs = []; document.getElementById('pcon').innerHTML = ''; } }
 
-// ── Render ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderCard(p) {
   const existing = document.getElementById('card-' + p.id);
   const card = buildCard(p);
@@ -1446,35 +1447,35 @@ function buildCard(p) {
   el.className = 'printer-card' + (p.status==='printing'?' printing':p.status==='error'?' error':'');
   const dotCls = !p.connected ? '' : p.status === 'printing' ? 'printing' : 'on';
   const tLabel = { octoprint:'OctoPrint', moonraker:'Moonraker', bambu:'Bambu Lab', usb:'USB Serial' }[p.type] || p.type;
-  const hv = p.hotend.actual.toFixed(1) + '°', hc = p.hotend.actual > 60 ? 'hot' : p.hotend.actual > 35 ? 'warm' : '';
-  const bv = p.bed.actual.toFixed(1)    + '°', bc = p.bed.actual    > 50 ? 'hot' : p.bed.actual    > 30 ? 'warm' : '';
+  const hv = p.hotend.actual.toFixed(1) + 'Â°', hc = p.hotend.actual > 60 ? 'hot' : p.hotend.actual > 35 ? 'warm' : '';
+  const bv = p.bed.actual.toFixed(1)    + 'Â°', bc = p.bed.actual    > 50 ? 'hot' : p.bed.actual    > 30 ? 'warm' : '';
 
   el.innerHTML = `
     <div class="card-cam">
       ${p.cameraUrl
-        ? `<img src="${p.cameraUrl}" alt="cam" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')" /><div class="no-cam hidden"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/><path d="M9 6l1.5-2h3L15 6"/></svg>Camera unavailable</div><div class="live-badge">● LIVE</div>`
-        : `<div class="no-cam"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/><path d="M9 6l1.5-2h3L15 6"/></svg>${p.type==='usb'?'USB — no camera':'No camera'}</div>`}
+        ? `<img src="${p.cameraUrl}" alt="cam" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')" /><div class="no-cam hidden"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/><path d="M9 6l1.5-2h3L15 6"/></svg>Camera unavailable</div><div class="live-badge">â— LIVE</div>`
+        : `<div class="no-cam"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/><path d="M9 6l1.5-2h3L15 6"/></svg>${p.type==='usb'?'USB â€” no camera':'No camera'}</div>`}
     </div>
     <div class="card-body">
       <div class="card-hdr">
-        <div class="pname">${p.name}${p.connecting?' <span style="color:var(--text3);font-weight:400;font-size:11px">connecting…</span>':''}</div>
+        <div class="pname">${p.name}${p.connecting?' <span style="color:var(--text3);font-weight:400;font-size:11px">connectingâ€¦</span>':''}</div>
         <div class="tbadge ${p.type}">${tLabel}</div>
         <div class="sdot ${dotCls}"></div>
       </div>
       <div class="temps">
-        <div class="tchip"><div class="lbl">Hotend</div><div class="val ${hc}">${hv}</div><div class="tgt">${p.hotend.target>0?'→ '+p.hotend.target+'°':''}</div></div>
-        <div class="tchip"><div class="lbl">Bed</div><div class="val ${bc}">${bv}</div><div class="tgt">${p.bed.target>0?'→ '+p.bed.target+'°':''}</div></div>
+        <div class="tchip"><div class="lbl">Hotend</div><div class="val ${hc}">${hv}</div><div class="tgt">${p.hotend.target>0?'â†’ '+p.hotend.target+'Â°':''}</div></div>
+        <div class="tchip"><div class="lbl">Bed</div><div class="val ${bc}">${bv}</div><div class="tgt">${p.bed.target>0?'â†’ '+p.bed.target+'Â°':''}</div></div>
       </div>
       <div>
-        <div class="prog-row"><span>${p.isPrinting?(p.currentFile||'Printing…'):p.connected?'Ready':'Not connected'}</span>${p.isPrinting?`<span>${p.progress}%</span>`:''}</div>
+        <div class="prog-row"><span>${p.isPrinting?(p.currentFile||'Printingâ€¦'):p.connected?'Ready':'Not connected'}</span>${p.isPrinting?`<span>${p.progress}%</span>`:''}</div>
         <div class="ptrack"><div class="pfill" style="width:${p.progress}%"></div></div>
       </div>
       <div class="card-acts">
         ${p.connected
           ? `<button class="btn-primary btn-sm" onclick="openManage('${p.id}')">Manage</button>
-             ${p.isPrinting&&!p.isPaused?`<button class="btn-secondary btn-sm" onclick="event.stopPropagation();pausePrint(printers.get('${p.id}'))">⏸</button>`:''}
-             ${p.isPaused?`<button class="btn-secondary btn-sm" onclick="event.stopPropagation();resumePrint(printers.get('${p.id}'))">▶</button>`:''}
-             ${p.isPrinting?`<button class="btn-danger btn-sm" onclick="event.stopPropagation();cancelPrint(printers.get('${p.id}'))">✕</button>`:''}
+             ${p.isPrinting&&!p.isPaused?`<button class="btn-secondary btn-sm" onclick="event.stopPropagation();pausePrint(printers.get('${p.id}'))">â¸</button>`:''}
+             ${p.isPaused?`<button class="btn-secondary btn-sm" onclick="event.stopPropagation();resumePrint(printers.get('${p.id}'))">â–¶</button>`:''}
+             ${p.isPrinting?`<button class="btn-danger btn-sm" onclick="event.stopPropagation();cancelPrint(printers.get('${p.id}'))">âœ•</button>`:''}
              <button class="btn-danger btn-sm" onclick="rmP('${p.id}')">Remove</button>`
           : `<button class="btn-primary btn-sm" onclick="recon('${p.id}')">Reconnect</button>
              <button class="btn-danger btn-sm" onclick="rmP('${p.id}')">Remove</button>`}
@@ -1496,20 +1497,20 @@ async function recon(id) {
   try { await connectP(p); save(); } catch (e) { toast('Reconnect failed: ' + e.message, 'error'); }
 }
 
-// ── Log ────────────────────────────────────────────────────────────────────────
+// â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function plog(p, s, t) {
   p.logs.push({ s, t });
   if (p.logs.length > 500) p.logs.shift();
   if (managedId === p.id) {
     const con = document.getElementById('pcon');
     const d = document.createElement('div'); d.className = 'cl ' + (t||'');
-    d.textContent = ({sent:'→ ',info:'◉ ',err:'✗ '}[t]||'← ') + s;
+    d.textContent = ({sent:'â†’ ',info:'â—‰ ',err:'âœ— '}[t]||'â† ') + s;
     con.appendChild(d); con.scrollTop = con.scrollHeight;
     while (con.children.length > 300) con.removeChild(con.firstChild);
   }
 }
 
-// ── Auth ───────────────────────────────────────────────────────────────────────
+// â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SESSION_KEY = 'printara_session';
 const SESSION_TTL = 12 * 60 * 60 * 1000;
 function getSession() {
@@ -1529,7 +1530,7 @@ function initUserChip(session) {
   document.getElementById('user-avatar').textContent = (label[0] || '?').toUpperCase();
 }
 
-// ── Persistence ────────────────────────────────────────────────────────────────
+// â”€â”€ Persistence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const _session = getSession();
 if (!_session) { location.replace('login.html'); }
 const LS = 'printara_printers_' + (_session ? _session.id : 'guest');
@@ -1547,7 +1548,7 @@ function load() {
   } catch (_) {}
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ft(url, opts, ms) { const c = new AbortController(); setTimeout(() => c.abort(), ms); return fetch(url, { ...opts, signal: c.signal }); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 function toast(msg, type='info') {
@@ -1556,11 +1557,11 @@ function toast(msg, type='info') {
   setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 4000);
 }
 
-// ── Events ────────────────────────────────────────────────────────────────────
+// â”€â”€ Events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.getElementById('pcin').addEventListener('keydown', e => { if (e.key==='Enter') pSendCon(); });
 document.getElementById('add-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('add-ip')?.focus(); });
 
-// ── Init ───────────────────────────────────────────────────────────────────────
+// â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (window.serialBridge) {
   window.serialBridge.onData(line => { if (bridgePrinter) handleUSBLine(bridgePrinter, line); });
   window.serialBridge.onError(msg => { if (bridgePrinter) { plog(bridgePrinter, msg, 'err'); bridgePrinter.connected = false; bridgePrinter.status = 'error'; renderCard(bridgePrinter); } });
@@ -1572,3 +1573,4 @@ load();
 </script>
 </body>
 </html>
+

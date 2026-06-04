@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pricing — Printara Print Queue</title>
-  <link rel="icon" href="logo.png" />
+  <title>Pricing â€” Printara Print Queue</title>
+  <link rel="icon" href="logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -27,19 +27,27 @@
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.6; min-height: 100vh; }
 
-    /* ── Nav ── */
+    /* â”€â”€ Nav â”€â”€ */
     nav {
       display: flex; align-items: center; padding: 0 32px; height: 56px;
       border-bottom: 1px solid var(--border); background: rgba(8,8,8,0.92);
       backdrop-filter: blur(14px); position: sticky; top: 0; z-index: 100;
     }
-    .nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--text); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; }
-    .nav-logo img { width: 24px; height: 24px; border-radius: 4px; }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+      color: var(--text); font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 17px; letter-spacing: .04em;
+    }
+    .nav-logo img {
+      width: 36px; height: 36px; object-fit: contain;
+      filter: drop-shadow(0 0 7px rgba(220,40,40,.5));
+      transition: filter .25s, transform .25s;
+    }
+    .nav-logo:hover img { filter: drop-shadow(0 0 16px rgba(255,60,60,.85)); transform: scale(1.1); }
     nav .spacer { flex: 1; }
     nav a.nl { color: var(--text2); text-decoration: none; font-size: 14px; margin-left: 24px; transition: color .15s; }
     nav a.nl:hover { color: var(--text); }
 
-    /* ── Hero ── */
+    /* â”€â”€ Hero â”€â”€ */
     .hero {
       text-align: center; padding: 80px 24px 56px; max-width: 700px; margin: 0 auto;
     }
@@ -57,7 +65,7 @@
     .hero h1 span { color: var(--red); }
     .hero p { font-size: 16px; color: var(--text2); max-width: 480px; margin: 0 auto; line-height: 1.65; }
 
-    /* ── Cards ── */
+    /* â”€â”€ Cards â”€â”€ */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -126,7 +134,7 @@
     .sub-msg { font-size: 12px; color: var(--text3); text-align: center; margin-top: 12px; min-height: 18px; }
     .sub-msg.err { color: #e05555; }
 
-    /* ── Compare table ── */
+    /* â”€â”€ Compare table â”€â”€ */
     .compare { max-width: 720px; margin: 0 auto 80px; padding: 0 24px; }
     .compare h2 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 32px; }
 
@@ -140,7 +148,7 @@
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: rgba(255,255,255,.02); }
 
-    /* ── FAQ ── */
+    /* â”€â”€ FAQ â”€â”€ */
     .faq { max-width: 640px; margin: 0 auto 80px; padding: 0 24px; }
     .faq h2 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 32px; }
     .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
@@ -148,7 +156,7 @@
     .faq-q { font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--text); }
     .faq-a { font-size: 14px; color: var(--text2); line-height: 1.7; }
 
-    /* ── Footer ── */
+    /* â”€â”€ Footer â”€â”€ */
     footer { border-top: 1px solid var(--border); padding: 28px 32px; text-align: center; font-size: 13px; color: var(--text3); }
     footer a { color: var(--text2); text-decoration: none; }
     footer a:hover { color: var(--text); }
@@ -158,7 +166,7 @@
 
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="logo.png" alt="Printara" />
+    <img src="logo.svg" alt="Printara" />
     Printara
   </a>
   <div class="spacer"></div>
@@ -167,14 +175,14 @@
   <a href="download.html" class="nl">Download</a>
 </nav>
 
-<!-- ── Hero ── -->
+<!-- â”€â”€ Hero â”€â”€ -->
 <section class="hero">
-  <div class="hero-badge">🖨️ Print Queue App</div>
+  <div class="hero-badge">ðŸ–¨ï¸ Print Queue App</div>
   <h1>Simple pricing.<br/><span>No surprises.</span></h1>
   <p>One plan. Full access to the Printara Print Queue desktop app on Windows, Mac &amp; Linux. Cancel anytime.</p>
 </section>
 
-<!-- ── Pricing cards ── -->
+<!-- â”€â”€ Pricing cards â”€â”€ -->
 <div class="cards">
 
   <!-- Free tier -->
@@ -187,12 +195,12 @@
     <p class="price-note">No credit card required</p>
     <div class="divider"></div>
     <ul class="features">
-      <li><span class="check">✓</span> <span><strong>3D design tools</strong> in the browser</span></li>
-      <li><span class="check">✓</span> <span><strong>Community project library</strong></span></li>
-      <li><span class="check">✓</span> <span><strong>Lithophane, map &amp; statue generators</strong></span></li>
-      <li><span class="x">✗</span> <span>Print Queue desktop app</span></li>
-      <li><span class="x">✗</span> <span>Auto-queue &amp; auto-eject</span></li>
-      <li><span class="x">✗</span> <span>Live temperature monitoring</span></li>
+      <li><span class="check">âœ“</span> <span><strong>3D design tools</strong> in the browser</span></li>
+      <li><span class="check">âœ“</span> <span><strong>Community project library</strong></span></li>
+      <li><span class="check">âœ“</span> <span><strong>Lithophane, map &amp; statue generators</strong></span></li>
+      <li><span class="x">âœ—</span> <span>Print Queue desktop app</span></li>
+      <li><span class="x">âœ—</span> <span>Auto-queue &amp; auto-eject</span></li>
+      <li><span class="x">âœ—</span> <span>Live temperature monitoring</span></li>
     </ul>
     <a href="index.html" class="btn-sub secondary">Get Started Free</a>
   </div>
@@ -205,24 +213,24 @@
       <span class="amount">$3</span><span class="cents">.99</span>
       <span class="period">&nbsp;/ month</span>
     </div>
-    <p class="price-note">Billed monthly · cancel anytime</p>
+    <p class="price-note">Billed monthly Â· cancel anytime</p>
     <div class="divider"></div>
     <ul class="features">
-      <li><span class="check">✓</span> <span>Everything in Free</span></li>
-      <li><span class="check">✓</span> <span><strong>Print Queue desktop app</strong> — Windows, Mac &amp; Linux</span></li>
-      <li><span class="check">✓</span> <span><strong>Auto-queue</strong> — next job starts automatically</span></li>
-      <li><span class="check">✓</span> <span><strong>Auto-eject</strong> — configurable end-of-print sequence</span></li>
-      <li><span class="check">✓</span> <span><strong>Live temperature display</strong> — hotend &amp; bed</span></li>
-      <li><span class="check">✓</span> <span><strong>Built-in G-code console</strong></span></li>
-      <li><span class="check">✓</span> <span><strong>All future updates</strong> included</span></li>
+      <li><span class="check">âœ“</span> <span>Everything in Free</span></li>
+      <li><span class="check">âœ“</span> <span><strong>Print Queue desktop app</strong> â€” Windows, Mac &amp; Linux</span></li>
+      <li><span class="check">âœ“</span> <span><strong>Auto-queue</strong> â€” next job starts automatically</span></li>
+      <li><span class="check">âœ“</span> <span><strong>Auto-eject</strong> â€” configurable end-of-print sequence</span></li>
+      <li><span class="check">âœ“</span> <span><strong>Live temperature display</strong> â€” hotend &amp; bed</span></li>
+      <li><span class="check">âœ“</span> <span><strong>Built-in G-code console</strong></span></li>
+      <li><span class="check">âœ“</span> <span><strong>All future updates</strong> included</span></li>
     </ul>
-    <button class="btn-sub primary" id="sub-btn" onclick="startCheckout()">Subscribe &amp; Download →</button>
+    <button class="btn-sub primary" id="sub-btn" onclick="startCheckout()">Subscribe &amp; Download â†’</button>
     <p class="sub-msg" id="sub-msg"></p>
   </div>
 
 </div>
 
-<!-- ── Compare table ── -->
+<!-- â”€â”€ Compare table â”€â”€ -->
 <section class="compare">
   <h2>Full comparison</h2>
   <table>
@@ -234,33 +242,33 @@
       </tr>
     </thead>
     <tbody>
-      <tr><td>Browser-based 3D tools</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-      <tr><td>Community project library</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-      <tr><td>Lithophane generator</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-      <tr><td>Map &amp; statue generator</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-      <tr><td>Print Queue desktop app</td><td class="no">✗</td><td class="yes">✓</td></tr>
-      <tr><td>Auto-queue (next job auto-start)</td><td class="no">✗</td><td class="yes">✓</td></tr>
-      <tr><td>Auto-eject after print</td><td class="no">✗</td><td class="yes">✓</td></tr>
-      <tr><td>Live temperature monitoring</td><td class="no">✗</td><td class="yes">✓</td></tr>
-      <tr><td>G-code console</td><td class="no">✗</td><td class="yes">✓</td></tr>
-      <tr><td>Pause / Resume / Cancel</td><td class="no">✗</td><td class="yes">✓</td></tr>
-      <tr><td>All future updates</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      <tr><td>Browser-based 3D tools</td><td class="yes">âœ“</td><td class="yes">âœ“</td></tr>
+      <tr><td>Community project library</td><td class="yes">âœ“</td><td class="yes">âœ“</td></tr>
+      <tr><td>Lithophane generator</td><td class="yes">âœ“</td><td class="yes">âœ“</td></tr>
+      <tr><td>Map &amp; statue generator</td><td class="yes">âœ“</td><td class="yes">âœ“</td></tr>
+      <tr><td>Print Queue desktop app</td><td class="no">âœ—</td><td class="yes">âœ“</td></tr>
+      <tr><td>Auto-queue (next job auto-start)</td><td class="no">âœ—</td><td class="yes">âœ“</td></tr>
+      <tr><td>Auto-eject after print</td><td class="no">âœ—</td><td class="yes">âœ“</td></tr>
+      <tr><td>Live temperature monitoring</td><td class="no">âœ—</td><td class="yes">âœ“</td></tr>
+      <tr><td>G-code console</td><td class="no">âœ—</td><td class="yes">âœ“</td></tr>
+      <tr><td>Pause / Resume / Cancel</td><td class="no">âœ—</td><td class="yes">âœ“</td></tr>
+      <tr><td>All future updates</td><td class="no">âœ—</td><td class="yes">âœ“</td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ── FAQ ── -->
+<!-- â”€â”€ FAQ â”€â”€ -->
 <section class="faq">
   <h2>Common questions</h2>
 
   <div class="faq-item">
     <div class="faq-q">Can I cancel anytime?</div>
-    <div class="faq-a">Yes. Cancel from your Stripe billing portal at any time — no questions asked. You keep access until the end of the billing period.</div>
+    <div class="faq-a">Yes. Cancel from your Stripe billing portal at any time â€” no questions asked. You keep access until the end of the billing period.</div>
   </div>
 
   <div class="faq-item">
     <div class="faq-q">What printers does it support?</div>
-    <div class="faq-a">Any printer that uses USB serial — Ender 3, Prusa MK3S/MK4, Voron, CR-10, Artillery, Anycubic Kobra, Neptune 4, Bambu Lab (serial mode), and any Marlin or Klipper printer with USB.</div>
+    <div class="faq-a">Any printer that uses USB serial â€” Ender 3, Prusa MK3S/MK4, Voron, CR-10, Artillery, Anycubic Kobra, Neptune 4, Bambu Lab (serial mode), and any Marlin or Klipper printer with USB.</div>
   </div>
 
   <div class="faq-item">
@@ -270,7 +278,7 @@
 
   <div class="faq-item">
     <div class="faq-q">Is my payment secure?</div>
-    <div class="faq-a">Payments are handled entirely by Stripe — your card details never touch our servers. Stripe is used by millions of businesses worldwide.</div>
+    <div class="faq-a">Payments are handled entirely by Stripe â€” your card details never touch our servers. Stripe is used by millions of businesses worldwide.</div>
   </div>
 
   <div class="faq-item">
@@ -281,11 +289,11 @@
 
 <footer>
   <p style="margin-bottom:8px">
-    <a href="index.html">Home</a> &nbsp;·&nbsp;
-    <a href="tools.html">Tools</a> &nbsp;·&nbsp;
+    <a href="index.html">Home</a> &nbsp;Â·&nbsp;
+    <a href="tools.html">Tools</a> &nbsp;Â·&nbsp;
     <a href="download.html">Download</a>
   </p>
-  © 2026 Printara. Payments secured by Stripe.
+  Â© 2026 Printara. Payments secured by Stripe.
 </footer>
 
 <script src="https://js.stripe.com/v3/"></script>
@@ -296,7 +304,7 @@
   (function () {
     const sub = JSON.parse(localStorage.getItem('pq_sub') || 'null');
     if (sub && sub.active && sub.expires > Date.now()) {
-      document.getElementById('sub-btn').textContent = '✓ Subscribed — Go to Download';
+      document.getElementById('sub-btn').textContent = 'âœ“ Subscribed â€” Go to Download';
       document.getElementById('sub-btn').onclick = () => location.href = 'download.html#download';
     }
   })();
@@ -307,18 +315,18 @@
     if (params.get('sub') === 'success' && params.get('session_id')) {
       const msg = document.getElementById('sub-msg');
       const btn = document.getElementById('sub-btn');
-      msg.textContent = 'Verifying payment…';
+      msg.textContent = 'Verifying paymentâ€¦';
       try {
         const res = await fetch('/.netlify/functions/verify-subscription?session_id=' + params.get('session_id'));
         const data = await res.json();
         if (data.active) {
           localStorage.setItem('pq_sub', JSON.stringify({ active: true, expires: Date.now() + 30*24*60*60*1000, email: data.email }));
-          btn.textContent = '✓ Subscribed — Go to Download';
+          btn.textContent = 'âœ“ Subscribed â€” Go to Download';
           btn.onclick = () => location.href = 'download.html#download';
           msg.textContent = 'Payment confirmed! Click above to download.';
           msg.style.color = '#22c55e';
         } else {
-          msg.textContent = 'Payment not confirmed yet — please wait a moment and refresh.';
+          msg.textContent = 'Payment not confirmed yet â€” please wait a moment and refresh.';
           msg.classList.add('err');
         }
       } catch {
@@ -327,7 +335,7 @@
       }
       history.replaceState({}, '', location.pathname);
     } else if (params.get('sub') === 'cancel') {
-      document.getElementById('sub-msg').textContent = 'Payment cancelled — no charge was made.';
+      document.getElementById('sub-msg').textContent = 'Payment cancelled â€” no charge was made.';
       history.replaceState({}, '', location.pathname);
     }
   })();
@@ -335,7 +343,7 @@
   async function startCheckout() {
     const btn = document.getElementById('sub-btn');
     const msg = document.getElementById('sub-msg');
-    btn.textContent = 'Loading…';
+    btn.textContent = 'Loadingâ€¦';
     btn.disabled = true;
     msg.textContent = '';
     msg.classList.remove('err');
@@ -354,10 +362,11 @@
     } catch (e) {
       msg.textContent = e.message;
       msg.classList.add('err');
-      btn.textContent = 'Subscribe & Download →';
+      btn.textContent = 'Subscribe & Download â†’';
       btn.disabled = false;
     }
   }
 </script>
 </body>
 </html>
+
