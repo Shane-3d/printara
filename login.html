@@ -1,16 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Printara â€” Sign In</title>
+  <title>Printara — Sign In</title>
   <link rel="icon" href="logo.svg" />
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{width:100%;height:100%;overflow:hidden;background:#060610;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#e8e8e8}
     #loginCanvas{position:fixed;inset:0;z-index:0;opacity:0.85;}
 
-    /* â”€â”€ Form wrap â”€â”€ */
+    /* ── Form wrap ── */
     #loginWrap{
       position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
       z-index:10;width:320px;opacity:0;transition:opacity 0.8s ease;
@@ -98,7 +98,7 @@
       <div class="fg"><label>Email</label><input type="email" id="siEmail" placeholder="you@example.com" autocomplete="email" required /></div>
       <div class="fg"><label>Password</label><input type="password" id="siPwd" placeholder="Your password" autocomplete="current-password" required /></div>
       <div class="err" id="siErr"></div>
-      <button type="submit" class="btn-main btn-blue">Sign In â†’</button>
+      <button type="submit" class="btn-main btn-blue">Sign In →</button>
     </form>
   </div>
 
@@ -109,7 +109,7 @@
       <div class="fg"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email" required /></div>
       <div class="fg"><label>Password</label><input type="password" id="suPwd" placeholder="Min 8 characters" minlength="8" autocomplete="new-password" required /></div>
       <div class="err" id="suErr"></div>
-      <button type="submit" class="btn-main btn-green">Create Account â†’</button>
+      <button type="submit" class="btn-main btn-green">Create Account →</button>
     </form>
   </div>
 
@@ -124,7 +124,7 @@
 </div>
 
 <script>
-// â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Auth ─────────────────────────────────────────────────────────────────────
 const SESSION_KEY  = 'printara_session';
 const ACCOUNTS_KEY = 'printara_accounts';
 const SESSION_TTL  = 12 * 60 * 60 * 1000;
@@ -157,7 +157,7 @@ async function doSignIn(e) {
   const email = document.getElementById('siEmail').value.trim().toLowerCase();
   const pwd   = document.getElementById('siPwd').value;
   const acct  = getAccounts().find(a=>a.email===email && a.provider==='local');
-  if (!acct) { err.textContent='No account found â€” sign up first.'; return; }
+  if (!acct) { err.textContent='No account found — sign up first.'; return; }
   if (await sha256(acct.salt+pwd) !== acct.hash) { err.textContent='Incorrect password.'; document.getElementById('siPwd').value=''; return; }
   startSession({id:acct.id, email:acct.email, name:acct.name, provider:'local'});
   location.replace('queue.html');
@@ -195,7 +195,7 @@ function handleGoogle(resp) {
   } catch(e) { alert('Google sign-in failed: '+e.message); }
 }
 
-// â”€â”€ Animation â€” two nozzle heads draw the login form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Animation — two nozzle heads draw the login form ─────────────────────────
 const canvas = document.getElementById('loginCanvas');
 const ctx    = canvas.getContext('2d');
 let W, H, CX, CY;
@@ -205,7 +205,7 @@ function resize() { W=canvas.width=window.innerWidth; H=canvas.height=window.inn
 resize();
 window.addEventListener('resize', resize);
 
-// Nozzles â€” positions set by measureAndBuild() before first tick
+// Nozzles — positions set by measureAndBuild() before first tick
 const nozzles = [
   {x:-80, y:0, color:'#0099ff', sparks:[]},
   {x:W+80, y:0, color:'#ff6b35', sparks:[]},
@@ -259,7 +259,7 @@ function measureAndBuild() {
     legQ[0].push({x1:CX, y1:prevY, x2:CX,  y2:rc.t, color, draw:false, speed:8});
     legQ[1].push({x1:CX, y1:prevY, x2:CX,  y2:rc.t, color, draw:false, speed:8});
 
-    // Top edge: nozzle 0 sweeps left, nozzle 1 sweeps right â€” exactly on the box border
+    // Top edge: nozzle 0 sweeps left, nozzle 1 sweeps right — exactly on the box border
     legQ[0].push({x1:CX,  y1:rc.t, x2:rc.l, y2:rc.t, color, draw:true, speed:6});
     legQ[1].push({x1:CX,  y1:rc.t, x2:rc.r, y2:rc.t, color, draw:true, speed:6});
 
@@ -317,7 +317,7 @@ function tick() {
   requestAnimationFrame(tick);
   _frame++;
 
-  // â”€â”€ Clear â”€â”€
+  // ── Clear ──
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#060610'; ctx.fillRect(0,0,W,H);
 
@@ -326,7 +326,7 @@ function tick() {
   for(let x=0;x<W;x+=44){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=44){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
 
-  // â”€â”€ Completed legs â”€â”€
+  // ── Completed legs ──
   ctx.lineWidth=2; ctx.lineCap='square'; ctx.shadowBlur=12;
   for(const l of completedLegs){
     ctx.globalAlpha=0.9; ctx.strokeStyle=l.color; ctx.shadowColor=l.color;
@@ -340,7 +340,7 @@ function tick() {
                  Math.abs(l.x2-l.x1)||2, Math.abs(l.y2-l.y1)||2);
   }
 
-  // â”€â”€ Move nozzles + draw current leg â”€â”€
+  // ── Move nozzles + draw current leg ──
   legDone[0]=false; legDone[1]=false;
   for(let i=0;i<2;i++){
     const n = nozzles[i];
@@ -389,7 +389,7 @@ function tick() {
     }
   }
 
-  // â”€â”€ Sparks â”€â”€
+  // ── Sparks ──
   for(const n of nozzles){
     for(const s of n.sparks){
       ctx.globalAlpha=Math.max(0,s.life); ctx.fillStyle=s.color;
@@ -398,7 +398,7 @@ function tick() {
   }
   ctx.globalAlpha=1;
 
-  // â”€â”€ Title (fades in early) â”€â”€
+  // ── Title (fades in early) ──
   const titleAlpha=Math.min(1, _frame/40);
   ctx.globalAlpha=titleAlpha;
   ctx.font='700 13px Inter,sans-serif';
@@ -407,7 +407,7 @@ function tick() {
   ctx.fillText('PRINTARA', CX, (curLeg[0] ? curLeg[0].y1 : nozzles[0].y) - 22);
   ctx.globalAlpha=1;
 
-  // â”€â”€ Nozzles â”€â”€
+  // ── Nozzles ──
   for(const n of nozzles){ if(curLeg[nozzles.indexOf(n)]) drawNozzle(n.x,n.y,n.color); }
 }
 
