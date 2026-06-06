@@ -48,6 +48,7 @@
         <select id="wifi-type">
           <option value="octoprint">OctoPrint (most printers)</option>
           <option value="moonraker">Moonraker / Klipper</option>
+          <option value="bambu">Bambu Lab</option>
         </select>
       </div>
       <div class="field">
@@ -57,6 +58,14 @@
       <div class="field" id="apikey-field">
         <label>OctoPrint API Key</label>
         <input type="text" id="wifi-apikey" placeholder="Paste API key…" spellcheck="false" />
+      </div>
+      <div class="field hidden" id="bambu-serial-field">
+        <label>Serial Number</label>
+        <input type="text" id="bambu-serial" placeholder="e.g. 01P00A…" spellcheck="false" />
+      </div>
+      <div class="field hidden" id="bambu-code-field">
+        <label>Access Code</label>
+        <input type="text" id="bambu-code" placeholder="8-digit code on printer" spellcheck="false" />
       </div>
       <div class="btn-row mt8">
         <button class="btn-primary" id="wifi-connect-btn">Connect</button>

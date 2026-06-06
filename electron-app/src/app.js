@@ -20,12 +20,16 @@ const wifiPanel      = $('wifi-panel');
 const usbPanel       = $('usb-panel');
 
 // WiFi
-const wifiType       = $('wifi-type');
-const wifiIp         = $('wifi-ip');
-const wifiApikey     = $('wifi-apikey');
-const apikeyField    = $('apikey-field');
-const wifiConnectBtn = $('wifi-connect-btn');
-const wifiDiscBtn    = $('wifi-disconnect-btn');
+const wifiType          = $('wifi-type');
+const wifiIp            = $('wifi-ip');
+const wifiApikey        = $('wifi-apikey');
+const apikeyField       = $('apikey-field');
+const bambuSerialField  = $('bambu-serial-field');
+const bambuCodeField    = $('bambu-code-field');
+const bambuSerial       = $('bambu-serial');
+const bambuCode         = $('bambu-code');
+const wifiConnectBtn    = $('wifi-connect-btn');
+const wifiDiscBtn       = $('wifi-disconnect-btn');
 
 // USB
 const portSelect     = $('port-select');
@@ -84,9 +88,12 @@ modeTabs.forEach(tab => {
   });
 });
 
-// Show/hide API key field based on wifi type
+// Show/hide fields based on wifi type
 wifiType.addEventListener('change', () => {
-  apikeyField.classList.toggle('hidden', wifiType.value !== 'octoprint');
+  const v = wifiType.value;
+  apikeyField.classList.toggle('hidden',      v !== 'octoprint');
+  bambuSerialField.classList.toggle('hidden', v !== 'bambu');
+  bambuCodeField.classList.toggle('hidden',   v !== 'bambu');
 });
 
 // ── WiFi connect ───────────────────────────────────────────────────────────────
@@ -103,14 +110,21 @@ wifiConnectBtn.addEventListener('click', async () => {
     const apiKey = wifiApikey.value.trim();
     if (!apiKey) { toast('Enter your OctoPrint API key', 'error'); wifiConnectBtn.disabled = false; wifiConnectBtn.textContent = 'Connect'; return; }
     res = await window.printer.connectOctoPrint({ ip, apiKey });
+  } else if (wifiType.value === 'bambu') {
+    const serial = bambuSerial.value.trim();
+    const accessCode = bambuCode.value.trim();
+    if (!serial)     { toast('Enter the Bambu serial number', 'error'); wifiConnectBtn.disabled = false; wifiConnectBtn.textContent = 'Connect'; return; }
+    if (!accessCode) { toast('Enter the Bambu access code', 'error');   wifiConnectBtn.disabled = false; wifiConnectBtn.textContent = 'Connect'; return; }
+    res = await window.printer.connectBambu({ ip, serial, accessCode });
   } else {
     res = await window.printer.connectMoonraker({ ip });
   }
 
   if (res.success) {
-    state.mode = wifiType.value === 'octoprint' ? 'octoprint' : 'moonraker';
+    state.mode = wifiType.value;
     setConnected(true);
-    logLine(`Connected via ${state.mode === 'octoprint' ? 'OctoPrint' : 'Moonraker'}${res.version ? ' v' + res.version : ''}`, 'info');
+    const label = state.mode === 'octoprint' ? 'OctoPrint' : state.mode === 'bambu' ? 'Bambu Lab' : 'Moonraker';
+    logLine(`Connected via ${label}${res.version ? ' v' + res.version : ''}`, 'info');
     toast('Connected to ' + ip, 'success');
   } else {
     wifiConnectBtn.disabled = false;
@@ -173,13 +187,16 @@ function setConnected(connected) {
   if (!connected) { state.mode = null; state.printing = false; state.paused = false; }
 
   // WiFi buttons
-  wifiConnectBtn.classList.toggle('hidden', connected && (state.mode === 'octoprint' || state.mode === 'moonraker'));
+  const isWifi = state.mode === 'octoprint' || state.mode === 'moonraker' || state.mode === 'bambu';
+  wifiConnectBtn.classList.toggle('hidden', connected && isWifi);
   wifiDiscBtn.classList.toggle('hidden',    !connected || state.mode === 'usb');
   wifiConnectBtn.disabled = false;
   wifiConnectBtn.textContent = 'Connect';
   wifiIp.disabled = connected;
   wifiType.disabled = connected;
   wifiApikey.disabled = connected;
+  bambuSerial.disabled = connected;
+  bambuCode.disabled = connected;
 
   // USB buttons
   usbConnectBtn.classList.toggle('hidden', connected && state.mode === 'usb');
@@ -458,7 +475,7 @@ function updateStatusChip() {
   if (state.ejecting)         { statusChip.classList.add('ejecting');  statusText.textContent = 'Ejecting'; return; }
   if (state.printing && state.paused) { statusChip.classList.add('connected'); statusText.textContent = 'Paused'; return; }
   if (state.printing)         { statusChip.classList.add('printing');  statusText.textContent = 'Printing'; return; }
-  const label = state.mode === 'octoprint' ? 'OctoPrint' : state.mode === 'moonraker' ? 'Moonraker' : 'USB';
+  const label = state.mode === 'octoprint' ? 'OctoPrint' : state.mode === 'moonraker' ? 'Moonraker' : state.mode === 'bambu' ? 'Bambu Lab' : 'USB';
   statusChip.classList.add('connected');
   statusText.textContent = `Ready · ${label}`;
 }
