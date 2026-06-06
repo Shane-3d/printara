@@ -680,35 +680,8 @@
 <!-- â”€â”€ Download â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 <div id="download" style="max-width:680px;margin:0 auto 24px;padding:0 24px">
 
-  <!-- Subscription gate -->
-  <div id="sub-gate">
-    <div style="background:linear-gradient(135deg,#111,#1a0f0f);border:1px solid rgba(247,38,38,0.3);border-radius:18px;padding:36px 32px;text-align:center;margin-bottom:20px">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(247,38,38,0.12);border:1px solid rgba(247,38,38,0.3);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:#f72626;margin-bottom:20px">ðŸ–¨ï¸ Print Queue Access</div>
-      <div style="font-size:48px;font-weight:900;color:#fff;line-height:1">$3.99<span style="font-size:18px;font-weight:500;color:#888">/month</span></div>
-      <p style="font-size:14px;color:#888;margin:12px 0 28px;line-height:1.6">Full access to the Printara Print Queue desktop app.<br/>Cancel anytime. No hidden fees.</p>
-      <ul style="list-style:none;text-align:left;display:inline-block;margin-bottom:28px;font-size:13px;color:#aaa;line-height:2">
-        <li>âœ“ &nbsp;Windows, Mac &amp; Linux app</li>
-        <li>âœ“ &nbsp;Auto-queue &amp; auto-eject</li>
-        <li>âœ“ &nbsp;Live temperature monitoring</li>
-        <li>âœ“ &nbsp;All future updates included</li>
-      </ul>
-      <br/>
-      <button id="sub-btn" onclick="startCheckout()" style="background:#f72626;color:#fff;border:none;border-radius:10px;padding:14px 36px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:background .15s">
-        Subscribe &amp; Download â†’
-      </button>
-      <p id="sub-msg" style="font-size:12px;color:#555;margin-top:14px"></p>
-    </div>
-  </div>
-
-  <!-- Downloads (shown after subscription verified) -->
-  <div id="sub-downloads" style="display:none">
-
-    <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);border-radius:12px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:#22c55e">
-      <span style="font-size:18px">âœ“</span>
-      <span>Subscription active â€” download any platform below.</span>
-      <button onclick="cancelSub()" style="margin-left:auto;font-size:11px;color:#555;background:none;border:none;cursor:pointer;text-decoration:underline">Manage</button>
-    </div>
-
+  <!-- Downloads -->
+  <div id="sub-downloads">
     <!-- Why local -->
     <div style="background:#111;border:1px solid #252525;border-radius:14px;padding:20px 24px;margin-bottom:20px;font-size:13px;color:#888;line-height:1.7">
       <strong style="color:#e8e8e8;font-size:14px">Why run locally?</strong><br/>
@@ -758,92 +731,16 @@
   <a href="https://github.com/shanevandekrol-dotcom/printara">GitHub</a>
 </p>
 
-<script src="https://js.stripe.com/v3/"></script>
 <script>
-  const STRIPE_PK = 'pk_test_51THCJOJwfRKy9mYmov2vC8u8cFkrgXRUjjaNhlEj1lvtegHfHEs1mdGDrhYHFmwdC2f9qhLMvjkSM4uYtBJTHKuA00iljZaNZP';
-
-  // Check if already subscribed (stored locally after verification)
-  function checkSub() {
-    const sub = JSON.parse(localStorage.getItem('pq_sub') || 'null');
-    if (sub && sub.active && sub.expires > Date.now()) {
-      showDownloads();
-      return true;
-    }
-    return false;
-  }
-
-  function showDownloads() {
-    document.getElementById('sub-gate').style.display = 'none';
-    document.getElementById('sub-downloads').style.display = 'block';
-  }
-
-  async function startCheckout() {
-    const btn = document.getElementById('sub-btn');
-    const msg = document.getElementById('sub-msg');
-    btn.textContent = 'Loadingâ€¦';
-    btn.disabled = true;
-    msg.textContent = '';
-    try {
-      const res = await fetch('/.netlify/functions/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error(data.error || 'Failed to start checkout');
-      }
-    } catch (e) {
-      msg.textContent = e.message;
-      btn.textContent = 'Subscribe & Download â†’';
-      btn.disabled = false;
-    }
-  }
-
-  async function handleReturn() {
-    const params = new URLSearchParams(location.search);
-    if (params.get('sub') === 'success' && params.get('session_id')) {
-      const msg = document.getElementById('sub-msg');
-      try {
-        const res = await fetch('/.netlify/functions/verify-subscription?session_id=' + params.get('session_id'));
-        const data = await res.json();
-        if (data.active) {
-          // Cache for 30 days
-          localStorage.setItem('pq_sub', JSON.stringify({ active: true, expires: Date.now() + 30*24*60*60*1000, email: data.email }));
-          showDownloads();
-        } else {
-          msg.textContent = 'Payment not confirmed yet â€” please wait a moment and refresh.';
-        }
-      } catch {
-        msg.textContent = 'Could not verify payment. Please contact support.';
-      }
-      // Clean up URL
-      history.replaceState({}, '', location.pathname + '#download');
-    } else if (params.get('sub') === 'cancel') {
-      document.getElementById('sub-msg').textContent = 'Payment cancelled.';
-      history.replaceState({}, '', location.pathname + '#download');
-    }
-  }
-
-  function cancelSub() {
-    localStorage.removeItem('pq_sub');
-    location.reload();
-  }
-
   // Version badge
   fetch('https://api.github.com/repos/shanevandekrol-dotcom/printara/releases/latest')
     .then(r => r.json())
     .then(d => {
       if (!d.name) return;
       document.getElementById('ver-badge').textContent = d.name.replace('Printara ', '');
-      document.getElementById('ver-note').textContent  = 'Latest: ' + d.name + ' Â· published ' + new Date(d.published_at).toLocaleDateString();
+      document.getElementById('ver-note').textContent  = 'Latest: ' + d.name + ' · published ' + new Date(d.published_at).toLocaleDateString();
     })
     .catch(() => {});
-
-  // Init
-  if (!checkSub()) handleReturn();
 </script>
 
 <!-- â”€â”€ Features â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
