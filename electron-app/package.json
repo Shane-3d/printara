@@ -8,7 +8,36 @@
     "start": "electron .",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "electron-forge publish",
+    "dist": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.printara.app",
+    "productName": "Printara",
+    "copyright": "Copyright © 2026 Printara",
+    "icon": "logo.ico",
+    "files": [
+      "**/*",
+      "!out/**",
+      "!node_modules/.cache/**"
+    ],
+    "extraResources": [
+      {
+        "from": "../logo.png",
+        "to": "logo.png"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "logo.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Printara"
+    }
   },
   "keywords": [
     "3d-printing",
@@ -33,6 +62,7 @@
     "@electron-forge/maker-squirrel": "^7.4.0",
     "@electron-forge/maker-zip": "^7.4.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
-    "electron": "^31.0.0"
+    "electron": "^31.0.0",
+    "electron-builder": "^26.15.2"
   }
 }

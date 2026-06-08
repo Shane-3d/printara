@@ -20,15 +20,12 @@ jobs:
 
       - name: Build installer
         working-directory: electron-app
-        run: npm run make
+        run: npm run dist
 
       - name: Upload Windows installer
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            electron-app/out/make/squirrel.windows/x64/PrintaraSetup.exe
-            electron-app/out/make/squirrel.windows/x64/Printara-*-full.nupkg
-            electron-app/out/make/squirrel.windows/x64/RELEASES
+          files: electron-app/dist/Printara*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
