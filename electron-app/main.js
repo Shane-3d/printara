@@ -726,15 +726,16 @@ ipcMain.handle('serial:connect', async (_ev, portPath, baudRate) => {
 });
 
 // ── Window ────────────────────────────────────────────────────────────────────────
-function getQueuePath()   { return app.isPackaged ? path.join(process.resourcesPath, 'queue.html')  : path.join(__dirname, '..', 'queue.html'); }
-function getLoginPath()   { return app.isPackaged ? path.join(process.resourcesPath, 'login.html')  : path.join(__dirname, '..', 'login.html'); }
 function getPreloadPath() { return path.join(__dirname, 'preload.js'); }
+function getIconPath()    { return path.join(__dirname, 'logo.ico'); }
+function getQueueUI()     { return path.join(__dirname, 'src', 'index.html'); }
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1300, height: 860, minWidth: 960, minHeight: 640,
     title: 'Printara — Print Queue',
     backgroundColor: '#0a0a0a',
+    icon: getIconPath(),
     webPreferences: {
       webSecurity: false,
       nodeIntegration: false,
@@ -745,7 +746,7 @@ function createWindow() {
 
   mainWindow.webContents.session.setPermissionCheckHandler((_wc, perm) => perm === 'serial' ? true : null);
   mainWindow.webContents.session.setDevicePermissionHandler(d => d.deviceType === 'serial');
-  mainWindow.loadFile(getLoginPath());
+  mainWindow.loadFile(getQueueUI());
   mainWindow.setMenuBarVisibility(false);
   mainWindow.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: 'deny' }; });
 }

@@ -4,13 +4,8 @@ module.exports = {
     name: 'Printara',
     executableName: 'printara',
     appCopyright: 'Copyright © 2026 Printara',
-    // Bundle the browser-facing pages next to the asar so main.js can load them
-    // with file:// paths in packaged builds.
+    icon: './logo',  // Electron appends .ico/.icns/.png per platform
     extraResource: [
-      '../login.html',
-      '../queue.html',
-      '../index.html',
-      '../download.html',
       '../logo.png',
     ],
   },
@@ -21,6 +16,7 @@ module.exports = {
       config: {
         name: 'Printara',
         setupExe: 'PrintaraSetup.exe',
+        setupIcon: './logo.ico',
       },
     },
     {
