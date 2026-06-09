@@ -37,7 +37,8 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Printara"
-    }
+    },
+    "artifactName": "PrintaraSetup.exe"
   },
   "keywords": [
     "3d-printing",
