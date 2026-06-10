@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Printara � 3D Design Tools & Community</title>
+  <title>Printara — 3D Print Queue Manager</title>
   <link rel="icon" href="logo.svg" />
   <link rel="apple-touch-icon" href="logo.svg" />
   <meta name="apple-mobile-web-app-title" content="Printara" />
@@ -62,49 +62,114 @@
     .err.on { display:block; }
 
     /* -- Hero -- */
-    .hero-section { position:relative; height:calc(100vh - 34px); min-height:475px; display:flex; align-items:center; overflow:hidden; background:#050708; }
-    .hero-overlay { position:absolute; inset:0; background:
-      radial-gradient(circle at 66% 50%, rgba(180,20,10,.20), transparent 26%),
-      radial-gradient(circle at 74% 28%, rgba(140,15,10,.16), transparent 28%),
-      linear-gradient(90deg,rgba(0,0,0,.98) 0%,rgba(0,0,0,.91) 20%,rgba(0,0,0,.50) 42%,rgba(0,0,0,.12) 66%,rgba(0,0,0,.30) 100%),
-      linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.28));
-      z-index:2; pointer-events:none; }
-    .hero-content { position:relative; z-index:3; padding:18px 0 0 25px; max-width:650px; display:flex; flex-direction:column; gap:10px; }
-    .hero-logo {
-      width:96px; height:96px; object-fit:contain; margin-bottom:0;
-      filter:drop-shadow(0 0 18px rgba(220,40,40,.6)) drop-shadow(0 8px 28px rgba(150,0,0,.4));
-      animation:heroLogoFloat 4s ease-in-out infinite;
+    .hero-section {
+      position:relative; height:calc(100vh - 52px); min-height:520px;
+      display:flex; align-items:center; overflow:hidden;
+      background:#0A0A0A;
     }
-    @keyframes heroLogoFloat {
-      0%,100% { transform:translateY(0) scale(1); filter:drop-shadow(0 0 16px rgba(220,40,40,.55)) drop-shadow(0 6px 22px rgba(150,0,0,.35)); }
-      50% { transform:translateY(-7px) scale(1.03); filter:drop-shadow(0 0 28px rgba(255,60,60,.85)) drop-shadow(0 14px 36px rgba(180,0,0,.55)); }
+    /* Warm studio backdrop glow on the right */
+    .hero-section::before {
+      content:'';
+      position:absolute; inset:0; z-index:0;
+      background:
+        radial-gradient(ellipse 70% 80% at 80% 50%, rgba(50,36,22,.75), transparent),
+        radial-gradient(ellipse 45% 55% at 90% 25%, rgba(35,25,14,.55), transparent);
     }
-    .hero-wordmark {
-      font-size:clamp(32px,4.5vw,62px); font-weight:900; letter-spacing:.08em;
-      color:#fff; font-family:'Space Grotesk',sans-serif; line-height:1; margin:0;
+    /* Left-to-right fade overlay — blends canvas into background */
+    .hero-overlay {
+      position:absolute; inset:0; z-index:2; pointer-events:none;
+      background:linear-gradient(
+        90deg,
+        #0A0A0A 0%,
+        #0A0A0A 26%,
+        rgba(10,10,10,.93) 36%,
+        rgba(10,10,10,.62) 48%,
+        rgba(10,10,10,.18) 62%,
+        transparent 78%
+      );
     }
-    .hero-content h1 { font-size:clamp(28px,3vw,58px); font-weight:900; line-height:.98; letter-spacing:0; color:#fff; margin:0; white-space:nowrap; }
-    .hero-content p { font-size:12px; line-height:1.55; color:#aeb3bc; max-width:305px; margin:0 0 4px; font-weight:500; }
-    .hero-cta { display:flex; gap:9px; flex-wrap:wrap; align-items:center; }
-    .hero-cta button, .hero-cta a {
-      display:inline-flex; align-items:center; gap:5px; padding:8px 20px;
-      border-radius:999px; font-size:11px; font-weight:700; cursor:pointer;
-      text-decoration:none; font-family:inherit; transition:transform .15s, box-shadow .15s;
-      background:transparent; border:1.5px solid #e02020; color:#e02020;
+    .hero-content {
+      position:relative; z-index:3;
+      padding:0 0 0 5vw; max-width:560px;
+      display:flex; flex-direction:column; gap:20px;
     }
-    .btn-blue { background:transparent; border-color:#e02020; color:#e02020; }
-    .btn-blue:hover { background:rgba(200,0,0,.12); transform:translateY(-1px); }
-    .btn-ghost { background:transparent; border-color:#e02020; color:#e02020; }
-    .btn-ghost:hover { background:rgba(200,0,0,.12); transform:translateY(-1px); }
-    .hero-print { background:transparent !important; border-color:#e02020 !important; color:#e02020 !important; }
-    .hero-print::before { content:''; }
-    .hero-browse::after { content:''; }
-    .hero-accent { color:#ffffff; }
+    /* Floating badge */
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:11px;
+      background:rgba(10,12,20,.85); backdrop-filter:blur(10px);
+      border:1px solid rgba(56,189,248,.3); border-radius:12px;
+      padding:9px 16px; width:fit-content;
+      box-shadow:0 0 18px rgba(56,189,248,.12), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .hero-badge-icon {
+      width:34px; height:34px; border-radius:8px; flex-shrink:0;
+      background:linear-gradient(135deg,#0f2744,#071528);
+      border:1px solid rgba(56,189,248,.25);
+      display:flex; align-items:center; justify-content:center; font-size:17px;
+    }
+    .hero-badge-label { font-size:11px; font-weight:800; color:#38BDF8; letter-spacing:.05em; line-height:1.3; }
+    .hero-badge-sub   { font-size:10px; color:#4a5568; font-weight:500; }
+    /* Main heading */
+    .hero-heading {
+      font-size:clamp(40px,5.8vw,76px); font-weight:900; line-height:1.02;
+      letter-spacing:-.025em; color:#fff; margin:0;
+      font-family:'Space Grotesk', sans-serif;
+    }
+    .hero-heading .cyan { color:#38BDF8; text-shadow:0 0 30px rgba(56,189,248,.5); }
+    /* Description */
+    .hero-desc {
+      font-size:15px; line-height:1.65; color:#7d8fa3; max-width:380px; margin:0; font-weight:400;
+    }
+    /* CTA row */
+    .hero-cta { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    /* Button 1 — glowing blue */
+    .btn-hero-primary {
+      display:inline-flex; align-items:center; gap:6px; padding:12px 26px;
+      background:#2563EB; color:#fff; border:none; border-radius:999px;
+      font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;
+      box-shadow:0 0 22px rgba(37,99,235,.65), 0 0 70px rgba(37,99,235,.22);
+      transition:box-shadow .2s, transform .15s;
+    }
+    .btn-hero-primary:hover { box-shadow:0 0 36px rgba(37,99,235,.95), 0 0 90px rgba(37,99,235,.4); transform:translateY(-1px); }
+    /* Button 2 — dark, orange text, printer icon */
+    .btn-hero-secondary {
+      display:inline-flex; align-items:center; gap:8px; padding:11px 20px;
+      background:rgba(255,255,255,.06); color:#fb923c;
+      border:1px solid rgba(255,255,255,.12); border-radius:999px;
+      font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
+      text-decoration:none; backdrop-filter:blur(6px); transition:background .15s, border-color .15s;
+    }
+    .btn-hero-secondary:hover { background:rgba(255,255,255,.11); border-color:rgba(251,146,60,.3); }
+    /* Button 3 — dark ghost, white text */
+    .btn-hero-ghost {
+      display:inline-flex; align-items:center; gap:6px; padding:11px 20px;
+      background:rgba(255,255,255,.06); color:#e2e8f0;
+      border:1px solid rgba(255,255,255,.12); border-radius:999px;
+      font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
+      text-decoration:none; backdrop-filter:blur(6px); transition:background .15s;
+    }
+    .btn-hero-ghost:hover { background:rgba(255,255,255,.11); }
+    /* Legacy aliases kept for other parts of page */
+    .btn-blue  { background:transparent; border:1.5px solid #e02020; color:#e02020; border-radius:999px; padding:8px 18px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; }
+    .btn-blue:hover  { background:rgba(200,0,0,.12); }
+    .btn-ghost { background:transparent; border:1.5px solid #e02020; color:#e02020; border-radius:999px; padding:8px 18px; font-size:12px; font-weight:700; font-family:inherit; transition:background .15s; }
+    .btn-ghost:hover { background:rgba(200,0,0,.12); }
+    .hero-accent { color:#38BDF8; }
+    /* Floating support chat widget */
+    .chat-fab {
+      position:fixed; bottom:24px; right:24px; z-index:500;
+      width:54px; height:54px; border-radius:50%;
+      background:#DC2626; border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 4px 22px rgba(220,38,38,.55);
+      transition:transform .2s, box-shadow .2s;
+    }
+    .chat-fab:hover { transform:scale(1.1); box-shadow:0 6px 32px rgba(220,38,38,.75); }
     .tools-strip { margin-top:-1px; background:#050708; }
     @media(max-width:768px) {
       .hero-section { min-height:560px; }
-      .hero-content { padding:36px 22px 0; max-width:92%; }
-      .hero-overlay { background:linear-gradient(90deg,rgba(0,0,0,.98),rgba(0,0,0,.62) 58%,rgba(0,0,0,.22)); }
+      .hero-content { padding:0 22px; max-width:100%; }
+      .hero-heading { font-size:clamp(34px,9vw,58px); }
     }
 
     /* -- Tools strip -- */
@@ -312,7 +377,7 @@
     <img src="logo.svg" alt="Printara" /><span class="logo-wordmark">Printara</span>
   </a>
   <div class="home-header-actions">
-    <div id="hGuest"><button onclick="openMod('loginModal')" style="padding:6px 16px;font-size:11px;font-weight:800;border-radius:999px;background:transparent;color:#e02020;border:1.5px solid #e02020;cursor:pointer;font-family:inherit;">Sign In</button></div>
+    <div id="hGuest"><button onclick="openMod('loginModal')" style="padding:8px 22px;font-size:13px;font-weight:700;border-radius:999px;background:#DC2626;color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 2px 14px rgba(220,38,38,.45);transition:box-shadow .2s,transform .15s;" onmouseover="this.style.boxShadow='0 4px 24px rgba(220,38,38,.7)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 2px 14px rgba(220,38,38,.45)';this.style.transform=''">Sign In</button></div>
     <div id="hUser" style="display:none;align-items:center;gap:8px;">
       <span class="user-badge" id="hUsername"></span>
       <button class="btn-printer" id="prHeaderBtn" onclick="openMod('printerModal')" title="Connect 3D Printer">🖨️ <span id="prHeaderLabel">Connect Printer</span></button>
@@ -326,15 +391,36 @@
 <section class="hero-section">
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <img src="logo.svg" alt="Printara" class="hero-logo" />
-    <div class="hero-wordmark">PRINTARA</div>
-    <h1>Design. Generate. <span class="hero-accent">Print.</span></h1>
-    <p>Browser-based 3D design tools and a community project library � sign up free.</p>
-    <div class="hero-cta">
-      <button class="btn-blue" id="heroBtn" onclick="handleHero()">Get Started Free ?</button>
-      <a href="download.html" class="btn-ghost hero-print">Print Queue</a>
-      <a href="#gallery" class="btn-ghost hero-browse">Browse Projects</a>
+
+    <!-- Floating badge -->
+    <div class="hero-badge">
+      <div class="hero-badge-icon">⚙️</div>
+      <div>
+        <div class="hero-badge-label">LayerForge Studio</div>
+        <div class="hero-badge-sub">3D Design Platform</div>
+      </div>
     </div>
+
+    <!-- Main heading -->
+    <h1 class="hero-heading">Design. Generate.<br><span class="cyan">Print.</span></h1>
+
+    <!-- Description -->
+    <p class="hero-desc">Browser-based 3D design tools and a community project library — sign up free.</p>
+
+    <!-- CTA buttons -->
+    <div class="hero-cta">
+      <button class="btn-hero-primary" id="heroBtn" onclick="handleHero()">
+        Get Started Free →
+      </button>
+      <a href="download.html" class="btn-hero-secondary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 9l3 3 5-5"/></svg>
+        Print Queue
+      </a>
+      <a href="#gallery" class="btn-hero-ghost">
+        Browse Projects ↓
+      </a>
+    </div>
+
   </div>
 </section>
 
@@ -375,8 +461,15 @@
 
 <!-- ===== FOOTER ===== -->
 <footer class="home-footer">
-  <img src="logo.svg" alt="Printara" /> � 2026 Printara. All rights reserved.
+  <img src="logo.svg" alt="Printara" /> &copy; 2026 Printara. All rights reserved.
 </footer>
+
+<!-- ===== FLOATING CHAT WIDGET ===== -->
+<button class="chat-fab" title="Support" onclick="alert('Support coming soon!')">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+  </svg>
+</button>
 
 <script>
   // -- Auth (shared session with tools.html) --
