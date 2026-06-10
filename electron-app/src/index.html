@@ -23,11 +23,20 @@
       <span class="tagline">Print Queue Manager</span>
     </div>
     <div class="spacer"></div>
+    <div id="reconnect-badge" class="reconnect-badge hidden">Reconnecting…</div>
+    <button class="btn-icon" id="history-btn" title="Print History" style="margin-right:8px">📋</button>
     <div id="status-chip" class="status-chip">
       <div class="dot"></div>
       <span id="status-text">Disconnected</span>
     </div>
   </header>
+
+  <!-- ── Update banner ─────────────────────────────────────────────────── -->
+  <div id="update-banner" class="update-banner hidden">
+    <span id="update-msg">A new version is available.</span>
+    <button class="btn-primary" id="update-install-btn" style="margin-left:12px;padding:4px 14px;font-size:12px">Restart & Install</button>
+    <button class="btn-icon" id="update-dismiss-btn" style="margin-left:6px" title="Dismiss">✕</button>
+  </div>
 
   <!-- ── Left sidebar ────────────────────────────────────────────────────── -->
   <aside id="sidebar-left">
@@ -200,6 +209,18 @@
     <div class="modal-actions">
       <button class="btn-secondary" id="eject-cancel-btn">Cancel</button>
       <button class="btn-primary" id="eject-save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── History modal ───────────────────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="history-modal">
+  <div class="modal" style="width:620px;max-width:95vw">
+    <h2>Print History</h2>
+    <div id="history-list" style="max-height:400px;overflow-y:auto;margin:12px 0"></div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="history-clear-btn">Clear History</button>
+      <button class="btn-secondary" id="history-close-btn">Close</button>
     </div>
   </div>
 </div>

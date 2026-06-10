@@ -68,6 +68,22 @@ const ejectInput     = $('eject-gcode-input');
 const ejectSaveBtn   = $('eject-save-btn');
 const ejectCancelBtn = $('eject-cancel-btn');
 
+// Update banner
+const updateBanner      = $('update-banner');
+const updateMsg         = $('update-msg');
+const updateInstallBtn  = $('update-install-btn');
+const updateDismissBtn  = $('update-dismiss-btn');
+
+// Reconnect badge
+const reconnectBadge    = $('reconnect-badge');
+
+// History
+const historyBtn        = $('history-btn');
+const historyModal      = $('history-modal');
+const historyList       = $('history-list');
+const historyClearBtn   = $('history-clear-btn');
+const historyCloseBtn   = $('history-close-btn');
+
 // ── Init ───────────────────────────────────────────────────────────────────────
 (async () => {
   await refreshPorts();
@@ -366,12 +382,6 @@ window.printer.onResponse(line => {
   if (!line.startsWith('ok') && !line.startsWith('wait')) logLine(line, 'recv');
 });
 
-window.printer.onDisconnected(() => {
-  setConnected(false);
-  logLine('Printer disconnected', 'error');
-  toast('Printer disconnected', 'error');
-  resetProgress();
-});
 
 window.printer.onTemperature(({ extruder, bed }) => {
   if (extruder) {
@@ -488,9 +498,92 @@ function toast(msg, type = 'info') {
   setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 3500);
 }
 
+// ── Auto-updater ───────────────────────────────────────────────────────────────
+window.printer.onUpdateAvailable(info => {
+  updateMsg.textContent = `Printara ${info.version} is available — downloading…`;
+  updateBanner.classList.remove('hidden');
+  updateInstallBtn.disabled = true;
+});
+
+window.printer.onUpdateDownloaded(info => {
+  updateMsg.textContent = `Printara ${info.version} downloaded — restart to install.`;
+  updateInstallBtn.disabled = false;
+});
+
+window.printer.onUpdateProgress(p => {
+  updateMsg.textContent = `Downloading update… ${Math.round(p.percent)}%`;
+});
+
+updateInstallBtn.addEventListener('click', () => window.printer.installUpdate());
+updateDismissBtn.addEventListener('click', () => updateBanner.classList.add('hidden'));
+
+// ── Auto-reconnect ─────────────────────────────────────────────────────────────
+window.printer.onReconnected(info => {
+  reconnectBadge.classList.add('hidden');
+  logLine(`Reconnected to ${info.ip || 'printer'}`, 'info');
+  toast('Reconnected to printer', 'success');
+  state.connected = true;
+  updateStatusChip();
+});
+
+window.printer.onDisconnected(() => {
+  // If mid-print, show reconnecting badge instead of full disconnect
+  if (state.printing) {
+    reconnectBadge.classList.remove('hidden');
+  } else {
+    setConnected(false);
+  }
+  logLine('Printer disconnected', 'error');
+  toast('Printer disconnected', 'error');
+  resetProgress();
+});
+
+// ── Print history ──────────────────────────────────────────────────────────────
+historyBtn.addEventListener('click', async () => {
+  const history = await window.printer.getHistory();
+  renderHistory(history);
+  historyModal.classList.remove('hidden');
+});
+
+historyCloseBtn.addEventListener('click', () => historyModal.classList.add('hidden'));
+historyClearBtn.addEventListener('click', async () => {
+  if (!confirm('Clear all print history?')) return;
+  await window.printer.clearHistory();
+  renderHistory([]);
+  toast('History cleared', 'info');
+});
+
+function renderHistory(items) {
+  if (!items.length) {
+    historyList.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:24px">No print history yet.</p>';
+    return;
+  }
+  historyList.innerHTML = items.slice().reverse().map(h => {
+    const started  = new Date(h.startedAt).toLocaleString();
+    const duration = h.durationMs ? formatDuration(h.durationMs) : '—';
+    const icon = h.status === 'done' ? '✓' : h.status === 'cancelled' ? '✕' : '⚠';
+    const cls  = h.status === 'done' ? 'done' : h.status === 'cancelled' ? 'cancelled' : 'error';
+    return `<div class="queue-item ${cls}" style="margin-bottom:6px">
+      <div class="item-icon">${icon}</div>
+      <div class="item-info">
+        <div class="item-name">${h.name}</div>
+        <div class="item-meta">${started} · ${duration} · ${h.mode || '?'}</div>
+      </div>
+      <div class="item-status status-${h.status}">${h.status}</div>
+    </div>`;
+  }).join('');
+}
+
+function formatDuration(ms) {
+  const s = Math.floor(ms / 1000);
+  if (s < 60)   return `${s}s`;
+  if (s < 3600) return `${Math.floor(s/60)}m ${s%60}s`;
+  return `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;
+}
+
 // ── Keyboard shortcuts ─────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'o') { e.preventDefault(); addFilesBtn.click(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { if (!startQueueBtn.disabled) startQueueBtn.click(); }
-  if (e.key === 'Escape') ejectModal.classList.add('hidden');
+  if (e.key === 'Escape') { ejectModal.classList.add('hidden'); historyModal.classList.add('hidden'); }
 });

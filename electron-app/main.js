@@ -1,6 +1,6 @@
 'use strict';
 
-const { app, BrowserWindow, shell, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, shell, ipcMain, dialog, Notification } = require('electron');
 const path   = require('path');
 const os     = require('os');
 const fs     = require('fs');
@@ -10,6 +10,7 @@ const { SerialPort }       = require('serialport');
 const { ReadlineParser }   = require('@serialport/parser-readline');
 const mqtt = require('mqtt');
 const ftp  = require('basic-ftp');
+const { autoUpdater }      = require('electron-updater');
 
 // ── Globals ─────────────────────────────────────────────────────────────────────
 let mainWindow  = null;
@@ -37,14 +38,96 @@ let resumeResolve  = null;
 // Default eject G-code
 let ejectLines = ['G91', 'G1 Z10 F300', 'G90', 'G28 X Y', 'M84'];
 
+// Print history (persisted to userData/history.json)
+let printHistory = [];
+
+// Auto-reconnect timer
+let reconnectTimer = null;
+const RECONNECT_INTERVAL = 5000;
+
 // ── Helpers ──────────────────────────────────────────────────────────────────────
 function emit(ch, data) {
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send(ch, data);
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  mainWindow.webContents.send(ch, data);
+  // Drive taskbar progress bar automatically
+  if (ch === 'printer:printProgress' && data && data.progress > 0) {
+    mainWindow.setProgressBar(data.progress / 100);
+  }
 }
 
-function ejectFilePath() {
-  return path.join(app.getPath('userData'), 'eject.json');
+function ejectFilePath()   { return path.join(app.getPath('userData'), 'eject.json'); }
+function historyFilePath() { return path.join(app.getPath('userData'), 'history.json'); }
+
+// ── Print history ────────────────────────────────────────────────────────────────
+function loadHistory() {
+  try {
+    const p = historyFilePath();
+    if (fs.existsSync(p)) printHistory = JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch (_) {}
 }
+
+function saveHistoryEntry(item, status, durationMs) {
+  const entry = {
+    id:       item.id,
+    name:     item.name,
+    filePath: item.filePath,
+    printer:  wifi.mode,
+    status,
+    durationMs,
+    finishedAt: new Date().toISOString(),
+    filamentMm: item.filamentMm || null,
+  };
+  printHistory.unshift(entry);
+  if (printHistory.length > 200) printHistory.length = 200;
+  try { fs.writeFileSync(historyFilePath(), JSON.stringify(printHistory, null, 2)); } catch (_) {}
+  emit('printer:historyUpdated', printHistory);
+}
+
+// ── OS notifications ──────────────────────────────────────────────────────────────
+function notify(title, body) {
+  if (!Notification.isSupported()) return;
+  new Notification({ title, body, icon: path.join(__dirname, 'logo.ico') }).show();
+}
+
+// ── Auto-reconnect ────────────────────────────────────────────────────────────────
+function startReconnect() {
+  if (reconnectTimer) return;
+  reconnectTimer = setInterval(async () => {
+    if (!wifi.ip || wifi.mode === 'usb') { stopReconnect(); return; }
+    try {
+      let ok = false;
+      if (wifi.mode === 'octoprint' || (!wifi.mode && wifi.apiKey)) {
+        const r = await httpReq({ hostname: wifi.ip, port: 80, path: '/api/version', method: 'GET', headers: { 'X-Api-Key': wifi.apiKey } });
+        ok = r.status === 200;
+        if (ok) wifi.mode = 'octoprint';
+      } else if (wifi.mode === 'moonraker' || !wifi.mode) {
+        const r = await httpReq({ hostname: wifi.ip, port: 80, path: '/printer/info', method: 'GET', headers: {} });
+        ok = r.status === 200;
+        if (ok) wifi.mode = 'moonraker';
+      }
+      if (ok) {
+        stopReconnect();
+        emit('printer:reconnected', { mode: wifi.mode });
+        notify('Printara', 'Reconnected to printer');
+      }
+    } catch (_) {}
+  }, RECONNECT_INTERVAL);
+}
+
+function stopReconnect() {
+  if (reconnectTimer) { clearInterval(reconnectTimer); reconnectTimer = null; }
+}
+
+// ── IPC: History ──────────────────────────────────────────────────────────────────
+ipcMain.handle('printer:getHistory',   () => printHistory);
+ipcMain.handle('printer:clearHistory', () => {
+  printHistory = [];
+  try { fs.writeFileSync(historyFilePath(), '[]'); } catch (_) {}
+});
+
+// ── IPC: Updater ──────────────────────────────────────────────────────────────────
+ipcMain.handle('updater:check',   () => autoUpdater.checkForUpdates());
+ipcMain.handle('updater:install', () => autoUpdater.quitAndInstall());
 
 // ── HTTP request helper ──────────────────────────────────────────────────────────
 function httpReq(options, body) {
@@ -166,6 +249,7 @@ ipcMain.handle('printer:connectUsb', async (_ev, { portPath, baudRate }) => {
     activePort.on('close', () => {
       wifi.mode = null;
       emit('printer:disconnected');
+      if (queueRunning) notify('Printer disconnected', 'USB connection lost during print');
     });
 
     await new Promise((res, rej) => activePort.open(err => err ? rej(err) : res()));
@@ -237,7 +321,7 @@ ipcMain.handle('printer:connectBambu', async (_ev, { ip, serial, accessCode }) =
       });
       bambuClient.on('close', () => {
         if (!settled) { settled = true; reject(new Error('Connection closed')); }
-        else { wifi.mode = null; emit('printer:disconnected'); }
+        else { emit('printer:disconnected'); startReconnect(); }
       });
       setTimeout(() => {
         if (!settled) { settled = true; bambuClient.end(true); reject(new Error('Timed out')); }
@@ -252,6 +336,7 @@ ipcMain.handle('printer:connectBambu', async (_ev, { ip, serial, accessCode }) =
 });
 
 ipcMain.handle('printer:disconnectWifi', () => {
+  stopReconnect();
   if (bambuClient) { try { bambuClient.end(true); } catch (_) {} bambuClient = null; }
   wifi.mode = null; wifi.ip = null; wifi.apiKey = null; wifi.serial = null; wifi.accessCode = null;
 });
@@ -422,13 +507,20 @@ async function runQueue() {
 
       currentItem = item;
       item.status = 'printing';
+      item._startedAt = Date.now();
       emit('printer:printStarted', item);
+
+      // Taskbar progress
+      if (mainWindow) mainWindow.setProgressBar(0);
 
       try {
         if (wifi.mode === 'usb') await runUsbPrint(item);
         else                     await runWifiPrint(item);
       } catch (err) {
         item.status = 'error';
+        saveHistoryEntry(item, 'error', Date.now() - item._startedAt);
+        notify('Print failed', `${item.name} — ${err.message}`);
+        if (mainWindow) mainWindow.setProgressBar(-1);
         currentItem = null;
         emit('printer:queueError', err.message);
         return;
@@ -436,19 +528,25 @@ async function runQueue() {
 
       if (cancelFlag) {
         item.status = 'cancelled';
+        saveHistoryEntry(item, 'cancelled', Date.now() - item._startedAt);
         emit('printer:printCancelled', item);
+        if (mainWindow) mainWindow.setProgressBar(-1);
         cancelFlag = false;
         break;
       }
 
       item.status = 'done';
+      saveHistoryEntry(item, 'done', Date.now() - item._startedAt);
+      notify('Print complete ✓', item.name);
       emit('printer:printComplete', item);
       emit('printer:printProgress', { progress: 100, currentLine: item.totalLines, totalLines: item.totalLines });
+      if (mainWindow) mainWindow.setProgressBar(-1);
       currentItem = null;
     }
   } finally {
     queueRunning = false;
     currentItem  = null;
+    if (mainWindow) mainWindow.setProgressBar(-1);
     emit('printer:queueComplete');
   }
 }
@@ -752,12 +850,23 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  // Load saved eject gcode
-  try {
-    const p = ejectFilePath();
-    if (fs.existsSync(p)) ejectLines = JSON.parse(fs.readFileSync(p, 'utf8'));
-  } catch (_) {}
+  // Load persisted data
+  try { const p = ejectFilePath();   if (fs.existsSync(p)) ejectLines = JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) {}
+  loadHistory();
+
   createWindow();
+
+  // Auto-updater
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on('update-available',  info => { emit('updater:available',   info); notify('Update available', `Printara ${info.version} is downloading…`); });
+  autoUpdater.on('update-downloaded', info => { emit('updater:downloaded',  info); notify('Update ready',     `Printara ${info.version} — restart to install`); });
+  autoUpdater.on('error',             err  => { emit('updater:error',       err.message); });
+  autoUpdater.on('download-progress', p    => { emit('updater:progress',    p); });
+
+  // Check for updates 5s after launch (only in packaged builds)
+  if (app.isPackaged) setTimeout(() => autoUpdater.checkForUpdates(), 5000);
 });
 
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });

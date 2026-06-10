@@ -61,6 +61,19 @@ contextBridge.exposeInMainWorld('printer', {
   onQueueComplete:    (cb) => ipcRenderer.on('printer:queueComplete',  ()      => cb()),
   onError:            (cb) => ipcRenderer.on('printer:error',          (_e, d) => cb(d)),
   onQueueError:       (cb) => ipcRenderer.on('printer:queueError',     (_e, d) => cb(d)),
+  onReconnected:      (cb) => ipcRenderer.on('printer:reconnected',    (_e, d) => cb(d)),
+
+  // Print history
+  getHistory:         ()              => ipcRenderer.invoke('printer:getHistory'),
+  clearHistory:       ()              => ipcRenderer.invoke('printer:clearHistory'),
+
+  // Auto-updater
+  checkForUpdates:    ()              => ipcRenderer.invoke('updater:check'),
+  installUpdate:      ()              => ipcRenderer.invoke('updater:install'),
+  onUpdateAvailable:  (cb) => ipcRenderer.on('updater:available',  (_e, d) => cb(d)),
+  onUpdateDownloaded: (cb) => ipcRenderer.on('updater:downloaded', (_e, d) => cb(d)),
+  onUpdateProgress:   (cb) => ipcRenderer.on('updater:progress',   (_e, d) => cb(d)),
+  onUpdaterError:     (cb) => ipcRenderer.on('updater:error',      (_e, d) => cb(d)),
 });
 
 // ── window.serialBridge — legacy (used by web queue.html) ────────────────────────

@@ -37,7 +37,7 @@ html, body {
 #app {
   display: grid;
   grid-template-columns: 260px 1fr 280px;
-  grid-template-rows: 48px 1fr 160px;
+  grid-template-rows: 48px auto 1fr 160px;
   height: 100vh;
   gap: 0;
 }
@@ -109,7 +109,7 @@ html, body {
 
 /* ── Left sidebar — Connection ────────────────────────────────────────────── */
 #sidebar-left {
-  grid-row: 2;
+  grid-row: 3;
   grid-column: 1;
   background: var(--surface);
   border-right: 1px solid var(--border);
@@ -264,7 +264,7 @@ button {
 
 /* ── Main area — Queue ────────────────────────────────────────────────────── */
 #main {
-  grid-row: 2;
+  grid-row: 3;
   grid-column: 2;
   display: flex;
   flex-direction: column;
@@ -408,7 +408,7 @@ button {
 
 /* ── Right sidebar — Console ──────────────────────────────────────────────── */
 #sidebar-right {
-  grid-row: 2;
+  grid-row: 3;
   grid-column: 3;
   background: var(--surface);
   border-left: 1px solid var(--border);
@@ -477,6 +477,7 @@ button {
 
 /* ── Bottom bar — Progress ────────────────────────────────────────────────── */
 #bottom-bar {
+  grid-row: 4;
   grid-column: 1 / -1;
   background: var(--surface);
   border-top: 1px solid var(--border);
@@ -624,6 +625,34 @@ button {
   from { transform: translateX(20px); opacity: 0; }
   to   { transform: translateX(0);    opacity: 1; }
 }
+
+/* ── Update banner ────────────────────────────────────────────────────────── */
+.update-banner {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  background: rgba(59,130,246,0.15);
+  border-bottom: 1px solid rgba(59,130,246,0.4);
+  color: var(--blue);
+  font-size: 12px;
+  gap: 4px;
+}
+.update-banner.hidden { display: none; }
+
+/* ── Reconnect badge ──────────────────────────────────────────────────────── */
+.reconnect-badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: rgba(234,179,8,0.15);
+  border: 1px solid rgba(234,179,8,0.4);
+  color: var(--yellow);
+  border-radius: 20px;
+  animation: pulse 1.5s infinite;
+}
+.reconnect-badge.hidden { display: none; }
+
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
 
 /* ── Scrollbar ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
