@@ -1,8 +1,14 @@
 name: Build & Release Electron App
 
 on:
+  push:
+    tags:
+      - 'v*'
   release:
     types: [created]
+
+permissions:
+  contents: write
 
 jobs:
   build-windows:
