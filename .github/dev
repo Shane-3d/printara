@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+echo "Printara Dev — starting print queue app..."
+
+cd "$(dirname "$0")/electron-app"
+
+if [ ! -d "node_modules" ]; then
+  echo "Installing dependencies..."
+  npm install
+fi
+
+npx electron .

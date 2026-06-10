@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Printara</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <meta name="apple-mobile-web-app-title" content="Printara" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== LOGIN GATE ===== -->
+  <div class="login-gate" id="loginGate">
+    <div class="login-box">
+      <div class="login-logo"><img src="logo.png" alt="Printara" class="logo-img logo-img--login" /></div>
+      <h2>Printara</h2>
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs" style="display:flex;gap:0;margin:12px 0 20px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <button id="gateTabLogin" onclick="switchGateTab('login')"
+          style="flex:1;padding:10px;border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;">
+          Sign In
+        </button>
+        <button id="gateTabSignup" onclick="switchGateTab('signup')"
+          style="flex:1;padding:10px;border:none;background:var(--surface2);color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;">
+          Sign Up
+        </button>
+      </div>
+
+      <!-- LOGIN PANEL -->
+      <div id="gatePanelLogin">
+        <form onsubmit="tryLogin(event)">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginInput" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+          <div class="login-error" id="loginError"></div>
+          <button type="submit" class="btn-primary" style="width:100%;margin-top:4px;">Sign In →</button>
+        </form>
+        <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:14px;">
+          No account? <a href="#" onclick="switchGateTab('signup');return false;" style="color:var(--accent);font-weight:600;">Sign up free</a>
+        </p>
+      </div>
+
+      <!-- SIGNUP PANEL -->
+      <div id="gatePanelSignup" style="display:none;">
+        <form onsubmit="trySignup(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="signupName" placeholder="Jane Smith" autocomplete="name" required />
+          </div>
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="signupUsername" placeholder="Choose a username" autocomplete="username" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="signupPwd" placeholder="Min 6 characters" minlength="6" autocomplete="new-password" required />
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" id="signupConfirm" placeholder="Re-enter password" autocomplete="new-password" required />
+          </div>
+          <div class="login-error" id="signupError"></div>
+          <button type="submit" class="btn-primary" style="width:100%;margin-top:4px;">Create Account →</button>
+        </form>
+        <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:14px;">
+          Already have an account? <a href="#" onclick="switchGateTab('login');return false;" style="color:var(--accent);font-weight:600;">Sign in</a>
+        </p>
+      </div>
+
+      <div class="login-footer" id="loginFooter"></div>
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header admin-content" id="adminHeader">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="Printara" class="logo-img" />
+      </a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">← Home</a>
+      </nav>
+      <span id="adminUserBadge" style="margin-left:auto; background:rgba(224,32,32,0.15); border:1px solid rgba(224,32,32,0.4); color:var(--accent); padding:5px 14px; border-radius:20px; font-size:13px; font-weight:600;">Admin</span>
+      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
+    </div>
+  </header>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar admin-content" id="adminSidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Admin</div>
+      <button class="sidebar-item" id="sbi-users" onclick="switchTab('users')">
+        <span class="sidebar-item-icon">👥</span> Accounts
+      </button>
+      <button class="sidebar-item" id="sbi-clockin" onclick="switchTab('clockin')">
+        <span class="sidebar-item-icon">⏱️</span> Hours
+      </button>
+      <button class="sidebar-item" id="sbi-support" onclick="switchTab('support')">
+        <span class="sidebar-item-icon">💬</span> Support <span id="sbi-support-badge" style="display:none;background:var(--accent);color:#fff;border-radius:10px;font-size:11px;font-weight:700;padding:1px 7px;margin-left:4px;"></span>
+      </button>
+      <button class="sidebar-item" id="sbi-settings" onclick="switchTab('settings')">
+        <span class="sidebar-item-icon">⚙️</span> Settings
+      </button>
+    </div>
+    <div class="sidebar-bottom">
+      <a href="index.html" class="sidebar-item">
+        <span class="sidebar-item-icon">←</span> Home
+      </a>
+    </div>
+  </aside>
+
+  <!-- ===== MOBILE BOTTOM NAV ===== -->
+  <nav class="admin-bottom-nav admin-content" id="adminBottomNav">
+    <button class="admin-bottom-nav-item active" id="mni-users" onclick="switchTab('users')">
+      <span class="admin-bottom-nav-icon">👥</span>Accounts
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-clockin" onclick="switchTab('clockin')">
+      <span class="admin-bottom-nav-icon">⏱️</span>Hours
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-support" onclick="switchTab('support')">
+      <span class="admin-bottom-nav-icon">💬</span>Support
+    </button>
+    <button class="admin-bottom-nav-item" id="mni-settings" onclick="switchTab('settings')">
+      <span class="admin-bottom-nav-icon">⚙️</span>Settings
+    </button>
+  </nav>
+
+  <!-- ===== ADMIN CONTENT ===== -->
+  <div class="admin-wrap admin-content" id="adminContent">
+    <div class="admin-header">
+      <h1>Admin Dashboard</h1>
+      <p>Manage your products and view incoming orders.</p>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('studio')">🖨️ 3D Studio</button>
+      <button class="tab-btn" onclick="switchTab('statue')">🗿 Statue Generator</button>
+      <button class="tab-btn" onclick="switchTab('litho')">🖼️ Lithophane</button>
+      <button class="tab-btn" onclick="switchTab('map')">🗺️ Map Generator</button>
+      <button class="tab-btn" onclick="switchTab('users')">Accounts <span id="usersBadge"></span></button>
+      <button class="tab-btn" onclick="switchTab('clockin')">⏱️ Hours</button>
+      <button class="tab-btn" onclick="switchTab('support')">💬 Support <span id="supportTabBadge" style="display:none;background:var(--accent);color:#fff;border-radius:10px;font-size:11px;font-weight:700;padding:0 6px;margin-left:2px;"></span></button>
+      <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+    </div>
+
+    <!-- ADD PRODUCT TAB -->
+    <div class="tab-panel" id="tab-add">
+      <form class="add-form" id="addProductForm" onsubmit="addProduct(event)" style="max-width:420px;">
+
+        <!-- PHOTO -->
+        <div class="photo-upload-area" id="aiPhotoArea" onclick="document.getElementById('aiPhotoInput').click()" style="margin-bottom:16px;">
+          <div class="photo-upload-placeholder" id="aiPhotoPlaceholder">
+            <div class="photo-upload-icon">📷</div>
+            <div class="photo-upload-text">Add a photo</div>
+          </div>
+          <img id="aiPhotoPreview" class="photo-preview-img" style="display:none;" alt="Product photo" />
+          <button type="button" class="photo-remove-btn" id="aiPhotoRemoveBtn" style="display:none;" onclick="removeAiPhoto(event)">✕</button>
+        </div>
+        <input type="file" id="aiPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleAiPhoto(event)" />
+        <input type="hidden" name="imageUrl" id="imageUrlInput" value="" />
+
+        <!-- NAME -->
+        <input type="text" name="name" required placeholder="Product name" autofocus
+          style="width:100%;padding:14px 16px;font-size:16px;font-weight:600;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);margin-bottom:10px;" />
+
+        <!-- PRICE -->
+        <input type="number" name="price" required min="0.01" step="0.01" placeholder="Price ($)"
+          style="width:100%;padding:14px 16px;font-size:16px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);margin-bottom:16px;" />
+
+        <!-- HIDDEN fields with sensible defaults -->
+        <input type="hidden" name="category"    value="" />
+        <input type="hidden" name="description" value="" />
+        <input type="hidden" name="material"    value="" />
+        <input type="hidden" name="printTime"   value="" />
+        <input type="hidden" name="dimensions"  value="" />
+        <input type="hidden" name="emoji"       value="📦" />
+        <input type="hidden" name="inStock"     value="true" />
+
+        <button type="submit" class="btn-primary btn-full">Add to Shop →</button>
+
+        <!-- OPTIONAL extras — collapsed -->
+        <button type="button" onclick="toggleListingDetails()"
+          style="margin-top:14px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:0;display:flex;align-items:center;gap:6px;">
+          <span id="toggleDetailsArrow">▶</span> Add more details
+        </button>
+        <div id="listingDetails" style="display:none;margin-top:14px;display:none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" id="detailCategory" placeholder="Home Decor" list="categoryList" oninput="document.querySelector('[name=category]').value=this.value" />
+              <datalist id="categoryList">
+                <option value="Home Decor" /><option value="Organization" />
+                <option value="Desk Accessories" /><option value="Tools & Hardware" />
+                <option value="Toys & Games" /><option value="Art & Gifts" />
+                <option value="Functional Parts" />
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label>Material</label>
+              <input type="text" id="detailMaterial" placeholder="PLA, PETG…" list="materialList" oninput="document.querySelector('[name=material]').value=this.value" />
+              <datalist id="materialList">
+                <option value="PLA" /><option value="PETG" /><option value="ASA" />
+                <option value="ABS" /><option value="TPU" /><option value="Resin" />
+              </datalist>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="detailDescription" rows="3" placeholder="What is it, what's it for…" oninput="document.querySelector('[name=description]').value=this.value"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Print Time</label>
+              <input type="text" id="detailPrintTime" placeholder="~2 hrs" oninput="document.querySelector('[name=printTime]').value=this.value" />
+            </div>
+            <div class="form-group">
+              <label>Dimensions</label>
+              <input type="text" id="detailDimensions" placeholder="50×50×80 mm" oninput="document.querySelector('[name=dimensions]').value=this.value" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Emoji</label>
+              <input type="text" id="detailEmoji" placeholder="📦" maxlength="4" oninput="document.querySelector('[name=emoji]').value=this.value||'📦'" />
+            </div>
+            <div class="form-group" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+              <label class="toggle-switch" style="margin:0;">
+                <input type="checkbox" id="inStockToggle" checked onchange="document.querySelector('[name=inStock]').value=this.checked?'true':'false';document.getElementById('inStockLabel').textContent=this.checked?'Visible':'Hidden';" />
+                <span class="toggle-track"></span>
+              </label>
+              <span id="inStockLabel" style="font-size:13px;color:var(--text2);">Visible</span>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- MANAGE PRODUCTS TAB -->
+    <div class="tab-panel" id="tab-manage">
+      <div class="manage-list" id="manageList"></div>
+      <div id="manageEmpty" style="display:none;" class="empty-state">
+        <div class="empty-icon">📦</div>
+        <h3>No products yet</h3>
+        <p>Add your first product using the "Add Product" tab.</p>
+      </div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div class="tab-panel" id="tab-orders">
+      <div class="orders-list" id="ordersList"></div>
+      <div id="ordersEmpty" style="display:none;" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>No orders yet</h3>
+        <p>Orders will appear here once customers check out.</p>
+      </div>
+    </div>
+
+    <!-- CUSTOM REQUESTS TAB -->
+    <div class="tab-panel" id="tab-custom">
+      <div class="custom-requests-list" id="customList"></div>
+      <div id="customEmpty" style="display:none;" class="empty-state">
+        <div class="empty-icon">🖨️</div>
+        <h3>No custom requests yet</h3>
+        <p>When customers request custom parts, they'll appear here.</p>
+      </div>
+    </div>
+
+    <!-- USERS TAB -->
+    <div class="tab-panel" id="tab-users">
+      <div class="users-list" id="usersList"></div>
+      <div id="usersEmpty" style="display:none;" class="empty-state">
+        <div class="empty-icon">👤</div>
+        <h3>No accounts yet</h3>
+        <p>Customer accounts will appear here once someone signs up.</p>
+      </div>
+    </div>
+
+    <!-- SALES TAB -->
+    <div class="tab-panel" id="tab-sales">
+      <h3 style="margin-bottom:6px;">Sales &amp; Discounts</h3>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:20px;">Enter a sale price below to show it in the shop with a badge and strikethrough. Leave blank or delete to remove the sale.</p>
+      <div class="sales-list" id="salesList"></div>
+      <div id="salesEmpty" style="display:none;" class="empty-state">
+        <div class="empty-icon">🏷️</div>
+        <p>No products yet. Add products first.</p>
+      </div>
+    </div>
+
+    <!-- REVENUE TAB -->
+    <div class="tab-panel" id="tab-revenue">
+      <h3 style="margin-bottom:6px;">Revenue</h3>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:20px;">Totals from all completed orders.</p>
+      <div id="revenueSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;"></div>
+      <h4 style="margin-bottom:12px;font-size:15px;">Revenue by Product</h4>
+      <div id="revenueByProduct"></div>
+      <h4 style="margin-top:28px;margin-bottom:12px;font-size:15px;">Completed Orders</h4>
+      <div id="revenueOrderList"></div>
+      <div id="revenueEmpty" style="display:none;" class="empty-state">
+        <div class="empty-icon">💰</div>
+        <p>No completed orders yet.</p>
+      </div>
+    </div>
+
+    <!-- CLOCK-IN TAB -->
+    <div class="tab-panel" id="tab-clockin">
+      <!-- View switcher (owner sees both tabs) -->
+      <div id="ciViewSwitcher" style="display:none;margin-bottom:20px;gap:8px;">
+        <button class="tab-btn active" id="ciViewMine" onclick="switchCIView('mine')">My Hours</button>
+        <button class="tab-btn" id="ciViewAll" onclick="switchCIView('all')">All Staff</button>
+      </div>
+
+      <!-- MY HOURS -->
+      <div id="ciSectionMine">
+        <div class="clockin-top">
+          <div class="clockin-status-card" id="clockinStatusCard">
+            <div class="clockin-clock-icon">⏱️</div>
+            <div class="clockin-status-label" id="clockinStatusLabel">Clocked Out</div>
+            <div class="clockin-elapsed" id="clockinElapsed" style="display:none;"></div>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn-primary" id="clockinBtn" onclick="clockIn()">Clock In</button>
+              <button class="btn-secondary" id="clockoutBtn" onclick="clockOut()" style="display:none;">Clock Out</button>
+            </div>
+          </div>
+          <div class="clockin-summary-card">
+            <div class="clockin-summary-title">My Summary</div>
+            <div class="clockin-summary-row"><span>Today</span><span id="ciSummaryToday">0h 0m</span></div>
+            <div class="clockin-summary-row"><span>This Week</span><span id="ciSummaryWeek">0h 0m</span></div>
+            <div class="clockin-summary-row"><span>This Month</span><span id="ciSummaryMonth">0h 0m</span></div>
+            <div class="clockin-summary-row clockin-summary-total"><span>All Time</span><span id="ciSummaryAll">0h 0m</span></div>
+          </div>
+        </div>
+        <h3 style="margin:24px 0 12px;">My Time Log</h3>
+        <div class="clockin-log" id="clockinLog"></div>
+        <div id="clockinLogEmpty" style="display:none;color:var(--text3);font-size:14px;text-align:center;padding:30px 0;">No sessions recorded yet.</div>
+        <div style="margin-top:18px;">
+          <button class="delete-btn" onclick="clearAllSessions()" style="font-size:13px;">🗑️ Clear My Log</button>
+        </div>
+      </div>
+
+      <!-- ALL STAFF (owner only) -->
+      <div id="ciSectionAll" style="display:none;">
+        <h3 style="margin-bottom:6px;">All Staff Hours</h3>
+        <p style="color:var(--text2);font-size:14px;margin-bottom:20px;">Total hours logged by every admin account.</p>
+        <div id="ciAllStaffList"></div>
+        <div id="ciAllStaffEmpty" style="display:none;color:var(--text3);font-size:14px;text-align:center;padding:30px 0;">No sessions recorded yet.</div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="pwd-section">
+        <h3>Your Account</h3>
+        <p>Change your own password.</p>
+        <form onsubmit="changePassword(event)" style="display:flex;flex-direction:column;gap:14px;max-width:380px;">
+          <div class="form-group">
+            <label>Current Password *</label>
+            <input type="password" id="currentPwd" required placeholder="Current password" />
+          </div>
+          <div class="form-group">
+            <label>New Password *</label>
+            <input type="password" id="newPwd" required placeholder="New password (min 8 chars)" minlength="8" />
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password *</label>
+            <input type="password" id="confirmPwd" required placeholder="Repeat new password" />
+          </div>
+          <div class="login-error" id="pwdError"></div>
+          <button type="submit" class="btn-primary" style="align-self:flex-start;">Update Password</button>
+        </form>
+      </div>
+
+      <!-- Admin Accounts (owner only — shown/hidden by JS) -->
+      <div class="pwd-section" id="adminAccountsSection" style="display:none;margin-top:20px;">
+        <h3>Admin Accounts</h3>
+        <p>Add staff accounts and control which pages they can access.</p>
+        <div id="adminAccountsList" style="margin-top:16px;"></div>
+
+        <h4 style="margin-top:24px;margin-bottom:14px;font-size:15px;">Add New Account</h4>
+        <form onsubmit="addAdminAccount(event)" style="display:flex;flex-direction:column;gap:12px;max-width:420px;">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Username *</label>
+              <input type="text" id="newAcctUsername" required placeholder="e.g. staff1" autocomplete="off" />
+            </div>
+            <div class="form-group">
+              <label>Password *</label>
+              <input type="password" id="newAcctPwd" required placeholder="Min 6 chars" minlength="6" autocomplete="new-password" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <select id="newAcctRole" onchange="toggleNewAcctPerms()" style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;">
+              <option value="staff">Staff (limited access)</option>
+              <option value="owner">Owner (full access)</option>
+            </select>
+          </div>
+          <div id="newAcctPerms" style="display:block;">
+            <label style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:block;">Page Permissions</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="add" checked /> Add Product</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="manage" checked /> Manage Products</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="studio" /> 3D Studio</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="statue" /> Statue Generator</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="litho" /> Lithophane</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="map" /> Map Generator</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="orders" checked /> Orders</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="custom" /> Custom Requests</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="users" /> Accounts</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="sales" /> Sales</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="revenue" /> Revenue</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="clockin" /> Hours</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" value="settings" /> Settings</label>
+            </div>
+          </div>
+          <div class="login-error" id="newAcctError"></div>
+          <button type="submit" class="btn-primary" style="align-self:flex-start;">Create Account →</button>
+        </form>
+      </div>
+
+      <div class="pwd-section" style="margin-top:20px;">
+        <h3>🎨 Appearance</h3>
+        <p>Customize the look of your admin panel. Colors are saved to this device.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:16px;max-width:480px;">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:14px;font-weight:600;">Dark / Light Mode</span>
+            <button class="theme-toggle" id="themeToggleSettings" onclick="toggleTheme()" style="width:auto;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;width:110px;">🌙 Dark</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Background</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorBg" value="#0a0a0f" oninput="applyCustomColor('bg',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorBgHex" value="#0a0a0f" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value))applyCustomColor('bg',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Text</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorText" value="#f0f0f8" oninput="applyCustomColor('text',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorTextHex" value="#f0f0f8" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value))applyCustomColor('text',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Accent</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorAccent" value="#e02020" oninput="applyCustomColor('accent',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorAccentHex" value="#e02020" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value))applyCustomColor('accent',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;">Surface / Cards</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="color" id="colorSurface" value="#1a1a26" oninput="applyCustomColor('surface',this.value)" style="width:40px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:2px;" />
+                <input type="text" id="colorSurfaceHex" value="#1a1a26" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value))applyCustomColor('surface',this.value)" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;" maxlength="7" />
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+            <button class="btn-primary" style="align-self:flex-start;" onclick="saveCustomColors()">Save Colors</button>
+            <button class="tab-btn" onclick="resetCustomColors()">Reset to Default</button>
+          </div>
+          <div id="colorStatus" style="font-size:13px;color:var(--green);display:none;">Colors saved ✓</div>
+        </div>
+      </div>
+
+      <div class="pwd-section" style="margin-top:20px;">
+        <h3>Session</h3>
+        <p>Logging out will require the password to access admin again.</p>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+      </div>
+
+      <div class="pwd-section" style="margin-top:20px;">
+        <h3>💳 Stripe Payments</h3>
+        <p>Accept card payments online. Requires a free <a href="https://dashboard.stripe.com/register" target="_blank" rel="noopener">Stripe account</a> and deployment on Netlify.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;margin-top:14px;">
+          <div class="form-group">
+            <label>Stripe Publishable Key</label>
+            <input type="text" id="stripeKeyInput" placeholder="pk_live_... or pk_test_..." autocomplete="off" />
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in Stripe Dashboard → Developers → API Keys. Also add this to config.js as <code>stripeKey</code>.</span>
+          </div>
+          <div class="form-group">
+            <label>Stripe Secret Key</label>
+            <input type="password" id="stripeSecretNote" placeholder="sk_live_... (Netlify env var only)" autocomplete="off" disabled style="opacity:0.5;cursor:not-allowed;" />
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">⚠️ Never paste here. Add <code>STRIPE_SECRET_KEY</code> in Netlify → Site → Environment Variables.</span>
+          </div>
+          <button class="btn-primary" style="align-self:flex-start;" onclick="saveStripeKey()">Save Publishable Key</button>
+          <div id="stripeKeySaved" style="font-size:13px;color:var(--green);display:none;">Key saved ✓ — refresh the shop page to activate card payments.</div>
+        </div>
+      </div>
+
+      <div class="pwd-section" style="margin-top:20px;">
+        <h3>☁️ Cloud Sync</h3>
+        <p>Enter your <a href="https://jsonbin.io" target="_blank" rel="noopener">JSONBin.io</a> credentials to sync products, orders, and accounts across all devices automatically.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;margin-top:14px;">
+          <div class="form-group">
+            <label>Master Key</label>
+            <input type="password" id="cloudKeyInput" placeholder="$2a$10$..." autocomplete="off" />
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in JSONBin → Account → API Keys → Master Key.</span>
+          </div>
+          <div class="form-group">
+            <label>Bin ID</label>
+            <input type="text" id="cloudBinInput" placeholder="64a3f2c8e1b2a3c4d5e6f7a8" autocomplete="off" maxlength="32" />
+            <span style="font-size:12px;color:var(--text3);margin-top:4px;">Found in JSONBin → your bin URL. Create a new bin if you don't have one.</span>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-primary" style="align-self:flex-start;" onclick="saveCloudSettings()">Save &amp; Connect</button>
+            <button class="tab-btn" onclick="manualSync()">↺ Sync Now</button>
+          </div>
+          <div id="cloudSyncStatus" style="font-size:13px;display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D STUDIO TAB -->
+
+    <!-- SUPPORT TAB -->
+    <div class="tab-panel" id="tab-support">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+        <div>
+          <h3 style="margin-bottom:4px;">Support Tickets</h3>
+          <p style="color:var(--text2);font-size:14px;">Chat conversations from the support widget on your site.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select id="supportFilter" onchange="loadSupportTickets()" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;">
+            <option value="all">All tickets</option>
+            <option value="open">Open</option>
+            <option value="resolved">Resolved</option>
+          </select>
+          <button class="tab-btn" onclick="loadSupportTickets()" style="padding:8px 14px;">↺ Refresh</button>
+        </div>
+      </div>
+
+      <div id="supportList"></div>
+      <div id="supportEmpty" style="display:none;" class="empty-state">
+        <div class="empty-icon">💬</div>
+        <h3>No support tickets yet</h3>
+        <p>When visitors use the chat widget to report problems, they'll appear here.</p>
+      </div>
+
+      <!-- Ticket detail drawer -->
+      <div id="supportDrawer" style="display:none;margin-top:24px;border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--surface2);border-bottom:1px solid var(--border);">
+          <div>
+            <span id="drawerName" style="font-weight:700;font-size:15px;"></span>
+            <span id="drawerEmail" style="font-size:13px;color:var(--text3);margin-left:8px;"></span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span id="drawerStatus" style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;"></span>
+            <button id="drawerResolveBtn" class="btn-primary" style="padding:6px 14px;font-size:13px;" onclick="resolveTicket()">Mark Resolved</button>
+            <button onclick="closeSupportDrawer()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;">✕</button>
+          </div>
+        </div>
+        <div id="drawerMessages" style="padding:16px;display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // ===== CLOUD SYNC (JSONBin) ===============================================
+    // cloudPull, cloudPush, schedulePush, syncAllFromDB all defined in app.js
+
+    // No-op stubs so existing call sites don't break
+    async function _dbPost()   {}
+    async function _dbPut()    {}
+    async function _dbDelete() {}
+
+    // Save cloud credentials to localStorage and config, then test connection
+    async function saveCloudSettings() {
+      const key = document.getElementById('cloudKeyInput')?.value.trim();
+      const bin = document.getElementById('cloudBinInput')?.value.trim();
+      const status = document.getElementById('cloudSyncStatus');
+      if (!key || !bin) {
+        status.textContent = '⚠️ Both Master Key and Bin ID are required.';
+        status.style.color = 'var(--accent3)';
+        status.style.display = 'block';
+        return;
+      }
+      // Persist to localStorage so all pages pick them up
+      localStorage.setItem('profab_cloud_key', key);
+      localStorage.setItem('profab_cloud_bin', bin);
+      // Inject into live config so cloudPull/cloudPush use them immediately
+      window.PROFAB_CONFIG = window.PROFAB_CONFIG || {};
+      window.PROFAB_CONFIG.cloudKey = key;
+      window.PROFAB_CONFIG.cloudBin = bin;
+
+      status.textContent = 'Testing connection…';
+      status.style.color = 'var(--text2)';
+      status.style.display = 'block';
+
+      const data = await cloudPull();
+      if (data === null) {
+        status.textContent = '❌ Could not connect. Check your Master Key and Bin ID.';
+        status.style.color = 'var(--accent3)';
+      } else {
+        // Push current local data up so other devices get it
+        await cloudPush();
+        status.textContent = '✅ Connected and synced!';
+        status.style.color = 'var(--green)';
+      }
+    }
+
+    // Load saved cloud credentials into the settings inputs
+    function loadCloudSettingsUI() {
+      // Prefer config.js values so all devices stay on the same bin.
+      // Only fall back to localStorage if config.js doesn't supply them.
+      const key = window.PROFAB_CONFIG?.cloudKey || localStorage.getItem('profab_cloud_key') || '';
+      const bin = window.PROFAB_CONFIG?.cloudBin || localStorage.getItem('profab_cloud_bin') || '';
+      // If config.js already has credentials, remove any stale localStorage
+      // overrides so this device uses the same bin as every other device.
+      if (window.PROFAB_CONFIG?.cloudKey) localStorage.removeItem('profab_cloud_key');
+      if (window.PROFAB_CONFIG?.cloudBin) localStorage.removeItem('profab_cloud_bin');
+      const ki = document.getElementById('cloudKeyInput');
+      const bi = document.getElementById('cloudBinInput');
+      if (ki && key) ki.value = key;
+      if (bi && bin) bi.value = bin;
+      // Ensure live config always reflects the resolved values
+      if (key && bin) {
+        window.PROFAB_CONFIG = window.PROFAB_CONFIG || {};
+        window.PROFAB_CONFIG.cloudKey = key;
+        window.PROFAB_CONFIG.cloudBin = bin;
+      }
+    }
+
+    // ===== MULTI-ACCOUNT ADMIN AUTH =====
+    const LOCKOUT_LIMIT    = 5;
+    const LOCKOUT_DURATION = 15 * 60 * 1000;
+    const SESSION_TTL      = 8  * 60 * 60 * 1000;
+    const ALL_TABS = ['studio','statue','litho','map','users','clockin','settings'];
+    const TAB_LABELS = { studio:'3D Studio', statue:'Statue Generator', litho:'Lithophane', map:'Map Generator', users:'Accounts', clockin:'Hours', settings:'Settings' };
+
+    async function hashPwd(salt, pwd) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + pwd));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function getAdminAccounts() {
+      const raw = localStorage.getItem('profab_admin_accounts');
+      if (raw) return JSON.parse(raw);
+      // Migrate legacy single-password from config.js on first load
+      const cfgSalt = window.PROFAB_CONFIG?.adminSalt;
+      const cfgHash = window.PROFAB_CONFIG?.adminHash;
+      if (cfgSalt && cfgHash) {
+        const owner = { id: 'owner', username: 'owner', salt: cfgSalt, hash: cfgHash, role: 'owner', permissions: [...ALL_TABS] };
+        saveAdminAccounts([owner]);
+        return [owner];
+      }
+      return [];
+    }
+    function saveAdminAccounts(accounts) {
+      localStorage.setItem('profab_admin_accounts', JSON.stringify(accounts));
+    }
+
+    // Session
+    function getAdminSession() {
+      const raw = sessionStorage.getItem('profab_admin_session');
+      if (!raw) return null;
+      const s = JSON.parse(raw);
+      if (Date.now() - s.ts > SESSION_TTL) { sessionStorage.removeItem('profab_admin_session'); return null; }
+      return s;
+    }
+    function isAuthenticated() { return !!getAdminSession(); }
+    function startSession(account) {
+      sessionStorage.setItem('profab_admin_session', JSON.stringify({
+        id: account.id, username: account.username, role: account.role,
+        permissions: account.permissions, ts: Date.now()
+      }));
+    }
+    function hasPermission(tab) {
+      const s = getAdminSession();
+      if (!s) return false;
+      if (s.role === 'owner') return true;
+      // 3D tools are available to every logged-in user
+      if (['studio','statue','litho','map'].includes(tab)) return true;
+      return s.permissions.includes(tab);
+    }
+
+    // Rate limiting
+    function getAttempts() {
+      return JSON.parse(localStorage.getItem('profab_login_attempts') || '{"count":0,"last":0}');
+    }
+    function recordFail() {
+      const a = getAttempts(); a.count++; a.last = Date.now();
+      localStorage.setItem('profab_login_attempts', JSON.stringify(a));
+      return a.count;
+    }
+    function clearAttempts() { localStorage.removeItem('profab_login_attempts'); }
+    function isLockedOut() {
+      const a = getAttempts();
+      if (a.count >= LOCKOUT_LIMIT) {
+        if (Date.now() - a.last < LOCKOUT_DURATION) return true;
+        clearAttempts();
+      }
+      return false;
+    }
+    function lockoutMins() {
+      return Math.ceil((LOCKOUT_DURATION - (Date.now() - getAttempts().last)) / 60000);
+    }
+
+    // First-run: no accounts yet — create owner account
+    function showSetupMode() {
+      document.getElementById('loginGate').innerHTML = `
+        <div class="login-box">
+          <div class="login-logo"><img src="logo.png" alt="Printara" class="logo-img logo-img--login" /></div>
+          <h2>Set Up Admin Access</h2>
+          <p>Create the owner account for this admin panel.</p>
+          <form onsubmit="setupOwner(event)">
+            <div class="form-group"><label>Username</label>
+              <input type="text" id="setupUsername" required autocomplete="username" placeholder="e.g. owner" />
+            </div>
+            <div class="form-group"><label>Password (min 8 chars)</label>
+              <input type="password" id="setupPwd" minlength="8" required autocomplete="new-password" placeholder="Create a strong password" />
+            </div>
+            <div class="form-group"><label>Confirm Password</label>
+              <input type="password" id="setupPwd2" required autocomplete="new-password" placeholder="Repeat password" />
+            </div>
+            <div class="login-error" id="setupError"></div>
+            <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:8px;">Create Owner Account →</button>
+          </form>
+        </div>`;
+    }
+
+    async function setupOwner(e) {
+      e.preventDefault();
+      const username = document.getElementById('setupUsername').value.trim();
+      const pwd      = document.getElementById('setupPwd').value;
+      const pwd2     = document.getElementById('setupPwd2').value;
+      const err      = document.getElementById('setupError');
+      if (!username)     { err.textContent = 'Username is required.';              err.classList.add('visible'); return; }
+      if (pwd !== pwd2)  { err.textContent = 'Passwords do not match.';            err.classList.add('visible'); return; }
+      if (pwd.length < 8){ err.textContent = 'Password must be at least 8 chars.'; err.classList.add('visible'); return; }
+      const salt  = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('');
+      const hash  = await hashPwd(salt, pwd);
+      const owner = { id: 'acct-' + Date.now().toString(36), username, salt, hash, role: 'owner', permissions: [...ALL_TABS] };
+      saveAdminAccounts([owner]);
+      _dbPost('/.netlify/functions/admin-accounts', owner);
+      startSession(owner);
+      document.getElementById('loginGate').style.display = 'none';
+      document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
+      initAdmin();
+    }
+
+    async function tryLogin(e) {
+      e.preventDefault();
+      const err = document.getElementById('loginError');
+      if (isLockedOut()) {
+        err.textContent = `Too many attempts. Try again in ${lockoutMins()} min.`;
+        err.classList.add('visible'); return;
+      }
+      const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+      const password = document.getElementById('loginInput').value;
+      const accounts = getAdminAccounts();
+      const account  = accounts.find(a => a.username.toLowerCase() === username);
+      if (account) {
+        const h = await hashPwd(account.salt, password);
+        if (h === account.hash) {
+          clearAttempts();
+          startSession(account);
+          document.getElementById('loginGate').style.display = 'none';
+          document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
+          initAdmin();
+          return;
+        }
+      }
+      const count = recordFail();
+      const left  = LOCKOUT_LIMIT - count;
+      err.textContent = left > 0
+        ? `Incorrect username or password. ${left} attempt${left===1?'':'s'} remaining.`
+        : `Too many attempts. Locked for ${lockoutMins()} min.`;
+      err.classList.add('visible');
+      document.getElementById('loginInput').value = '';
+      document.getElementById('loginInput').focus();
+      setTimeout(() => err.classList.remove('visible'), 4000);
+    }
+
+    function switchGateTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('gatePanelLogin').style.display  = isLogin ? '' : 'none';
+      document.getElementById('gatePanelSignup').style.display = isLogin ? 'none' : '';
+      document.getElementById('gateTabLogin').style.background  = isLogin ? 'var(--accent)' : 'var(--surface2)';
+      document.getElementById('gateTabLogin').style.color       = isLogin ? '#fff' : 'var(--text2)';
+      document.getElementById('gateTabSignup').style.background = isLogin ? 'var(--surface2)' : 'var(--accent)';
+      document.getElementById('gateTabSignup').style.color      = isLogin ? 'var(--text2)' : '#fff';
+      document.getElementById('loginError').textContent  = '';
+      document.getElementById('signupError').textContent = '';
+    }
+
+    async function trySignup(e) {
+      e.preventDefault();
+      const err      = document.getElementById('signupError');
+      const name     = document.getElementById('signupName').value.trim();
+      const username = document.getElementById('signupUsername').value.trim().toLowerCase();
+      const pwd      = document.getElementById('signupPwd').value;
+      const confirm  = document.getElementById('signupConfirm').value;
+
+      err.textContent = ''; err.classList.remove('visible');
+
+      if (pwd !== confirm) {
+        err.textContent = 'Passwords do not match.'; err.classList.add('visible'); return;
+      }
+      if (pwd.length < 6) {
+        err.textContent = 'Password must be at least 6 characters.'; err.classList.add('visible'); return;
+      }
+      if (!/^[a-z0-9_]+$/.test(username)) {
+        err.textContent = 'Username may only contain letters, numbers, and underscores.'; err.classList.add('visible'); return;
+      }
+
+      const accounts = getAdminAccounts();
+      if (accounts.find(a => a.username.toLowerCase() === username)) {
+        err.textContent = 'That username is already taken.'; err.classList.add('visible'); return;
+      }
+
+      const salt = crypto.randomUUID();
+      const hash = await hashPwd(salt, pwd);
+      const newAcct = {
+        id: 'acct-' + Date.now().toString(36),
+        username, name, salt, hash,
+        role: 'user',
+        permissions: ['studio','statue','litho','map']
+      };
+      accounts.push(newAcct);
+      saveAdminAccounts(accounts);
+      _dbPost('/.netlify/functions/admin-accounts', newAcct);
+
+      startSession(newAcct);
+      document.getElementById('loginGate').style.display = 'none';
+      document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
+      initAdmin();
+      showToast('Account created — welcome, ' + (name || username) + '!');
+    }
+
+    function logout() {
+      sessionStorage.removeItem('profab_admin_session');
+      location.reload();
+    }
+
+    // Change own password
+    async function changePassword(e) {
+      e.preventDefault();
+      const cur     = document.getElementById('currentPwd').value;
+      const nw      = document.getElementById('newPwd').value;
+      const confirm = document.getElementById('confirmPwd').value;
+      const err     = document.getElementById('pwdError');
+      const session  = getAdminSession();
+      if (!session) return;
+      const accounts = getAdminAccounts();
+      const account  = accounts.find(a => a.id === session.id);
+      if (!account) return;
+      if (await hashPwd(account.salt, cur) !== account.hash) {
+        err.textContent = 'Current password is incorrect.'; err.classList.add('visible'); return;
+      }
+      if (nw.length < 8) {
+        err.textContent = 'New password must be at least 8 characters.'; err.classList.add('visible'); return;
+      }
+      if (nw !== confirm) {
+        err.textContent = 'New passwords do not match.'; err.classList.add('visible'); return;
+      }
+      const salt = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('');
+      account.salt = salt;
+      account.hash = await hashPwd(salt, nw);
+      saveAdminAccounts(accounts);
+      _dbPut('/.netlify/functions/admin-accounts', { id: account.id, salt: account.salt, hash: account.hash });
+      err.classList.remove('visible');
+      e.target.reset();
+      showToast('Password updated ✓');
+    }
+
+    // ===== ADMIN ACCOUNTS MANAGEMENT (owner only) =====
+    function renderAdminAccounts() {
+      const session  = getAdminSession();
+      const section  = document.getElementById('adminAccountsSection');
+      if (!section) return;
+      if (!session || session.role !== 'owner') { section.style.display = 'none'; return; }
+      section.style.display = 'block';
+      const accounts = getAdminAccounts();
+      section.querySelector('#adminAccountsList').innerHTML = accounts.map(a => `
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div>
+              <span style="font-weight:700;font-size:15px;color:var(--text);">${a.username}</span>
+              <span style="margin-left:8px;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700;background:${a.role==='owner'?'rgba(224,32,32,0.2)':'rgba(76,175,80,0.15)'};color:${a.role==='owner'?'var(--accent)':'#66bb6a'}">${a.role}</span>
+            </div>
+            ${a.id !== session.id ? `<button class="delete-btn" onclick="deleteAdminAccount('${a.id}')">Remove</button>` : '<span style="font-size:12px;color:var(--text3);">(you)</span>'}
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Permissions</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${ALL_TABS.map(tab => {
+              const has = (a.permissions||[]).includes(tab);
+              const locked = a.role === 'owner'; // owner always has all
+              return `<label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:${locked?'default':'pointer'};opacity:${locked?'0.5':'1'};">
+                <input type="checkbox" ${has?'checked':''} ${locked?'disabled':''} onchange="toggleAccountPerm('${a.id}','${tab}',this.checked)" />
+                ${TAB_LABELS[tab]}
+              </label>`;
+            }).join('')}
+          </div>
+        </div>`).join('');
+    }
+
+    function toggleAccountPerm(accountId, tab, checked) {
+      const accounts = getAdminAccounts();
+      const account  = accounts.find(a => a.id === accountId);
+      if (!account || account.role === 'owner') return;
+      if (checked) { if (!account.permissions.includes(tab)) account.permissions.push(tab); }
+      else { account.permissions = account.permissions.filter(t => t !== tab); }
+      saveAdminAccounts(accounts);
+      _dbPut('/.netlify/functions/admin-accounts', { id: accountId, permissions: account.permissions });
+      showToast('Permissions updated ✓');
+    }
+
+    function deleteAdminAccount(accountId) {
+      const session = getAdminSession();
+      if (!session || session.role !== 'owner') return;
+      if (accountId === session.id) { showToast("Can't delete your own account."); return; }
+      if (!confirm('Remove this admin account? This cannot be undone.')) return;
+      saveAdminAccounts(getAdminAccounts().filter(a => a.id !== accountId));
+      _dbDelete(`/.netlify/functions/admin-accounts?id=${encodeURIComponent(accountId)}`);
+      renderAdminAccounts();
+      showToast('Account removed ✓');
+    }
+
+    async function addAdminAccount(e) {
+      e.preventDefault();
+      const username = document.getElementById('newAcctUsername').value.trim();
+      const pwd      = document.getElementById('newAcctPwd').value;
+      const role     = document.getElementById('newAcctRole').value;
+      const err      = document.getElementById('newAcctError');
+      const accounts = getAdminAccounts();
+      if (!username) { err.textContent = 'Username is required.'; err.classList.add('visible'); return; }
+      if (pwd.length < 6) { err.textContent = 'Password must be at least 6 characters.'; err.classList.add('visible'); return; }
+      if (accounts.find(a => a.username.toLowerCase() === username.toLowerCase())) {
+        err.textContent = 'That username already exists.'; err.classList.add('visible'); return;
+      }
+      const perms = role === 'owner' ? ['studio','statue','litho','map','users','clockin','settings'] :
+        Array.from(document.querySelectorAll('#newAcctPerms input[type=checkbox]:checked')).map(cb => cb.value);
+      const salt = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('');
+      const hash = await hashPwd(salt, pwd);
+      const newAcct = { id: 'acct-' + Date.now().toString(36), username, salt, hash, role, permissions: perms };
+      accounts.push(newAcct);
+      saveAdminAccounts(accounts);
+      _dbPost('/.netlify/functions/admin-accounts', newAcct);
+      e.target.reset();
+      toggleNewAcctPerms();
+      err.classList.remove('visible');
+      renderAdminAccounts();
+      showToast(`Account "${username}" created ✓`);
+    }
+
+    function toggleNewAcctPerms() {
+      const role  = document.getElementById('newAcctRole')?.value;
+      const perms = document.getElementById('newAcctPerms');
+      if (perms) perms.style.display = role === 'owner' ? 'none' : 'block';
+    }
+
+    // ===== TABS =====
+    function switchTab(tab) {
+      // Permission guard — redirect to first allowed tab if blocked
+      if (isAuthenticated() && !hasPermission(tab)) {
+        const fallback = ALL_TABS.find(t => hasPermission(t));
+        if (fallback && fallback !== tab) { switchTab(fallback); return; }
+      }
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        const tabs = ['studio', 'statue', 'litho', 'map', 'users', 'clockin', 'settings'];
+        b.classList.toggle('active', tabs[i] === tab);
+      });
+      document.querySelectorAll('[id^="sbi-"]').forEach(el => {
+        el.classList.toggle('active', el.id === 'sbi-' + tab);
+      });
+      document.querySelectorAll('[id^="mni-"]').forEach(el => {
+        el.classList.toggle('active', el.id === 'mni-' + tab);
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (tab === 'manage')   renderManage();
+      if (tab === 'orders')   renderOrders();
+      if (tab === 'custom')   renderCustom();
+      if (tab === 'users')    renderUsers();
+      if (tab === 'sales')    renderSales();
+      if (tab === 'revenue')  renderRevenue();
+      if (tab === 'clockin')  { renderClockIn(); if (getAdminSession()?.role === 'owner') renderAllStaffHours(); }
+      if (tab === 'settings') { initColorPickers(); renderAdminAccounts(); }
+    }
+
+    // ===== SALES =====
+    function renderSales() {
+      const list  = document.getElementById('salesList');
+      const empty = document.getElementById('salesEmpty');
+      const products = getProducts();
+      if (products.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      list.innerHTML = products.map(p => {
+        const onSale = p.salePrice != null && p.salePrice < p.price;
+        return `
+          <div class="sale-row" id="sale-row-${p.id}">
+            <div class="sale-row-name">${p.name}</div>
+            <div class="sale-row-price">Regular: $${Number(p.price).toFixed(2)}</div>
+            ${onSale ? `<span class="sale-active-badge">🏷️ On Sale: $${Number(p.salePrice).toFixed(2)}</span>` : ''}
+            <input class="sale-row-input" type="number" min="0" step="0.01"
+              id="sale-input-${p.id}"
+              placeholder="Sale price…"
+              value="${onSale ? Number(p.salePrice).toFixed(2) : ''}" />
+            <button class="btn-primary" style="padding:6px 14px;font-size:13px;" onclick="setSale('${p.id}')">Set Sale</button>
+            ${onSale ? `<button class="delete-btn" onclick="clearSale('${p.id}')">Clear</button>` : ''}
+          </div>`;
+      }).join('');
+    }
+
+    function setSale(id) {
+      const input = document.getElementById('sale-input-' + id);
+      const val = parseFloat(input.value);
+      if (isNaN(val) || val <= 0) { showToast('Enter a valid sale price.'); return; }
+      const products = getProducts();
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      if (val >= p.price) { showToast('Sale price must be lower than regular price ($' + Number(p.price).toFixed(2) + ').'); return; }
+      p.salePrice = val;
+      saveProducts(products);
+      dbUpdateProduct({ id, salePrice: val });
+      showToast(`Sale set: ${p.name} → $${val.toFixed(2)} ✓`);
+      renderSales();
+    }
+
+    function clearSale(id) {
+      const products = getProducts();
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      delete p.salePrice;
+      saveProducts(products);
+      dbUpdateProduct({ id, salePrice: null });
+      showToast(`Sale removed for ${p.name}.`);
+      renderSales();
+    }
+
+    // ===== REVENUE =====
+    function renderRevenue() {
+      const completed = getOrders().filter(o => o.type !== 'custom' && o.status === 'Complete');
+      const empty = document.getElementById('revenueEmpty');
+      const summary = document.getElementById('revenueSummary');
+      const byProduct = document.getElementById('revenueByProduct');
+      const orderList = document.getElementById('revenueOrderList');
+
+      if (completed.length === 0) {
+        empty.style.display = 'block';
+        summary.innerHTML = '';
+        byProduct.innerHTML = '';
+        orderList.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      // Totals
+      const totalRevenue = completed.reduce((s, o) => s + Number(o.total), 0);
+      const cashRevenue  = completed.filter(o => o.paymentMethod !== 'merits').reduce((s, o) => s + Number(o.total), 0);
+      const meritsRevenue = completed.filter(o => o.paymentMethod === 'merits').reduce((s, o) => s + Number(o.total), 0);
+      const totalOrders  = completed.length;
+
+      summary.innerHTML = `
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">Total Revenue</div>
+          <div style="font-size:28px;font-weight:800;color:var(--accent);">$${totalRevenue.toFixed(2)}</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">Orders Completed</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);">${totalOrders}</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">💵 Cash</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);">$${cashRevenue.toFixed(2)}</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">⭐ Merits</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);">$${meritsRevenue.toFixed(2)}</div>
+        </div>`;
+
+      // Revenue by product
+      const productTotals = {};
+      completed.forEach(o => {
+        (o.items || []).forEach(item => {
+          if (!productTotals[item.name]) productTotals[item.name] = { qty: 0, revenue: 0 };
+          productTotals[item.name].qty     += item.qty;
+          productTotals[item.name].revenue += item.price * item.qty;
+        });
+      });
+      const sorted = Object.entries(productTotals).sort((a, b) => b[1].revenue - a[1].revenue);
+      byProduct.innerHTML = sorted.length === 0 ? '' : `
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:10px 16px;background:var(--surface2);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);">
+            <span>Product</span><span style="text-align:right;">Units Sold</span><span style="text-align:right;">Revenue</span>
+          </div>
+          ${sorted.map(([name, d], i) => `
+            <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:11px 16px;font-size:14px;border-top:1px solid var(--border);background:${i % 2 === 0 ? 'var(--bg2)' : 'var(--bg)'};align-items:center;">
+              <span style="font-weight:600;color:var(--text);">${name}</span>
+              <span style="text-align:right;color:var(--text2);">${d.qty}</span>
+              <span style="text-align:right;font-weight:700;color:var(--accent);">$${d.revenue.toFixed(2)}</span>
+            </div>`).join('')}
+        </div>`;
+
+      // Completed order list
+      orderList.innerHTML = completed.slice().reverse().map(o => {
+        const date = new Date(o.date).toLocaleString();
+        return `
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div style="font-weight:700;font-size:14px;color:var(--text);">${o.customer?.name || 'Customer'}</div>
+              <div style="font-size:12px;color:var(--text2);">${date} · ${o.id}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:18px;font-weight:800;color:var(--accent);">$${Number(o.total).toFixed(2)}</div>
+              <div style="font-size:11px;color:var(--text3);">${o.paymentMethod === 'merits' ? '⭐ Merits' : '💵 Cash'}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ===== CUSTOM REQUESTS =====
+    function renderCustom() {
+      const list  = document.getElementById('customList');
+      const empty = document.getElementById('customEmpty');
+      const reqs  = getOrders().filter(o => o.type === 'custom');
+      const badge = document.getElementById('customBadge');
+      if (badge) badge.textContent = reqs.length > 0 ? `(${reqs.length})` : '';
+      if (reqs.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      list.innerHTML = reqs.map(r => {
+        const date = new Date(r.date).toLocaleString();
+        const isMerits = r.paymentMethod === 'merits';
+        const statusClass = r.status === 'Complete' ? 'status--complete' : r.status === 'Rejected' ? 'status--rejected' : 'status--new';
+        return `
+          <div class="custom-request-card">
+            <div class="order-card-header">
+              <span class="order-status ${statusClass}">${r.status}</span>
+              <span class="order-id">${r.id}</span>
+              <span class="order-date">${date}</span>
+            </div>
+            <div class="order-customer">
+              ${r.customer.name}
+              <span class="order-payment-badge order-payment-badge--${r.paymentMethod || 'cash'}">${isMerits ? '⭐ Merits' : '💵 Cash'}</span>
+            </div>
+            <div class="order-customer-detail">
+              ${r.customer.email}${r.customer.phone ? ' · ' + r.customer.phone : ''}
+            </div>
+            <div class="custom-description">${r.description}</div>
+            ${r.photo ? `<img src="${r.photo}" class="custom-request-photo" alt="Reference photo" />` : ''}
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+              ${r.status === 'Complete'
+                ? '<span class="order-complete-label">✓ Completed</span>'
+                : r.status === 'Rejected'
+                  ? '<span style="font-size:12px;font-weight:600;color:#ef5350;padding:6px 0;">✕ Rejected</span>'
+                  : `<button class="complete-btn" onclick="completeCustom('${r.id}')">✓ Mark Complete</button>
+                     <button class="reject-btn" onclick="rejectCustom('${r.id}')">✕ Reject</button>`}
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ===== USERS =====
+    function renderUsers() {
+      const list  = document.getElementById('usersList');
+      const empty = document.getElementById('usersEmpty');
+      const users = getUsers();
+      const badge = document.getElementById('usersBadge');
+      if (badge) badge.textContent = users.length > 0 ? `(${users.length})` : '';
+      if (users.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      list.innerHTML = users.map(u => {
+        const date = u.registeredAt
+          ? new Date(u.registeredAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          : '—';
+        const orderCount = getOrders().filter(o => o.userId === u.id && o.type !== 'custom').length;
+        const customCount = getOrders().filter(o => o.userId === u.id && o.type === 'custom').length;
+        return `
+          <div class="user-card">
+            <div class="user-card-avatar">${u.name.charAt(0).toUpperCase()}</div>
+            <div class="user-card-info">
+              <div class="user-card-name">${u.name}</div>
+              <div class="user-card-email">${u.email}${u.profile?.phone ? ' · ' + u.profile.phone : ''}</div>
+              <div class="user-card-meta">Joined ${date} · ${orderCount} order${orderCount!==1?'s':''} · ${customCount} custom request${customCount!==1?'s':''}</div>
+            </div>
+            <button class="delete-btn" onclick="deleteUser('${u.id}')">Remove</button>
+          </div>`;
+      }).join('');
+    }
+
+    function deleteUser(id) {
+      if (!confirm('Remove this account? They will be signed out immediately.')) return;
+      saveUsers(getUsers().filter(u => u.id !== id));
+      _dbDelete(`/.netlify/functions/accounts?id=${encodeURIComponent(id)}`);
+      renderUsers();
+      showToast('Account removed.');
+    }
+
+    function completeCustom(id) {
+      const orders = getOrders();
+      const r = orders.find(o => o.id === id);
+      if (r) {
+        r.status = 'Complete';
+        saveOrders(orders);
+        _dbPut('/.netlify/functions/orders', { id, status: 'Complete' });
+        addNotification(r.userId, 'custom_complete', r.id, `Your custom request ${r.id} is complete! We'll be in touch. ✓`);
+        renderCustom();
+        showToast('Marked complete ✓');
+      }
+    }
+
+    function rejectCustom(id) {
+      if (!confirm('Reject this custom request?')) return;
+      const orders = getOrders();
+      const r = orders.find(o => o.id === id);
+      if (r) {
+        r.status = 'Rejected';
+        saveOrders(orders);
+        _dbPut('/.netlify/functions/orders', { id, status: 'Rejected' });
+        addNotification(r.userId, 'custom_rejected', r.id, `Your custom request ${r.id} was not accepted. Contact us for more info.`);
+        renderCustom();
+        showToast('Request rejected.');
+      }
+    }
+
+    // ===== PRODUCTS =====
+    function toggleListingDetails() {
+      const panel = document.getElementById('listingDetails');
+      const arrow = document.getElementById('toggleDetailsArrow');
+      const open = panel.style.display === 'none';
+      panel.style.display = open ? 'block' : 'none';
+      arrow.textContent = open ? '▼' : '▶';
+    }
+
+    async function addProduct(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form));
+      const product = {
+        id: 'prod-' + Date.now().toString(36),
+        name: data.name,
+        category: data.category || '',
+        description: data.description || '',
+        price: parseFloat(data.price),
+        material: data.material || '',
+        printTime: data.printTime || '',
+        dimensions: data.dimensions || '',
+        image: _aiPhotoData || data.imageUrl || '',
+        emoji: data.emoji || '📦',
+        inStock: data.inStock === 'true'
+      };
+      const products = getProducts();
+      products.push(product);
+      saveProducts(products);
+      await dbUpsertProduct(product);
+      form.reset();
+      // Clear detail fields
+      ['detailCategory','detailMaterial','detailDescription','detailPrintTime','detailDimensions','detailEmoji'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      const toggle = document.getElementById('inStockToggle');
+      if (toggle) { toggle.checked = true; document.querySelector('[name=inStock]').value = 'true'; const lbl = document.getElementById('inStockLabel'); if(lbl) lbl.textContent = 'Visible'; }
+      // Collapse details
+      document.getElementById('listingDetails').style.display = 'none';
+      document.getElementById('toggleDetailsArrow').textContent = '▶';
+      removeAiPhoto({ stopPropagation: () => {} });
+      showToast('Product added! ✓');
+      switchTab('manage');
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Delete this product? This cannot be undone.')) return;
+      saveProducts(getProducts().filter(p => p.id !== id));
+      await dbDeleteProduct(id);
+      renderManage();
+      showToast('Product deleted.');
+    }
+
+    async function toggleStock(id) {
+      const products = getProducts();
+      const p = products.find(p => p.id === id);
+      if (p) p.inStock = !p.inStock;
+      saveProducts(products);
+      await dbUpdateProduct({ id, inStock: p.inStock });
+      renderManage();
+    }
+
+    function renderManage() {
+      const list = document.getElementById('manageList');
+      const empty = document.getElementById('manageEmpty');
+      const products = getProducts();
+      if (products.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      list.innerHTML = products.map(p => {
+        const imgSrc = p.image || '';
+        const safeId = p.id.replace(/[^a-z0-9\-]/gi, '');
+        return `
+          <div class="edit-card" id="edit-card-${safeId}">
+            <!-- IMAGE -->
+            <div class="edit-card-img-wrap">
+              ${imgSrc
+                ? `<img src="${imgSrc}" class="edit-card-img" id="edit-img-preview-${safeId}" alt="${p.name}" />`
+                : `<div class="edit-card-img-placeholder" id="edit-img-preview-${safeId}">${p.emoji || '📦'}</div>`}
+              <button type="button" class="edit-img-btn" onclick="document.getElementById('edit-img-input-${safeId}').click()">📷 Change</button>
+              <input type="file" id="edit-img-input-${safeId}" accept="image/*" style="display:none;"
+                onchange="handleEditPhoto('${safeId}', this)" />
+            </div>
+
+            <!-- FIELDS -->
+            <div class="edit-card-fields">
+              <div class="edit-field-row">
+                <div class="edit-field">
+                  <label>Name</label>
+                  <input id="ef-name-${safeId}" value="${escHtml(p.name)}" placeholder="Product name" />
+                </div>
+                <div class="edit-field edit-field--sm">
+                  <label>Price ($)</label>
+                  <input type="number" id="ef-price-${safeId}" value="${Number(p.price).toFixed(2)}" min="0.01" step="0.01" />
+                </div>
+              </div>
+              <div class="edit-field-row">
+                <div class="edit-field">
+                  <label>Category</label>
+                  <input id="ef-cat-${safeId}" value="${escHtml(p.category || '')}" placeholder="Category" list="categoryList" />
+                </div>
+                <div class="edit-field">
+                  <label>Material</label>
+                  <input id="ef-mat-${safeId}" value="${escHtml(p.material || '')}" placeholder="PLA, PETG…" list="materialList" />
+                </div>
+              </div>
+              <div class="edit-field">
+                <label>Description</label>
+                <textarea id="ef-desc-${safeId}" rows="2" placeholder="Description">${escHtml(p.description || '')}</textarea>
+              </div>
+              <div class="edit-field-row">
+                <div class="edit-field">
+                  <label>Print Time</label>
+                  <input id="ef-pt-${safeId}" value="${escHtml(p.printTime || '')}" placeholder="~2 hrs" />
+                </div>
+                <div class="edit-field">
+                  <label>Dimensions</label>
+                  <input id="ef-dim-${safeId}" value="${escHtml(p.dimensions || '')}" placeholder="50×50×80 mm" />
+                </div>
+              </div>
+
+              <!-- ACTIONS -->
+              <div class="edit-card-actions">
+                <button class="btn-primary" onclick="saveProductEdit('${p.id}')">Save</button>
+                <button class="tab-btn" onclick="toggleStock('${p.id}')">${p.inStock ? '🔴 Hide' : '✅ Show'}</button>
+                <button class="delete-btn btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // Pending new photo data per product id while editing
+    const _editPhotos = {};
+
+    function handleEditPhoto(safeId, input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 1024;
+          let w = img.width, h = img.height;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else       { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const data = canvas.toDataURL('image/jpeg', 0.85);
+          _editPhotos[safeId] = data;
+          const preview = document.getElementById('edit-img-preview-' + safeId);
+          if (preview.tagName === 'IMG') {
+            preview.src = data;
+          } else {
+            // replace placeholder div with img
+            const img2 = document.createElement('img');
+            img2.src = data;
+            img2.className = 'edit-card-img';
+            img2.id = 'edit-img-preview-' + safeId;
+            preview.replaceWith(img2);
+          }
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveProductEdit(id) {
+      const safeId = id.replace(/[^a-z0-9\-]/gi, '');
+      const products = getProducts();
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+
+      p.name        = document.getElementById('ef-name-' + safeId)?.value.trim() || p.name;
+      p.price       = parseFloat(document.getElementById('ef-price-' + safeId)?.value) || p.price;
+      p.category    = document.getElementById('ef-cat-' + safeId)?.value.trim() || '';
+      p.material    = document.getElementById('ef-mat-' + safeId)?.value.trim() || '';
+      p.description = document.getElementById('ef-desc-' + safeId)?.value.trim() || '';
+      p.printTime   = document.getElementById('ef-pt-' + safeId)?.value.trim() || '';
+      p.dimensions  = document.getElementById('ef-dim-' + safeId)?.value.trim() || '';
+      if (_editPhotos[safeId]) { p.image = _editPhotos[safeId]; delete _editPhotos[safeId]; }
+
+      saveProducts(products);
+      await dbUpdateProduct({ id: p.id, name: p.name, price: p.price, category: p.category, material: p.material, description: p.description, printTime: p.printTime, dimensions: p.dimensions, image: p.image });
+      showToast(`${p.name} saved ✓`);
+      renderManage();
+    }
+
+    // ===== ORDERS =====
+    function renderOrders() {
+      const list = document.getElementById('ordersList');
+      const empty = document.getElementById('ordersEmpty');
+      const orders = getOrders().filter(o => o.type !== 'custom');
+      const badge = document.getElementById('orderBadge');
+      if (badge) badge.textContent = orders.length > 0 ? `(${orders.length})` : '';
+
+      if (orders.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      list.innerHTML = orders.map(o => {
+        const date = new Date(o.date).toLocaleString();
+        const itemLines = o.items.map(i =>
+          `<div>• ${i.name} × ${i.qty} — $${(i.price * i.qty).toFixed(2)}</div>`
+        ).join('');
+        return `
+          <div class="order-card">
+            <div class="order-card-header">
+              <span class="order-status">${o.status}</span>
+              <span class="order-id">${o.id}</span>
+              <span class="order-date">${date}</span>
+            </div>
+            <div class="order-customer">${o.customer.name} <span class="order-payment-badge order-payment-badge--${o.paymentMethod || 'cash'}">${o.paymentMethod === 'merits' ? '⭐ Merits' : '💵 Cash'}</span></div>
+            <div class="order-customer-detail">
+              ${o.customer.email}${o.customer.phone ? ' · ' + o.customer.phone : ''}
+            </div>
+            ${o.notes ? `<div style="font-size:13px;color:var(--text2);margin-bottom:12px;font-style:italic;">Notes: ${o.notes}</div>` : ''}
+            ${o.photo ? `<div style="margin-bottom:12px;"><img src="${o.photo}" alt="Order reference photo" style="max-width:100%;max-height:220px;border-radius:10px;object-fit:cover;border:1px solid var(--border);" /></div>` : ''}
+            <div class="order-items-list">${itemLines}</div>
+            <div class="order-total-line">Total: $${Number(o.total).toFixed(2)}</div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+              ${o.status !== 'Complete' ? `<button class="complete-btn" onclick="completeOrder('${o.id}')">✓ Mark Complete</button>` : '<span class="order-complete-label">✓ Completed</span>'}
+              <button class="tab-btn" onclick="printReceipt(${JSON.stringify(o).replace(/"/g,'&quot;')})" style="font-size:12px;padding:6px 14px;">🖨️ Print Receipt</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ===== COMPLETE ORDER =====
+    function completeOrder(id) {
+      const orders = getOrders();
+      const o = orders.find(o => o.id === id);
+      if (o) {
+        o.status = 'Complete';
+        saveOrders(orders);
+        _dbPut('/.netlify/functions/orders', { id, status: 'Complete' });
+        addNotification(o.userId, 'order_complete', o.id, `Your order ${o.id} is ready! 🎉`);
+        renderOrders();
+        showToast('Order marked as complete ✓');
+      }
+    }
+
+    // ===== CLOCK-IN =====
+    let ciTimer = null;
+
+    function getCISessions() {
+      return JSON.parse(localStorage.getItem('profab_ci_sessions') || '[]');
+    }
+    function saveCISessions(s) {
+      localStorage.setItem('profab_ci_sessions', JSON.stringify(s));
+    }
+    function getCIActiveMap() {
+      const raw = localStorage.getItem('profab_ci_active');
+      if (!raw) return {};
+      const val = JSON.parse(raw);
+      // Migrate old single-session format { start, accountId, ... } to map format
+      if (val && typeof val === 'object' && val.start && val.accountId) {
+        return { [val.accountId]: val };
+      }
+      return (val && typeof val === 'object') ? val : {};
+    }
+    function getMyActive() {
+      const session = getAdminSession();
+      if (!session) return null;
+      return getCIActiveMap()[session.id] || null;
+    }
+    function saveMyActive(a) {
+      const session = getAdminSession();
+      if (!session) return;
+      const map = getCIActiveMap();
+      if (a) map[session.id] = a;
+      else delete map[session.id];
+      if (Object.keys(map).length > 0)
+        localStorage.setItem('profab_ci_active', JSON.stringify(map));
+      else
+        localStorage.removeItem('profab_ci_active');
+    }
+
+    function fmtDuration(ms) {
+      const total = Math.floor(ms / 1000);
+      const h = Math.floor(total / 3600);
+      const m = Math.floor((total % 3600) / 60);
+      const s = total % 60;
+      if (h > 0) return `${h}h ${m}m`;
+      if (m > 0) return `${m}m ${s}s`;
+      return `${s}s`;
+    }
+    function fmtDurationHM(ms) {
+      const total = Math.floor(ms / 60000);
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      return `${h}h ${m}m`;
+    }
+
+    function clockIn() {
+      if (getMyActive()) return;
+      const session = getAdminSession();
+      const active = { start: new Date().toISOString(), accountId: session?.id || 'unknown', username: session?.username || '?' };
+      saveMyActive(active);
+      _dbPost('/.netlify/functions/clock-sessions?active=1', active);
+      renderClockIn();
+      showToast('Clocked in ✓');
+    }
+
+    function clockOut() {
+      const active = getMyActive();
+      if (!active) return;
+      const end = new Date().toISOString();
+      const ms = new Date(end) - new Date(active.start);
+      if (ms < 1000) { showToast('Clock-in too short.'); return; }
+      const completed = { start: active.start, end, ms, accountId: active.accountId || 'unknown', username: active.username || '?' };
+      const sessions = getCISessions();
+      sessions.unshift(completed);
+      saveCISessions(sessions);
+      saveMyActive(null);
+      _dbPost('/.netlify/functions/clock-sessions', completed);
+      _dbDelete(`/.netlify/functions/clock-sessions?active=1&accountId=${encodeURIComponent(active.accountId || 'unknown')}`);
+      clearInterval(ciTimer);
+      ciTimer = null;
+      renderClockIn();
+      showToast(`Clocked out — ${fmtDuration(ms)} logged ✓`);
+    }
+
+    function clearAllSessions() {
+      const session = getAdminSession();
+      if (!confirm('Clear your entire time log? This cannot be undone.')) return;
+      const accountId = session?.id || 'unknown';
+      // Only remove sessions belonging to current account
+      const remaining = getCISessions().filter(s => s.accountId !== accountId);
+      saveCISessions(remaining);
+      _dbDelete(`/.netlify/functions/clock-sessions?accountId=${encodeURIComponent(accountId)}`);
+      renderClockIn();
+      showToast('Your time log cleared.');
+    }
+
+    function switchCIView(view) {
+      document.getElementById('ciSectionMine').style.display = view === 'mine' ? '' : 'none';
+      document.getElementById('ciSectionAll').style.display  = view === 'all'  ? '' : 'none';
+      document.getElementById('ciViewMine').classList.toggle('active', view === 'mine');
+      document.getElementById('ciViewAll').classList.toggle('active', view === 'all');
+      if (view === 'all') renderAllStaffHours();
+    }
+
+    function renderClockIn() {
+      const adminSess = getAdminSession();
+      const myActive  = getMyActive();
+      // Sessions for this account only
+      const allSessions = getCISessions();
+      const sessions    = allSessions.filter(s => s.accountId === adminSess?.id);
+
+      // Show/hide view switcher for owners
+      const switcher = document.getElementById('ciViewSwitcher');
+      if (switcher) switcher.style.display = adminSess?.role === 'owner' ? 'flex' : 'none';
+
+      // Buttons
+      document.getElementById('clockinBtn').style.display   = myActive ? 'none' : 'inline-flex';
+      document.getElementById('clockoutBtn').style.display  = myActive ? 'inline-flex' : 'none';
+
+      // Status label
+      const label   = document.getElementById('clockinStatusLabel');
+      const elapsed = document.getElementById('clockinElapsed');
+      const card    = document.getElementById('clockinStatusCard');
+      if (myActive) {
+        label.textContent = 'Clocked In';
+        card.classList.add('clockin-active');
+        elapsed.style.display = 'block';
+        clearInterval(ciTimer);
+        ciTimer = setInterval(() => {
+          elapsed.textContent = fmtDuration(Date.now() - new Date(myActive.start));
+        }, 1000);
+        elapsed.textContent = fmtDuration(Date.now() - new Date(myActive.start));
+      } else {
+        label.textContent = 'Clocked Out';
+        card.classList.remove('clockin-active');
+        elapsed.style.display = 'none';
+        clearInterval(ciTimer);
+        ciTimer = null;
+      }
+
+      // Summary (my sessions only)
+      const now = new Date();
+      const todayStr   = now.toDateString();
+      const weekStart  = new Date(now); weekStart.setDate(now.getDate() - now.getDay());
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      let msToday = 0, msWeek = 0, msMonth = 0, msAll = 0;
+      sessions.forEach(s => {
+        const d = new Date(s.start);
+        msAll += s.ms;
+        if (d.toDateString() === todayStr) msToday += s.ms;
+        if (d >= weekStart) msWeek += s.ms;
+        if (d >= monthStart) msMonth += s.ms;
+      });
+      document.getElementById('ciSummaryToday').textContent = fmtDurationHM(msToday);
+      document.getElementById('ciSummaryWeek').textContent  = fmtDurationHM(msWeek);
+      document.getElementById('ciSummaryMonth').textContent = fmtDurationHM(msMonth);
+      document.getElementById('ciSummaryAll').textContent   = fmtDurationHM(msAll);
+
+      // Log (my sessions only)
+      const log   = document.getElementById('clockinLog');
+      const empty = document.getElementById('clockinLogEmpty');
+      if (sessions.length === 0) { log.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      const groups = {};
+      sessions.forEach(s => {
+        const key = new Date(s.start).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(s);
+      });
+      log.innerHTML = Object.entries(groups).map(([date, rows]) => {
+        const dayTotal = rows.reduce((a, r) => a + r.ms, 0);
+        return `<div class="ci-day-group">
+          <div class="ci-day-header"><span>${date}</span><span class="ci-day-total">${fmtDurationHM(dayTotal)}</span></div>
+          ${rows.map(r => {
+            const inT  = new Date(r.start).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            const outT = new Date(r.end).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            return `<div class="ci-row"><span class="ci-row-time">${inT} → ${outT}</span><span class="ci-row-dur">${fmtDuration(r.ms)}</span></div>`;
+          }).join('')}
+        </div>`;
+      }).join('');
+    }
+
+    function renderAllStaffHours() {
+      const listEl = document.getElementById('ciAllStaffList');
+      const emptyEl = document.getElementById('ciAllStaffEmpty');
+      const allSessions = getCISessions();
+      const accounts = getAdminAccounts();
+
+      if (allSessions.length === 0) {
+        listEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      // Group sessions by accountId
+      const byAccount = {};
+      allSessions.forEach(s => {
+        const key = s.accountId || 'unknown';
+        if (!byAccount[key]) byAccount[key] = { username: s.username || key, sessions: [] };
+        byAccount[key].sessions.push(s);
+      });
+
+      // Also include accounts with zero sessions so they show up
+      accounts.forEach(a => {
+        if (!byAccount[a.id]) byAccount[a.id] = { username: a.username, sessions: [] };
+        else byAccount[a.id].username = a.username; // keep name fresh
+      });
+
+      const now = new Date();
+      const todayStr   = now.toDateString();
+      const weekStart  = new Date(now); weekStart.setDate(now.getDate() - now.getDay());
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      // Check active clock-in per account
+      const activeMap = getCIActiveMap();
+
+      listEl.innerHTML = Object.entries(byAccount).map(([accountId, data]) => {
+        const { username, sessions } = data;
+        let msToday = 0, msWeek = 0, msMonth = 0, msAll = 0;
+        sessions.forEach(s => {
+          const d = new Date(s.start);
+          msAll += s.ms;
+          if (d.toDateString() === todayStr) msToday += s.ms;
+          if (d >= weekStart) msWeek += s.ms;
+          if (d >= monthStart) msMonth += s.ms;
+        });
+        const isClockedIn = !!activeMap[accountId];
+        const liveMs = isClockedIn ? Date.now() - new Date(activeMap[accountId].start) : 0;
+
+        // Group sessions by date for log
+        const groups = {};
+        sessions.forEach(s => {
+          const key = new Date(s.start).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(s);
+        });
+
+        return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;margin-bottom:18px;overflow:hidden;">
+          <div style="padding:16px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:16px;font-weight:800;color:var(--text);">${username}</span>
+              ${isClockedIn ? `<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(76,175,80,0.15);color:#66bb6a;">● Live — ${fmtDuration(liveMs)}</span>` : ''}
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+              <div style="text-align:center;"><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Today</div><div style="font-size:15px;font-weight:700;color:var(--text);">${fmtDurationHM(msToday)}</div></div>
+              <div style="text-align:center;"><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Week</div><div style="font-size:15px;font-weight:700;color:var(--text);">${fmtDurationHM(msWeek)}</div></div>
+              <div style="text-align:center;"><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Month</div><div style="font-size:15px;font-weight:700;color:var(--text);">${fmtDurationHM(msMonth)}</div></div>
+              <div style="text-align:center;"><div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">All Time</div><div style="font-size:18px;font-weight:800;color:var(--accent);">${fmtDurationHM(msAll)}</div></div>
+            </div>
+          </div>
+          ${sessions.length > 0 ? `
+          <details style="padding:0;">
+            <summary style="padding:10px 18px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;">
+              ▸ View time log (${sessions.length} session${sessions.length===1?'':'s'})
+            </summary>
+            <div style="padding:0 18px 14px;">
+              ${Object.entries(groups).map(([date, rows]) => {
+                const dayTotal = rows.reduce((a, r) => a + r.ms, 0);
+                return `<div class="ci-day-group" style="margin-bottom:8px;">
+                  <div class="ci-day-header"><span>${date}</span><span class="ci-day-total">${fmtDurationHM(dayTotal)}</span></div>
+                  ${rows.map(r => {
+                    const inT  = new Date(r.start).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                    const outT = new Date(r.end).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                    return `<div class="ci-row"><span class="ci-row-time">${inT} → ${outT}</span><span class="ci-row-dur">${fmtDuration(r.ms)}</span></div>`;
+                  }).join('')}
+                </div>`;
+              }).join('')}
+            </div>
+          </details>` : '<div style="padding:12px 18px;font-size:13px;color:var(--text3);">No sessions recorded.</div>'}
+        </div>`;
+      }).join('');
+    }
+
+    // ===== ORDER NOTIFICATIONS =====
+    let _knownOrderIds = null;
+    let _pollTimer = null;
+
+    async function requestNotifyPermission() {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default') {
+        await Notification.requestPermission();
+      }
+    }
+
+    function fireOrderNotification(order) {
+      const title = `New Order — ${order.id}`;
+      const body  = `${order.customer?.name || 'Customer'} · $${Number(order.total).toFixed(2)} · ${order.paymentMethod === 'merits' ? '⭐ Merits' : '💵 Cash'}`;
+      // Browser notification (works when tab is in background)
+      if (Notification.permission === 'granted') {
+        const n = new Notification(title, {
+          body,
+          icon: 'logo.png',
+          badge: 'logo.png',
+          tag: order.id,
+          requireInteraction: true
+        });
+        n.onclick = () => { window.focus(); switchTab('orders'); n.close(); };
+      }
+      // Always show on-screen toast too
+      showToast(`🛒 New order: ${order.customer?.name || 'Customer'} — $${Number(order.total).toFixed(2)}`);
+    }
+
+    async function pollForNewOrders() {
+      if (!isAuthenticated()) { clearInterval(_pollTimer); _pollTimer = null; return; }
+      await syncAllFromDB();
+      const current = getOrders().filter(o => o.type !== 'custom').map(o => o.id);
+      if (_knownOrderIds === null) {
+        // First poll after init — just record baseline, no notification
+        _knownOrderIds = new Set(current);
+        return;
+      }
+      const allOrders = getOrders().filter(o => o.type !== 'custom');
+      let hasNew = false;
+      for (const o of allOrders) {
+        if (!_knownOrderIds.has(o.id)) {
+          fireOrderNotification(o);
+          _knownOrderIds.add(o.id);
+          hasNew = true;
+        }
+      }
+      if (hasNew) {
+        initAdmin(); // refresh badges
+        // If orders tab is open, re-render it
+        const panel = document.getElementById('tab-orders');
+        if (panel && panel.classList.contains('active')) renderOrders();
+      }
+      // Always re-render the manage tab if it's open so product changes
+      // made on other devices are reflected without a manual refresh.
+      const managePanel = document.getElementById('tab-manage');
+      if (managePanel && managePanel.classList.contains('active')) renderManage();
+    }
+
+    function startOrderPolling() {
+      if (_pollTimer) return; // already running
+      _knownOrderIds = null;
+      pollForNewOrders(); // set baseline immediately
+      _pollTimer = setInterval(pollForNewOrders, 5000); // check every 5 seconds
+    }
+
+    // ===== INIT =====
+    function initAdmin() {
+      const session = getAdminSession();
+
+      // Show current user in header badge
+      const badge = document.getElementById('adminUserBadge');
+      if (badge && session) badge.textContent = session.username;
+
+      // Hide tabs/nav items the user doesn't have permission for
+      const allTabNames = ['studio','statue','litho','map','users','clockin','settings'];
+      allTabNames.forEach(tab => {
+        const visible = hasPermission(tab);
+        // top tab bar button (index matches allTabNames order)
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+          if (allTabNames[i] === tab) b.style.display = visible ? '' : 'none';
+        });
+        // sidebar item
+        const sbi = document.getElementById('sbi-' + tab);
+        if (sbi) sbi.style.display = visible ? '' : 'none';
+        // bottom nav
+        const mni = document.getElementById('mni-' + tab);
+        if (mni) mni.style.display = visible ? '' : 'none';
+      });
+
+      // Show/render admin accounts section in settings if owner
+      renderAdminAccounts();
+
+      // Navigate to first permitted tab
+      const firstTab = allTabNames.find(t => hasPermission(t)) || 'studio';
+      switchTab(firstTab);
+
+      const usersBadge = document.getElementById('usersBadge');
+      const users = getUsers();
+      if (usersBadge && users.length > 0) usersBadge.textContent = `(${users.length})`;
+      syncMobileBadges();
+      // Resume clock-in timer if currently clocked in
+      if (getCIActive()) renderClockIn();
+      // Start order polling & request notification permission
+      requestNotifyPermission();
+      startOrderPolling();
+    }
+
+    // On load — check session IMMEDIATELY (no cloud delay)
+    document.addEventListener('DOMContentLoaded', async () => {
+      loadCloudSettingsUI(); // inject saved cloud credentials before any sync
+      if (isAuthenticated()) {
+        document.getElementById('loginGate').style.display = 'none';
+        document.querySelectorAll('.admin-content').forEach(el => el.classList.add('unlocked'));
+        await syncAllFromDB();
+        initAdmin();
+      } else {
+        // Check if any accounts exist; if not, show first-run setup
+        if (getAdminAccounts().length === 0) {
+          showSetupMode();
+        } else {
+          if (isLockedOut()) {
+            const err = document.getElementById('loginError');
+            err.textContent = `Too many failed attempts. Try again in ${lockoutMins()} min.`;
+            err.classList.add('visible');
+            document.getElementById('loginInput').disabled = true;
+          } else {
+            document.getElementById('loginUsername').focus();
+          }
+        }
+      }
+    });
+
+    // ===== PRODUCT PHOTO =====
+    let _aiPhotoData = null;
+
+    function handleAiPhoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 1024;
+          let w = img.width, h = img.height;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else       { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          _aiPhotoData = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('aiPhotoPreview').src = _aiPhotoData;
+          document.getElementById('aiPhotoPreview').style.display = 'block';
+          document.getElementById('aiPhotoPlaceholder').style.display = 'none';
+          document.getElementById('aiPhotoRemoveBtn').style.display = 'block';
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeAiPhoto(e) {
+      e.stopPropagation();
+      _aiPhotoData = null;
+      document.getElementById('aiPhotoInput').value = '';
+      const urlInput = document.getElementById('imageUrlInput');
+      if (urlInput) urlInput.value = '';
+      document.getElementById('aiPhotoPreview').style.display = 'none';
+      document.getElementById('aiPhotoPreview').src = '';
+      document.getElementById('aiPhotoPlaceholder').style.display = 'block';
+      document.getElementById('aiPhotoRemoveBtn').style.display = 'none';
+    }
+    function initColorPickers() { syncColorPickers(); }
+
+    // ===== MOBILE BADGE SYNC =====
+    function syncMobileBadges() {
+      const orders = getOrders();
+      const newOrders = orders.filter(o => o.type !== 'custom' && o.status === 'New').length;
+      const newCustom = orders.filter(o => o.type === 'custom' && o.status === 'New').length;
+      const ob = document.getElementById('mobileOrderBadge');
+      const cb = document.getElementById('mobileCustomBadge');
+      if (ob) { ob.textContent = newOrders || ''; ob.style.display = newOrders ? 'flex' : 'none'; }
+      if (cb) { cb.textContent = newCustom || ''; cb.style.display = newCustom ? 'flex' : 'none'; }
+    }
+    // Call after unlock
+    document.addEventListener('profab-unlocked', syncMobileBadges);
+
+    // ===== SUPPORT TICKETS ====================================================
+    let _supportSessions = [];
+    let _activeSessionId = null;
+
+    async function loadSupportTickets() {
+      const filter = document.getElementById('supportFilter')?.value || 'all';
+      const list = document.getElementById('supportList');
+      const empty = document.getElementById('supportEmpty');
+      list.innerHTML = '<p style="color:var(--text3);font-size:14px;">Loading…</p>';
+      empty.style.display = 'none';
+
+      try {
+        const res = await fetch('/.netlify/functions/support-chat');
+        const sessions = await res.json();
+        _supportSessions = Array.isArray(sessions) ? sessions : [];
+
+        const filtered = filter === 'all' ? _supportSessions
+          : _supportSessions.filter(s => s.status === filter);
+
+        if (!filtered.length) {
+          list.innerHTML = '';
+          empty.style.display = 'flex';
+          updateSupportBadge();
+          return;
+        }
+
+        list.innerHTML = filtered.map(s => {
+          const isOpen = s.status === 'open';
+          const date = new Date(s.started_at).toLocaleString();
+          const name = s.name || 'Anonymous';
+          const email = s.email ? `<span style="color:var(--text3);font-size:12px;">${s.email}</span>` : '';
+          const badge = isOpen
+            ? `<span style="background:rgba(224,32,32,.2);color:var(--accent);border:1px solid rgba(224,32,32,.3);border-radius:10px;font-size:11px;font-weight:700;padding:2px 8px;">Open</span>`
+            : `<span style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25);border-radius:10px;font-size:11px;font-weight:700;padding:2px 8px;">Resolved</span>`;
+          const preview = (s.first_message || '').slice(0, 90) + ((s.first_message || '').length > 90 ? '…' : '');
+          return `<div onclick="openSupportDrawer('${s.session_id}')"
+            style="border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer;background:var(--surface2);transition:border-color .15s;"
+            onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+              <span style="font-weight:700;font-size:15px;">${name}</span>
+              ${email}
+              ${badge}
+              <span style="margin-left:auto;font-size:12px;color:var(--text3);">${date}</span>
+            </div>
+            <div style="font-size:13px;color:var(--text2);">${preview || '(no message)'}</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px;">${s.message_count} message(s)</div>
+          </div>`;
+        }).join('');
+
+        updateSupportBadge();
+      } catch (e) {
+        list.innerHTML = `<p style="color:var(--accent);font-size:14px;">Error loading tickets: ${e.message}</p>`;
+      }
+    }
+
+    function updateSupportBadge() {
+      const openCount = _supportSessions.filter(s => s.status === 'open').length;
+      const badge1 = document.getElementById('supportTabBadge');
+      const badge2 = document.getElementById('sbi-support-badge');
+      [badge1, badge2].forEach(b => {
+        if (!b) return;
+        b.textContent = openCount || '';
+        b.style.display = openCount ? 'inline-flex' : 'none';
+      });
+    }
+
+    async function openSupportDrawer(sessionId) {
+      _activeSessionId = sessionId;
+      const session = _supportSessions.find(s => s.session_id === sessionId);
+
+      document.getElementById('drawerName').textContent = session?.name || 'Anonymous';
+      document.getElementById('drawerEmail').textContent = session?.email || '';
+
+      const statusEl = document.getElementById('drawerStatus');
+      const resolveBtn = document.getElementById('drawerResolveBtn');
+      const isOpen = session?.status === 'open';
+      statusEl.textContent = isOpen ? 'Open' : 'Resolved';
+      statusEl.style.background = isOpen ? 'rgba(224,32,32,.2)' : 'rgba(34,197,94,.12)';
+      statusEl.style.color = isOpen ? 'var(--accent)' : '#22c55e';
+      resolveBtn.style.display = isOpen ? 'block' : 'none';
+
+      const drawer = document.getElementById('supportDrawer');
+      drawer.style.display = 'block';
+      document.getElementById('drawerMessages').innerHTML = '<p style="color:var(--text3);font-size:13px;">Loading…</p>';
+
+      try {
+        const res = await fetch(`/.netlify/functions/support-chat?session=${sessionId}`);
+        const msgs = await res.json();
+        document.getElementById('drawerMessages').innerHTML = msgs.map(m => {
+          const isBot = m.sender === 'bot';
+          const time = new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+          return `<div style="display:flex;flex-direction:column;align-items:${isBot ? 'flex-start' : 'flex-end'};">
+            <div style="max-width:80%;background:${isBot ? 'var(--surface2)' : 'var(--accent)'};color:${isBot ? 'var(--text)' : '#fff'};
+              padding:9px 13px;border-radius:${isBot ? '14px 14px 14px 4px' : '14px 14px 4px 14px'};font-size:13.5px;line-height:1.45;">
+              ${m.message}
+            </div>
+            <span style="font-size:11px;color:var(--text3);margin-top:3px;">${isBot ? 'Support Bot' : m.name} · ${time}</span>
+          </div>`;
+        }).join('');
+      } catch {
+        document.getElementById('drawerMessages').innerHTML = '<p style="color:var(--accent);font-size:13px;">Error loading messages.</p>';
+      }
+    }
+
+    function closeSupportDrawer() {
+      document.getElementById('supportDrawer').style.display = 'none';
+      _activeSessionId = null;
+    }
+
+    async function resolveTicket() {
+      if (!_activeSessionId) return;
+      try {
+        await fetch('/.netlify/functions/support-chat', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: _activeSessionId, status: 'resolved' }),
+        });
+        closeSupportDrawer();
+        loadSupportTickets();
+      } catch (e) {
+        alert('Failed to update ticket: ' + e.message);
+      }
+    }
+
+    // Load tickets when support tab is opened
+    document.addEventListener('profab-unlocked', () => {
+      // Patch switchTab to load support tickets when navigating there
+      const origSwitch = window.switchTab;
+      if (origSwitch) {
+        window.switchTab = function(tab) {
+          origSwitch(tab);
+          if (tab === 'support') loadSupportTickets();
+        };
+      }
+    });
+
+  </script>
+</body>
+</html>

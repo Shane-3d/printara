@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../.github"
+		},
+		{
+			"path": "../.vscode"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../netlify"
+		},
+		{
+			"path": "../node_modules"
+		}
+	]
+}

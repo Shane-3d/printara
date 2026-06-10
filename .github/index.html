@@ -50,21 +50,36 @@
     .err.on { display:block; }
 
     /* ── Hero ── */
-    .hero { display:flex; flex-direction:column; align-items:center; text-align:center; padding:64px 24px 48px; gap:14px; }
-    .hero-logo { width:96px; height:96px; object-fit:contain; margin-bottom:0; filter:drop-shadow(0 0 16px rgba(220,40,40,.55)) drop-shadow(0 6px 22px rgba(150,0,0,.35)); animation:heroLogoFloat 4s ease-in-out infinite; }
-    @keyframes heroLogoFloat { 0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 16px rgba(220,40,40,.55)) drop-shadow(0 6px 22px rgba(150,0,0,.35));} 50%{transform:translateY(-7px) scale(1.03);filter:drop-shadow(0 0 28px rgba(255,60,60,.85)) drop-shadow(0 14px 36px rgba(180,0,0,.55));} }
-    .hero-wordmark { font-size:clamp(32px,4.5vw,62px); font-weight:900; letter-spacing:.08em; color:#fff; font-family:'Space Grotesk',sans-serif; line-height:1; margin:0; }
-    .hero h1 { font-size:clamp(26px,6vw,52px); font-weight:800; line-height:1.1; background:linear-gradient(135deg,#fff 40%,#00b4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin:0; }
-    .hero p { font-size:clamp(14px,2vw,17px); color:var(--text2); max-width:480px; margin:0; }
-    .hero-cta { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
-    .hero-cta button, .hero-cta a {
-      display:inline-flex; align-items:center; gap:7px; padding:13px 26px;
-      border-radius:13px; font-size:14px; font-weight:700; border:none; cursor:pointer;
-      text-decoration:none; font-family:inherit; transition:transform .15s, box-shadow .15s;
-    }
-    .btn-blue { background:#0099ff; color:#fff; box-shadow:0 4px 18px rgba(0,150,255,0.35); }
-    .btn-blue:hover { box-shadow:0 7px 28px rgba(0,150,255,0.5); transform:translateY(-1px); }
-    .btn-ghost { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+    .hero { position:relative; display:flex; align-items:center; min-height:calc(100vh - 52px); background:#0A0A0A; overflow:hidden; }
+    .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 70% 80% at 75% 50%, rgba(50,36,22,.7), transparent),radial-gradient(ellipse 40% 50% at 85% 25%, rgba(30,22,14,.5), transparent); }
+    .hero-split { flex-direction:row; align-items:center; gap:0; padding:0; }
+    .hero-left { position:relative; z-index:2; padding:0 0 0 5vw; max-width:560px; flex-shrink:0; display:flex; flex-direction:column; gap:20px; }
+    .hero-badge { display:inline-flex; align-items:center; gap:11px; background:rgba(10,12,20,.85); backdrop-filter:blur(10px); border:1px solid rgba(56,189,248,.3); border-radius:12px; padding:9px 16px; width:fit-content; box-shadow:0 0 18px rgba(56,189,248,.12); }
+    .hero-badge-icon { width:34px; height:34px; border-radius:8px; flex-shrink:0; background:linear-gradient(135deg,#0f2744,#071528); border:1px solid rgba(56,189,248,.25); display:flex; align-items:center; justify-content:center; font-size:17px; }
+    .hero-badge-label { font-size:11px; font-weight:800; color:#38BDF8; letter-spacing:.05em; }
+    .hero-badge-sub { font-size:10px; color:#4a5568; font-weight:500; }
+    .hero-heading { font-size:clamp(40px,5.5vw,72px); font-weight:900; line-height:1.02; letter-spacing:-.025em; color:#fff; margin:0; font-family:'Space Grotesk',sans-serif; }
+    .hero-heading .cyan { color:#38BDF8; text-shadow:0 0 30px rgba(56,189,248,.45); }
+    .hero-desc { font-size:15px; line-height:1.65; color:#7d8fa3; max-width:380px; margin:0; }
+    .hero-cta { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .btn-hero-primary { display:inline-flex; align-items:center; gap:6px; padding:12px 26px; background:#2563EB; color:#fff; border:none; border-radius:999px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 0 22px rgba(37,99,235,.65),0 0 70px rgba(37,99,235,.22); transition:box-shadow .2s,transform .15s; }
+    .btn-hero-primary:hover { box-shadow:0 0 36px rgba(37,99,235,.95),0 0 90px rgba(37,99,235,.4); transform:translateY(-1px); }
+    .btn-hero-secondary { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; background:rgba(255,255,255,.06); color:#fb923c; border:1px solid rgba(255,255,255,.12); border-radius:999px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; text-decoration:none; backdrop-filter:blur(6px); transition:background .15s; }
+    .btn-hero-secondary:hover { background:rgba(255,255,255,.11); }
+    .btn-hero-ghost { display:inline-flex; align-items:center; gap:6px; padding:11px 20px; background:rgba(255,255,255,.06); color:#e2e8f0; border:1px solid rgba(255,255,255,.12); border-radius:999px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; text-decoration:none; backdrop-filter:blur(6px); transition:background .15s; }
+    .btn-hero-ghost:hover { background:rgba(255,255,255,.11); }
+    .btn-blue  { background:transparent; border:1.5px solid #e02020; color:#e02020; border-radius:999px; padding:8px 18px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-ghost { background:rgba(255,255,255,.06); color:#e2e8f0; border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:8px 18px; font-size:12px; font-weight:600; font-family:inherit; text-decoration:none; }
+    /* Right cams */
+    .hero-cams { position:absolute; right:0; top:0; bottom:0; width:52%; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:2px; opacity:.55; mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.6) 15%,#000 50%); -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.6) 15%,#000 50%); }
+    .cam-wrap { position:relative; overflow:hidden; background:#0a0a0a; }
+    .cam-cvs { width:100%; height:100%; object-fit:cover; display:block; }
+    .cam-hud { position:absolute; bottom:6px; left:8px; display:flex; gap:8px; align-items:center; }
+    .cam-live { font-size:9px; font-weight:700; color:#ef4444; letter-spacing:.04em; }
+    .cam-id { font-size:9px; color:#666; font-weight:600; }
+    /* Chat widget */
+    .chat-fab { position:fixed; bottom:24px; right:24px; z-index:500; width:54px; height:54px; border-radius:50%; background:#DC2626; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 22px rgba(220,38,38,.55); transition:transform .2s,box-shadow .2s; }
+    .chat-fab:hover { transform:scale(1.1); box-shadow:0 6px 32px rgba(220,38,38,.75); }
 
     /* ── Tools strip ── */
     .tools-strip { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:0 24px 56px; max-width:960px; margin:0 auto; }
@@ -412,7 +427,7 @@
     <img src="logo.svg" alt="Printara" /> Printara
   </a>
   <div class="home-header-actions">
-    <div id="hGuest"><button onclick="openMod('loginModal')" class="btn-primary" style="padding:9px 18px;font-size:13px;border-radius:10px;">Sign In</button></div>
+    <div id="hGuest"><button onclick="openMod('loginModal')" class="btn-primary" style="padding:9px 20px;font-size:13px;border-radius:999px;background:#DC2626;border:none;color:#fff;box-shadow:0 2px 14px rgba(220,38,38,.45);">Sign In</button></div>
     <div id="hUser" style="display:none;align-items:center;gap:8px;">
       <span class="user-badge" id="hUsername"></span>
       <button class="btn-printer" id="prHeaderBtn" onclick="openMod('printerModal')" title="Connect 3D Printer">🖨️ <span id="prHeaderLabel">Connect Printer</span></button>
@@ -426,14 +441,27 @@
 <section class="hero hero-split">
   <!-- Left: brand + CTAs -->
   <div class="hero-left">
-    <img src="logo.svg" alt="Printara" class="hero-logo" />
-    <div class="hero-wordmark">PRINTARA</div>
-    <h1>Design. Generate. Print.</h1>
-    <p>Browser-based 3D design tools and a community project library — sign up free.</p>
+    <div class="hero-badge">
+      <div class="hero-badge-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" fill="#38BDF8"/><rect x="13" y="3" width="8" height="8" rx="1.5" fill="#38BDF8" opacity=".5"/><rect x="3" y="13" width="8" height="8" rx="1.5" fill="#38BDF8" opacity=".5"/><rect x="13" y="13" width="8" height="8" rx="1.5" fill="#38BDF8" opacity=".25"/></svg>
+      </div>
+      <div>
+        <div class="hero-badge-label">PRINTARA STUDIO</div>
+        <div class="hero-badge-sub">Browser-native 3D tools</div>
+      </div>
+    </div>
+    <h1 class="hero-heading">Design. Generate.<br><span class="cyan">Print.</span></h1>
+    <p class="hero-desc">Browser-based 3D design tools and a community project library — sign up free and start creating today.</p>
     <div class="hero-cta">
-      <button class="btn-blue" id="heroBtn" onclick="handleHero()">Get Started Free →</button>
-      <a href="download.html" class="btn-ghost" style="background:#1a1a1a;border-color:#ff6b35;color:#ff6b35;">🖨️ Print Queue</a>
-      <a href="#gallery" class="btn-ghost">Browse Projects ↓</a>
+      <button class="btn-hero-primary" id="heroBtn" onclick="handleHero()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Get Started Free
+      </button>
+      <a href="download.html" class="btn-hero-secondary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 17v2M16 17v2M5 19h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Print Queue
+      </a>
+      <a href="#gallery" class="btn-hero-ghost">Browse Projects ↓</a>
     </div>
   </div>
 
@@ -1485,5 +1513,11 @@
   }
 </script>
 <script src="support-chat-widget.js" defer></script>
+
+<!-- ===== CHAT FAB ===== -->
+<button class="chat-fab" title="Chat with us" onclick="alert('Support chat coming soon!')">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+</button>
+
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Printara — Dashboard</title>
-  <link rel="icon" href="logo.svg" />
+  <link rel="icon" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/mqtt@5/dist/mqtt.min.js"></script>
@@ -12,7 +12,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg:#0a0a0a; --surface:#111; --surface2:#1a1a1a; --surface3:#242424;
-      --border:#2a2a2a; --accent:#e02020; --accent-dim:rgba(224,32,32,.12);
+      --border:#2a2a2a; --accent:#0099ff; --accent-dim:rgba(0,153,255,.12);
       --orange:#ff6b35; --orange-dim:rgba(255,107,53,.1);
       --green:#22c55e; --red:#ef4444; --yellow:#eab308;
       --text:#e8e8e8; --text2:#888; --text3:#444; --radius:12px;
@@ -21,9 +21,8 @@
 
     /* topbar */
     #topbar { display:flex; align-items:center; gap:12px; padding:0 20px; height:54px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
-    #topbar a { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:800; font-size:15px; font-family:'Inter',sans-serif; letter-spacing:.02em; }
-    #topbar a img { filter:drop-shadow(0 0 6px rgba(220,40,40,.45)); transition:filter .2s,transform .2s; }
-    #topbar a:hover img { filter:drop-shadow(0 0 14px rgba(255,60,60,.8)); transform:scale(1.1); }
+    #topbar a { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:800; font-size:15px; }
+    #topbar a svg { color:var(--accent); }
     .spacer { flex:1; }
 
     /* dashboard grid */
@@ -46,7 +45,7 @@
     .card-hdr { display:flex; align-items:center; gap:8px; }
     .pname { font-size:14px; font-weight:800; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .tbadge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; background:var(--surface2); color:var(--text2); border:1px solid var(--border); white-space:nowrap; }
-    .tbadge.octoprint { background:rgba(224,32,32,.1); color:var(--accent); border-color:rgba(224,32,32,.3); }
+    .tbadge.octoprint { background:rgba(0,153,255,.1); color:var(--accent); border-color:rgba(0,153,255,.3); }
     .tbadge.moonraker { background:rgba(34,197,94,.1); color:var(--green); border-color:rgba(34,197,94,.3); }
     .tbadge.bambu     { background:var(--orange-dim); color:var(--orange); border-color:rgba(255,107,53,.3); }
     .tbadge.usb       { background:rgba(234,179,8,.1); color:var(--yellow); border-color:rgba(234,179,8,.3); }
@@ -118,7 +117,7 @@
     .qbadge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; flex-shrink:0; }
     .badge-queued    { background:var(--surface3); color:var(--text2); }
     .badge-uploading { background:rgba(234,179,8,.12); color:var(--yellow); }
-    .badge-printing  { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(224,32,32,.3); }
+    .badge-printing  { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(0,153,255,.3); }
     .badge-done      { background:rgba(34,197,94,.1); color:var(--green); border:1px solid rgba(34,197,94,.3); }
     .badge-error,.badge-cancelled { background:rgba(239,68,68,.1); color:var(--red); }
     #pcon { min-height:100px; max-height:180px; overflow-y:auto; background:#080808; border-radius:8px; padding:8px; font-family:'Fira Code',monospace; font-size:11px; line-height:1.7; }
@@ -133,7 +132,7 @@
     .toast { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:12px; max-width:280px; animation:slideIn .2s ease; }
     .toast.success { border-color:rgba(34,197,94,.4); color:var(--green); }
     .toast.error   { border-color:rgba(239,68,68,.4);  color:var(--red); }
-    .toast.info    { border-color:rgba(224,32,32,.4);  color:var(--accent); }
+    .toast.info    { border-color:rgba(0,153,255,.4);  color:var(--accent); }
     @keyframes slideIn { from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1} }
     ::-webkit-scrollbar { width:4px; } ::-webkit-scrollbar-thumb { background:#333; border-radius:2px; }
 
@@ -179,7 +178,7 @@
 
 <header id="topbar">
   <a href="index.html">
-    <img src="logo.svg" alt="Printara" style="width:28px;height:28px;object-fit:contain;" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
     Printara
   </a>
   <span style="color:var(--text3);margin:0 2px">/</span>
@@ -1375,10 +1374,10 @@ function renderGcodePreview(canvas, gcode, colors) {
   ctx.stroke();
 
   // Extrusion per tool/color
-  const palette = colors && colors.length ? colors : ['#e02020'];
+  const palette = colors && colors.length ? colors : ['#0099ff'];
   const numColors = palette.length;
   for (let t = 0; t < Math.max(1, numColors); t++) {
-    ctx.strokeStyle = palette[t % numColors] || '#e02020';
+    ctx.strokeStyle = palette[t % numColors] || '#0099ff';
     ctx.lineWidth = 1; ctx.beginPath();
     for (const [fx, fy, nx2, ny2, hasE, tool2] of moves) {
       if (hasE && (tool2 === t || numColors === 1)) { ctx.moveTo(tx(fx), ty(fy)); ctx.lineTo(tx(nx2), ty(ny2)); }
@@ -1573,4 +1572,3 @@ load();
 </script>
 </body>
 </html>
-
