@@ -339,8 +339,8 @@ dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover
 dropZone.addEventListener('drop', async e => {
   e.preventDefault(); dropZone.classList.remove('dragover');
   const paths = Array.from(e.dataTransfer.files)
-    .filter(f => /\.(gcode|g|gc|gco|ngc)$/i.test(f.name)).map(f => f.path);
-  if (!paths.length) { toast('Drop .gcode files only', 'error'); return; }
+    .filter(f => /\.(gcode|g|gc|gco|ngc|3mf)$/i.test(f.name)).map(f => f.path);
+  if (!paths.length) { toast('Drop .gcode or .3mf files only', 'error'); return; }
   const res = await window.printer.addFilesToQueue(paths);
   if (res.success) { state.queue.push(...res.items); renderQueue(); toast(`Added ${res.items.length} file(s)`, 'success'); }
 });

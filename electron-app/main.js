@@ -29,6 +29,7 @@ const printers = new Map();
 let bambuClient    = null;
 let bambuDoneResolve = null;
 let bambuDoneReject  = null;
+let bambuPrinting    = false;   // set true once the printer reports a running/preparing job
 
 // Print queue
 let queue          = [];
@@ -401,8 +402,8 @@ ipcMain.handle('printer:disconnectWifi', () => {
 // ── IPC: File picker & queue management ─────────────────────────────────────────
 ipcMain.handle('printer:browseFiles', async () => {
   return dialog.showOpenDialog(mainWindow, {
-    title: 'Add G-code Files',
-    filters: [{ name: 'G-code', extensions: ['gcode', 'g', 'gc', 'gco', 'ngc'] }],
+    title: 'Add G-code or 3MF Files',
+    filters: [{ name: 'Printable files', extensions: ['gcode', 'g', 'gc', 'gco', 'ngc', '3mf'] }],
     properties: ['openFile', 'multiSelections'],
   });
 });
@@ -436,12 +437,15 @@ ipcMain.handle('printer:addFilesToQueue', (_ev, filePaths) => {
     let totalLines = 0;
     let thumbnail  = null;
     let filamentMm = null;
-    try {
-      const raw = fs.readFileSync(fp, 'utf8');
-      totalLines = raw.split('\n').filter(l => l.split(';')[0].trim()).length;
-      thumbnail  = extractThumbnail(raw);
-      filamentMm = extractFilamentMm(raw);
-    } catch (_) {}
+    // .3mf is a binary zip — skip the text parse (it would just read garbage)
+    if (!/\.3mf$/i.test(fp)) {
+      try {
+        const raw = fs.readFileSync(fp, 'utf8');
+        totalLines = raw.split('\n').filter(l => l.split(';')[0].trim()).length;
+        thumbnail  = extractThumbnail(raw);
+        filamentMm = extractFilamentMm(raw);
+      } catch (_) {}
+    }
     const item = {
       id:         Date.now().toString(36) + Math.random().toString(36).slice(2),
       name:       path.basename(fp),
@@ -551,14 +555,22 @@ function handleBambuMessage(raw) {
 
     // Print state
     const state = print.gcode_state;
-    if (state === 'FINISH' && bambuDoneResolve) {
-      const r = bambuDoneResolve; bambuDoneResolve = null; bambuDoneReject = null;
-      r();
-    } else if ((state === 'FAILED' || state === 'CANCEL') && bambuDoneReject) {
-      const r = bambuDoneReject; bambuDoneResolve = null; bambuDoneReject = null;
-      if (state === 'CANCEL') { cancelFlag = true; bambuDoneResolve = r; bambuDoneResolve(); bambuDoneResolve = null; }
-      else r(new Error('Bambu print failed (error ' + (print.print_error || 'unknown') + ')'));
+
+    // Confirm the job actually started — this clears the "did not start" timeout
+    // in runBambuPrint so a successfully-launched print isn't aborted.
+    if (['PREPARE', 'RUNNING', 'PAUSE', 'SLICING'].includes(state) || print.mc_percent !== undefined) {
+      bambuPrinting = true;
     }
+
+    // Surface an explicitly rejected print command early (don't wait for the timeout).
+    if (print.command && /file/.test(print.command) && print.result && print.result !== 'success') {
+      if (bambuDoneReject) bambuDoneReject(new Error('Printer rejected the print command: ' + (print.reason || print.result)));
+      return;
+    }
+
+    if (state === 'FINISH' && bambuDoneResolve)      bambuDoneResolve();
+    else if (state === 'FAILED' && bambuDoneReject)  bambuDoneReject(new Error('Bambu print failed (error ' + (print.print_error || 'unknown') + ')'));
+    else if (state === 'CANCEL' && bambuDoneResolve) { cancelFlag = true; bambuDoneResolve(); }
   } catch (_) {}
 }
 
@@ -718,9 +730,10 @@ async function runWifiPrint(item) {
 }
 
 async function runBambuPrint(item) {
-  const filename = path.basename(item.filePath);
+  const filename  = path.basename(item.filePath);
+  const isProject = /\.3mf$/i.test(filename);   // sliced Bambu Studio / OrcaSlicer project
 
-  // FTP upload to /sdcard/ (Bambu Lab uses implicit FTPS on port 990, uploads to /sdcard/)
+  // ── 1. FTP upload (implicit FTPS, port 990) ─────────────────────────────────
   emit('printer:printProgress', { progress: 0, currentLine: 0, totalLines: 0, gcode: 'Uploading via FTP…' });
   const tmpPath = path.join(os.tmpdir(), 'printara_bambu_' + filename);
   fs.copyFileSync(item.filePath, tmpPath);
@@ -731,35 +744,59 @@ async function runBambuPrint(item) {
   } finally {
     try { fs.unlinkSync(tmpPath); } catch (_) {}
   }
+  const remotePath = `${uploadDir}/${filename}`.replace(/\/{2,}/g, '/');  // e.g. /sdcard/foo.gcode
 
-  // Send MQTT print command — file URL reflects where FTP actually landed
+  // ── 2. Send the correct MQTT print command for the file type ────────────────
+  // Bambu's `project_file` command only works on sliced .3mf projects (it looks
+  // for Metadata/plate_1.gcode inside the archive). A raw .gcode must be started
+  // with `gcode_file`, pointing at the path where FTP just landed it.
+  bambuPrinting = false;
   emit('printer:printProgress', { progress: 0, currentLine: 0, totalLines: 0, gcode: 'Starting print…' });
-  await bambuPublish({
-    command:      'project_file',
-    url:          `file://${uploadDir}/${filename}`,
-    param:        filename,
-    subtask_name: path.basename(filename, path.extname(filename)),
-    task_id:      '0',
-    profile_id:   '0',
-    project_id:   '0',
-  });
 
-  // Wait for MQTT status to report FINISH/FAILED/CANCEL
+  if (isProject) {
+    await bambuPublish({
+      command:        'project_file',
+      param:          'Metadata/plate_1.gcode',
+      url:            `file://${remotePath}`,
+      subtask_name:   path.basename(filename, path.extname(filename)),
+      project_id:     '0', profile_id: '0', task_id: '0', subtask_id: '0',
+      bed_type:       'auto',
+      use_ams:        false,
+      timelapse:      false,
+      bed_leveling:   true,
+      flow_cali:      false,
+      vibration_cali: true,
+      layer_inspect:  false,
+    });
+  } else {
+    await bambuPublish({ command: 'gcode_file', param: remotePath });
+  }
+
+  // ── 3. Wait for FINISH / FAILED / CANCEL — but fail fast if it never starts ──
   await new Promise((resolve, reject) => {
-    bambuDoneResolve = resolve;
-    bambuDoneReject  = reject;
-    // Poll cancel flag
-    const t = setInterval(() => {
-      if (cancelFlag) {
-        clearInterval(t);
-        bambuDoneResolve = null; bambuDoneReject = null;
-        resolve();
+    const cleanup = () => {
+      clearInterval(poll); clearTimeout(startTimer);
+      bambuDoneResolve = null; bambuDoneReject = null;
+    };
+    bambuDoneResolve = () => { cleanup(); resolve(); };
+    bambuDoneReject  = (e) => { cleanup(); reject(e); };
+
+    // If the printer never enters a printing state, the command was rejected or
+    // ignored — surface that instead of hanging the queue forever.
+    const startTimer = setTimeout(() => {
+      if (!bambuPrinting) {
+        cleanup();
+        reject(new Error(
+          'Printer did not start within 30s — it likely rejected the file. ' +
+          'Check: the file is sliced for THIS exact Bambu model, the SD card is inserted, ' +
+          'and the printer is idle (not mid-print or in an error state).'
+        ));
       }
+    }, 30000);
+
+    const poll = setInterval(() => {
+      if (cancelFlag) { cleanup(); resolve(); }
     }, 500);
-    const origResolve = resolve;
-    const origReject  = reject;
-    bambuDoneResolve = () => { clearInterval(t); origResolve(); };
-    bambuDoneReject  = (e) => { clearInterval(t); origReject(e); };
   });
 }
 
