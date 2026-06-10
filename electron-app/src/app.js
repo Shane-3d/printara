@@ -77,6 +77,13 @@ const updateDismissBtn  = $('update-dismiss-btn');
 // Reconnect badge
 const reconnectBadge    = $('reconnect-badge');
 
+// Webcam
+const webcamPanel       = $('webcam-panel');
+const webcamImg         = $('webcam-img');
+const webcamPlaceholder = $('webcam-placeholder');
+const webcamToggleBtn   = $('webcam-toggle-btn');
+let webcamCollapsed     = false;
+
 // History
 const historyBtn        = $('history-btn');
 const historyModal      = $('history-modal');
@@ -142,6 +149,7 @@ wifiConnectBtn.addEventListener('click', async () => {
     const label = state.mode === 'octoprint' ? 'OctoPrint' : state.mode === 'bambu' ? 'Bambu Lab' : 'Moonraker';
     logLine(`Connected via ${label}${res.version ? ' v' + res.version : ''}`, 'info');
     toast('Connected to ' + ip, 'success');
+    startWebcam();
   } else {
     wifiConnectBtn.disabled = false;
     wifiConnectBtn.textContent = 'Connect';
@@ -152,6 +160,7 @@ wifiConnectBtn.addEventListener('click', async () => {
 
 wifiDiscBtn.addEventListener('click', async () => {
   await window.printer.disconnectWifi();
+  stopWebcam();
   setConnected(false);
   logLine('Disconnected', 'info');
   toast('Disconnected', 'info');
@@ -498,6 +507,35 @@ function toast(msg, type = 'info') {
   setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 3500);
 }
 
+// ── Webcam ─────────────────────────────────────────────────────────────────────
+async function startWebcam() {
+  const url = await window.printer.getWebcamUrl();
+  if (!url) { webcamPanel.classList.add('hidden'); return; }
+  webcamPanel.classList.remove('hidden');
+  webcamImg.src = url;
+  webcamImg.classList.add('visible');
+  webcamPlaceholder.style.display = 'none';
+  webcamImg.onerror = () => {
+    webcamImg.classList.remove('visible');
+    webcamPlaceholder.style.display = 'flex';
+    webcamPlaceholder.textContent = 'Camera unavailable';
+  };
+}
+
+function stopWebcam() {
+  webcamImg.src = '';
+  webcamImg.classList.remove('visible');
+  webcamPlaceholder.style.display = 'flex';
+  webcamPlaceholder.textContent = 'No camera connected';
+  webcamPanel.classList.add('hidden');
+}
+
+webcamToggleBtn.addEventListener('click', () => {
+  webcamCollapsed = !webcamCollapsed;
+  $('webcam-viewport').style.display = webcamCollapsed ? 'none' : '';
+  webcamToggleBtn.textContent = webcamCollapsed ? '▸' : '▾';
+});
+
 // ── Auto-updater ───────────────────────────────────────────────────────────────
 window.printer.onUpdateAvailable(info => {
   updateMsg.textContent = `Printara ${info.version} is available — downloading…`;
@@ -524,10 +562,11 @@ window.printer.onReconnected(info => {
   toast('Reconnected to printer', 'success');
   state.connected = true;
   updateStatusChip();
+  startWebcam();
 });
 
 window.printer.onDisconnected(() => {
-  // If mid-print, show reconnecting badge instead of full disconnect
+  stopWebcam();
   if (state.printing) {
     reconnectBadge.classList.remove('hidden');
   } else {

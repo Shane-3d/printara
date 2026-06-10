@@ -170,8 +170,20 @@
     </div>
   </main>
 
-  <!-- ── Right sidebar: Console ─────────────────────────────────────────── -->
+  <!-- ── Right sidebar: Console + Webcam ──────────────────────────────── -->
   <aside id="sidebar-right">
+    <!-- Webcam panel -->
+    <div id="webcam-panel" class="webcam-panel hidden">
+      <div class="webcam-header">
+        <span>Camera</span>
+        <button class="btn-icon" id="webcam-toggle-btn" title="Hide camera">▾</button>
+      </div>
+      <div id="webcam-viewport">
+        <img id="webcam-img" alt="Webcam feed" />
+        <div id="webcam-placeholder">No camera connected</div>
+      </div>
+    </div>
+
     <div id="console-header">
       <h3>Console</h3>
       <button class="btn-icon" id="clear-console-btn" title="Clear">✕</button>

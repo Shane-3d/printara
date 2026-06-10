@@ -118,6 +118,14 @@ function stopReconnect() {
   if (reconnectTimer) { clearInterval(reconnectTimer); reconnectTimer = null; }
 }
 
+// ── IPC: Webcam ───────────────────────────────────────────────────────────────────
+ipcMain.handle('printer:getWebcamUrl', () => {
+  if (!wifi.ip || wifi.mode === 'bambu') return null;
+  if (wifi.mode === 'octoprint') return `http://${wifi.ip}/webcam/?action=stream`;
+  if (wifi.mode === 'moonraker') return `http://${wifi.ip}/webcam?action=stream`;
+  return null;
+});
+
 // ── IPC: History ──────────────────────────────────────────────────────────────────
 ipcMain.handle('printer:getHistory',   () => printHistory);
 ipcMain.handle('printer:clearHistory', () => {

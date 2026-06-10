@@ -67,6 +67,9 @@ contextBridge.exposeInMainWorld('printer', {
   getHistory:         ()              => ipcRenderer.invoke('printer:getHistory'),
   clearHistory:       ()              => ipcRenderer.invoke('printer:clearHistory'),
 
+  // Webcam
+  getWebcamUrl:       ()              => ipcRenderer.invoke('printer:getWebcamUrl'),
+
   // Auto-updater
   checkForUpdates:    ()              => ipcRenderer.invoke('updater:check'),
   installUpdate:      ()              => ipcRenderer.invoke('updater:install'),

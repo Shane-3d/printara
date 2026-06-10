@@ -406,6 +406,51 @@ button {
   flex-shrink: 0;
 }
 
+/* ── Webcam panel ─────────────────────────────────────────────────────────── */
+.webcam-panel {
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.webcam-panel.hidden { display: none; }
+
+.webcam-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#webcam-viewport {
+  position: relative;
+  background: #000;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  max-height: 180px;
+}
+
+#webcam-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+}
+#webcam-img.visible { display: block; }
+
+#webcam-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
 /* ── Right sidebar — Console ──────────────────────────────────────────────── */
 #sidebar-right {
   grid-row: 3;
