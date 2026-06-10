@@ -19,8 +19,11 @@ let activePort  = null;
 // Pending 'ok' resolvers for synchronous USB G-code streaming
 const okWaiters = [];
 
-// WiFi session
+// WiFi session (single-printer / legacy)
 const wifi = { mode: null, ip: null, apiKey: null, serial: null, accessCode: null };
+
+// Multi-printer registry: Map<id, { id, name, mode, ip, apiKey, serial, accessCode, status, port }>
+const printers = new Map();
 
 // Bambu Lab MQTT session (separate from the multi-printer mqttClients map)
 let bambuClient    = null;
@@ -117,6 +120,52 @@ function startReconnect() {
 function stopReconnect() {
   if (reconnectTimer) { clearInterval(reconnectTimer); reconnectTimer = null; }
 }
+
+// ── IPC: Multi-printer registry ───────────────────────────────────────────────────
+ipcMain.handle('printers:list', () => {
+  return Array.from(printers.values()).map(p => ({ ...p, port: undefined })); // don't send SerialPort object
+});
+
+ipcMain.handle('printers:add', async (_ev, opts) => {
+  // opts: { name, mode, ip, apiKey, serial, accessCode, portPath, baudRate }
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+  const printer = { id, name: opts.name || `Printer ${printers.size + 1}`, mode: opts.mode, ip: opts.ip || null, apiKey: opts.apiKey || null, serial: opts.serial || null, accessCode: opts.accessCode || null, status: 'connecting', busy: false };
+  printers.set(id, printer);
+  emit('printers:updated', Array.from(printers.values()).map(p => ({ ...p, port: undefined })));
+
+  // Attempt connection
+  try {
+    if (opts.mode === 'usb') {
+      const sp = new SerialPort({ path: opts.portPath, baudRate: parseInt(opts.baudRate, 10) || 115200 });
+      await new Promise((res, rej) => { sp.once('open', res); sp.once('error', rej); });
+      printer.status = 'ready';
+      printer.port = sp;
+    } else if (opts.mode === 'octoprint') {
+      const r = await httpReq({ hostname: opts.ip, port: 80, path: '/api/version', method: 'GET', headers: { 'X-Api-Key': opts.apiKey } });
+      if (r.status >= 400) throw new Error(`HTTP ${r.status}`);
+      printer.status = 'ready';
+    } else if (opts.mode === 'moonraker') {
+      const r = await httpReq({ hostname: opts.ip, port: 80, path: '/printer/info', method: 'GET', headers: {} });
+      if (r.status >= 400) throw new Error(`HTTP ${r.status}`);
+      printer.status = 'ready';
+    } else if (opts.mode === 'bambu') {
+      printer.status = 'ready'; // Bambu connects per-job
+    }
+  } catch (err) {
+    printer.status = 'error';
+    printer.error = err.message;
+  }
+  emit('printers:updated', Array.from(printers.values()).map(p => ({ ...p, port: undefined })));
+  return { success: printer.status === 'ready', id, error: printer.error };
+});
+
+ipcMain.handle('printers:remove', (_ev, id) => {
+  const p = printers.get(id);
+  if (p && p.port) try { p.port.close(); } catch (_) {}
+  printers.delete(id);
+  emit('printers:updated', Array.from(printers.values()).map(p => ({ ...p, port: undefined })));
+  return { success: true };
+});
 
 // ── IPC: Webcam ───────────────────────────────────────────────────────────────────
 ipcMain.handle('printer:getWebcamUrl', () => {

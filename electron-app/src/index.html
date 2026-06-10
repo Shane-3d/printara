@@ -45,8 +45,9 @@
     <div class="panel" style="padding-bottom:0">
       <div class="panel-title">Connection</div>
       <div class="mode-tabs">
-        <button class="mode-tab active" data-mode="wifi">📶 WiFi</button>
-        <button class="mode-tab" data-mode="usb">🔌 USB</button>
+        <button class="mode-tab active" data-mode="wifi">WiFi</button>
+        <button class="mode-tab" data-mode="usb">USB</button>
+        <button class="mode-tab" data-mode="multi">Multi</button>
       </div>
     </div>
 
@@ -80,6 +81,12 @@
         <button class="btn-primary" id="wifi-connect-btn">Connect</button>
         <button class="btn-secondary hidden" id="wifi-disconnect-btn">Disconnect</button>
       </div>
+    </div>
+
+    <!-- Multi-printer panel -->
+    <div id="multi-panel" class="panel hidden">
+      <div id="printers-list"></div>
+      <button class="btn-secondary" id="add-printer-btn" style="width:100%;margin-top:4px">+ Add Printer</button>
     </div>
 
     <!-- USB panel -->
@@ -221,6 +228,50 @@
     <div class="modal-actions">
       <button class="btn-secondary" id="eject-cancel-btn">Cancel</button>
       <button class="btn-primary" id="eject-save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Add printer modal ──────────────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="add-printer-modal">
+  <div class="modal">
+    <h2>Add Printer</h2>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="ap-name" placeholder="e.g. Ender 3" />
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="ap-type">
+        <option value="octoprint">OctoPrint</option>
+        <option value="moonraker">Moonraker / Klipper</option>
+        <option value="bambu">Bambu Lab</option>
+        <option value="usb">USB Serial</option>
+      </select>
+    </div>
+    <div class="field" id="ap-ip-field">
+      <label>IP Address</label>
+      <input type="text" id="ap-ip" placeholder="192.168.1.100" spellcheck="false" />
+    </div>
+    <div class="field" id="ap-apikey-field">
+      <label>API Key</label>
+      <input type="text" id="ap-apikey" placeholder="OctoPrint API key" spellcheck="false" />
+    </div>
+    <div class="field hidden" id="ap-serial-field">
+      <label>Serial Number</label>
+      <input type="text" id="ap-serial" placeholder="e.g. 01P00A…" spellcheck="false" />
+    </div>
+    <div class="field hidden" id="ap-code-field">
+      <label>Access Code</label>
+      <input type="text" id="ap-code" placeholder="8-digit code" spellcheck="false" />
+    </div>
+    <div class="field hidden" id="ap-port-field">
+      <label>Port</label>
+      <select id="ap-port"><option value="">Select port…</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="ap-cancel-btn">Cancel</button>
+      <button class="btn-primary" id="ap-add-btn">Connect</button>
     </div>
   </div>
 </div>

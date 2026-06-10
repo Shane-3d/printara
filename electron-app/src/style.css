@@ -681,6 +681,23 @@ button {
   to   { transform: translateX(0);    opacity: 1; }
 }
 
+/* ── Printer slots (multi-printer panel) ─────────────────────────────────── */
+.printer-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+.printer-slot-info { display: flex; align-items: center; min-width: 0; flex: 1; overflow: hidden; }
+.dot-green  { background: var(--green); }
+.dot-yellow { background: var(--yellow); }
+.dot-red    { background: var(--red); }
+
 /* ── Update banner ────────────────────────────────────────────────────────── */
 .update-banner {
   grid-column: 1 / -1;

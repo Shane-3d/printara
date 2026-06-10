@@ -67,6 +67,12 @@ contextBridge.exposeInMainWorld('printer', {
   getHistory:         ()              => ipcRenderer.invoke('printer:getHistory'),
   clearHistory:       ()              => ipcRenderer.invoke('printer:clearHistory'),
 
+  // Multi-printer
+  listPrinters:       ()              => ipcRenderer.invoke('printers:list'),
+  addPrinter:         (opts)          => ipcRenderer.invoke('printers:add',    opts),
+  removePrinter:      (id)            => ipcRenderer.invoke('printers:remove', id),
+  onPrintersUpdated:  (cb) => ipcRenderer.on('printers:updated', (_e, d) => cb(d)),
+
   // Webcam
   getWebcamUrl:       ()              => ipcRenderer.invoke('printer:getWebcamUrl'),
 

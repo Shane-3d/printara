@@ -84,6 +84,26 @@ const webcamPlaceholder = $('webcam-placeholder');
 const webcamToggleBtn   = $('webcam-toggle-btn');
 let webcamCollapsed     = false;
 
+// Multi-printer
+const multiPanel        = $('multi-panel');
+const printersList      = $('printers-list');
+const addPrinterBtn     = $('add-printer-btn');
+const addPrinterModal   = $('add-printer-modal');
+const apType            = $('ap-type');
+const apName            = $('ap-name');
+const apIp              = $('ap-ip');
+const apApikey          = $('ap-apikey');
+const apSerial          = $('ap-serial');
+const apCode            = $('ap-code');
+const apPort            = $('ap-port');
+const apIpField         = $('ap-ip-field');
+const apApikeyField     = $('ap-apikey-field');
+const apSerialField     = $('ap-serial-field');
+const apCodeField       = $('ap-code-field');
+const apPortField       = $('ap-port-field');
+const apAddBtn          = $('ap-add-btn');
+const apCancelBtn       = $('ap-cancel-btn');
+
 // History
 const historyBtn        = $('history-btn');
 const historyModal      = $('history-modal');
@@ -102,12 +122,13 @@ const historyCloseBtn   = $('history-close-btn');
 // ── Mode tabs ──────────────────────────────────────────────────────────────────
 modeTabs.forEach(tab => {
   tab.addEventListener('click', () => {
-    if (state.connected) { toast('Disconnect first', 'error'); return; }
+    const m = tab.dataset.mode;
+    if (m !== 'multi' && state.connected) { toast('Disconnect first', 'error'); return; }
     modeTabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    const m = tab.dataset.mode;
-    wifiPanel.classList.toggle('hidden', m !== 'wifi');
-    usbPanel.classList.toggle('hidden',  m !== 'usb');
+    wifiPanel.classList.toggle('hidden',  m !== 'wifi');
+    usbPanel.classList.toggle('hidden',   m !== 'usb');
+    multiPanel.classList.toggle('hidden', m !== 'multi');
   });
 });
 
@@ -543,6 +564,91 @@ webcamToggleBtn.addEventListener('click', () => {
   webcamCollapsed = !webcamCollapsed;
   $('webcam-viewport').style.display = webcamCollapsed ? 'none' : '';
   webcamToggleBtn.textContent = webcamCollapsed ? '▸' : '▾';
+});
+
+// ── Multi-printer ──────────────────────────────────────────────────────────────
+let activePrinters = [];
+
+(async () => {
+  activePrinters = await window.printer.listPrinters();
+  renderPrintersList();
+})();
+
+window.printer.onPrintersUpdated(list => {
+  activePrinters = list;
+  renderPrintersList();
+});
+
+function renderPrintersList() {
+  printersList.innerHTML = '';
+  if (!activePrinters.length) {
+    printersList.innerHTML = '<p style="font-size:11px;color:var(--text-dim);text-align:center;padding:8px 0">No printers added yet</p>';
+    return;
+  }
+  for (const p of activePrinters) {
+    const div = document.createElement('div');
+    div.className = 'printer-slot';
+    const dotCls = p.status === 'ready' ? 'dot-green' : p.status === 'error' ? 'dot-red' : 'dot-yellow';
+    div.innerHTML = `
+      <div class="printer-slot-info">
+        <span class="${dotCls}" style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px"></span>
+        <strong>${p.name}</strong>
+        <span style="color:var(--text-dim);font-size:10px;margin-left:4px">${p.mode}${p.ip ? ' · ' + p.ip : ''}</span>
+      </div>
+      <button class="btn-icon" onclick="removePrinterSlot('${p.id}')" title="Remove">✕</button>`;
+    printersList.appendChild(div);
+  }
+}
+
+window.removePrinterSlot = async (id) => {
+  await window.printer.removePrinter(id);
+};
+
+// Add-printer modal
+apType.addEventListener('change', () => {
+  const v = apType.value;
+  apIpField.classList.toggle('hidden',     v === 'usb');
+  apApikeyField.classList.toggle('hidden', v !== 'octoprint');
+  apSerialField.classList.toggle('hidden', v !== 'bambu');
+  apCodeField.classList.toggle('hidden',   v !== 'bambu');
+  apPortField.classList.toggle('hidden',   v !== 'usb');
+  if (v === 'usb') {
+    window.printer.listPorts().then(ports => {
+      apPort.innerHTML = '<option value="">Select port…</option>';
+      for (const p of ports) {
+        const o = document.createElement('option');
+        o.value = p.path;
+        o.textContent = p.manufacturer ? `${p.path} — ${p.manufacturer}` : p.path;
+        apPort.appendChild(o);
+      }
+    });
+  }
+});
+
+addPrinterBtn.addEventListener('click', () => addPrinterModal.classList.remove('hidden'));
+apCancelBtn.addEventListener('click',   () => addPrinterModal.classList.add('hidden'));
+
+apAddBtn.addEventListener('click', async () => {
+  const opts = {
+    name:       apName.value.trim() || null,
+    mode:       apType.value,
+    ip:         apIp.value.trim(),
+    apiKey:     apApikey.value.trim(),
+    serial:     apSerial.value.trim(),
+    accessCode: apCode.value.trim(),
+    portPath:   apPort.value,
+    baudRate:   115200,
+  };
+  apAddBtn.disabled = true; apAddBtn.textContent = 'Connecting…';
+  const res = await window.printer.addPrinter(opts);
+  apAddBtn.disabled = false; apAddBtn.textContent = 'Connect';
+  if (res.success) {
+    addPrinterModal.classList.add('hidden');
+    toast(`${opts.name || 'Printer'} connected`, 'success');
+    apName.value = ''; apIp.value = ''; apApikey.value = ''; apSerial.value = ''; apCode.value = '';
+  } else {
+    toast('Failed: ' + res.error, 'error');
+  }
 });
 
 // ── Auto-updater ───────────────────────────────────────────────────────────────
