@@ -400,6 +400,16 @@ button {
 .status-cancelled{ background: rgba(239,68,68,0.1); color: var(--red); }
 .status-error    { background: rgba(239,68,68,0.1); color: var(--red); }
 
+.item-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  background: var(--surface3);
+}
+
 .queue-item .item-actions {
   display: flex;
   gap: 4px;

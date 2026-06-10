@@ -277,12 +277,15 @@ function renderQueue() {
 
     const statusLabel = { queued: 'Queued', printing: 'Printing…', done: 'Done', cancelled: 'Cancelled', error: 'Error' }[item.status] || item.status;
     const icon = item.status === 'done' ? '✓' : item.status === 'printing' ? '⚙' : '📄';
+    const thumbHtml = item.thumbnail
+      ? `<img class="item-thumb" src="${item.thumbnail}" alt="" />`
+      : `<div class="item-icon">${icon}</div>`;
 
     div.innerHTML = `
-      <div class="item-icon">${icon}</div>
+      ${thumbHtml}
       <div class="item-info">
         <div class="item-name" title="${item.filePath}">${item.name}</div>
-        <div class="item-meta">${item.totalLines?.toLocaleString() || '?'} lines · ${formatTime(item.addedAt)}</div>
+        <div class="item-meta">${item.totalLines?.toLocaleString() || '?'} lines${item.filamentMm ? ' · ' + formatFilament(item.filamentMm) : ''} · ${formatTime(item.addedAt)}</div>
       </div>
       <div class="item-status status-${item.status}">${statusLabel}</div>
       <div class="item-actions">
@@ -301,6 +304,12 @@ function renderQueue() {
 function formatTime(iso) {
   if (!iso) return '';
   return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatFilament(mm) {
+  if (mm == null) return '';
+  if (mm >= 1000) return (mm / 1000).toFixed(2) + 'm';
+  return Math.round(mm) + 'mm';
 }
 
 // Drag & drop
@@ -606,7 +615,7 @@ function renderHistory(items) {
       <div class="item-icon">${icon}</div>
       <div class="item-info">
         <div class="item-name">${h.name}</div>
-        <div class="item-meta">${started} · ${duration} · ${h.mode || '?'}</div>
+        <div class="item-meta">${started} · ${duration}${h.filamentMm ? ' · ' + formatFilament(h.filamentMm) : ''} · ${h.mode || '?'}</div>
       </div>
       <div class="item-status status-${h.status}">${h.status}</div>
     </div>`;

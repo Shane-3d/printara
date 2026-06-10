@@ -358,12 +358,40 @@ ipcMain.handle('printer:browseFiles', async () => {
   });
 });
 
+function extractFilamentMm(raw) {
+  // PrusaSlicer: "; filament used [mm] = 1234.56"
+  let m = raw.match(/; filament used \[mm\] = ([\d.]+)/);
+  if (m) return parseFloat(m[1]);
+  // Orca/Bambu: "; total filament used(g) = 4.56"  → convert from g using ~1.24 g/cm3 PLA density
+  m = raw.match(/; total filament used\(g\) = ([\d.]+)/);
+  if (m) return parseFloat(m[1]) / 1.24 * 1000; // g → mm (approx, PLA)
+  // Generic: "; filament_total_mm = 1234"
+  m = raw.match(/; filament_total_mm = ([\d.]+)/);
+  if (m) return parseFloat(m[1]);
+  return null;
+}
+
+function extractThumbnail(raw) {
+  // PrusaSlicer / Orca / Bambu embed thumbnails as:
+  // ; thumbnail begin WxH <size>
+  // ; <base64 data>
+  // ; thumbnail end
+  const match = raw.match(/; thumbnail begin \d+x\d+ \d+\r?\n([\s\S]*?); thumbnail end/m);
+  if (!match) return null;
+  const b64 = match[1].replace(/; ?/gm, '').replace(/\r?\n/g, '').trim();
+  return b64 ? `data:image/png;base64,${b64}` : null;
+}
+
 ipcMain.handle('printer:addFilesToQueue', (_ev, filePaths) => {
   const items = filePaths.map(fp => {
     let totalLines = 0;
+    let thumbnail  = null;
+    let filamentMm = null;
     try {
       const raw = fs.readFileSync(fp, 'utf8');
       totalLines = raw.split('\n').filter(l => l.split(';')[0].trim()).length;
+      thumbnail  = extractThumbnail(raw);
+      filamentMm = extractFilamentMm(raw);
     } catch (_) {}
     const item = {
       id:         Date.now().toString(36) + Math.random().toString(36).slice(2),
@@ -371,6 +399,8 @@ ipcMain.handle('printer:addFilesToQueue', (_ev, filePaths) => {
       filePath:   fp,
       status:     'queued',
       totalLines,
+      thumbnail,
+      filamentMm,
       addedAt:    new Date().toISOString(),
     };
     queue.push(item);
