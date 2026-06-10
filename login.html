@@ -34,7 +34,7 @@
     /* Tabs */
     .tabs{display:flex;background:rgba(255,255,255,.04);border:1px solid #1e1e2e;border-radius:10px;overflow:hidden;margin-bottom:18px}
     .tab{flex:1;padding:9px 4px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
-    .tab.active{background:#0099ff;color:#fff}
+    .tab.active{background:#e02020;color:#fff}
     .tab:not(.active){background:transparent;color:#666}
 
     /* Inputs */
@@ -45,7 +45,7 @@
       background:rgba(255,255,255,.05);border:1px solid #1e1e2e;border-radius:10px;
       color:#e8e8e8;outline:none;transition:border-color .2s,box-shadow .2s;
     }
-    .fg input:focus{border-color:#0099ff;box-shadow:0 0 0 3px rgba(0,153,255,.14)}
+    .fg input:focus{border-color:#e02020;box-shadow:0 0 0 3px rgba(224,32,32,.14)}
 
     /* Buttons */
     .btn-main{
@@ -53,8 +53,8 @@
       border-radius:10px;cursor:pointer;font-family:inherit;transition:all .15s;
       margin-top:2px;
     }
-    .btn-blue{background:#0099ff;color:#fff}
-    .btn-blue:hover{background:#007ecc;box-shadow:0 5px 18px rgba(0,153,255,.4)}
+    .btn-blue{background:transparent;color:#e02020;border:1.5px solid #e02020;border-radius:999px}
+    .btn-blue:hover{background:rgba(224,32,32,.12)}
     .btn-green{background:#22c55e;color:#fff}
     .btn-green:hover{background:#16a34a;box-shadow:0 5px 18px rgba(34,197,94,.35)}
 
@@ -74,7 +74,7 @@
       display:flex;align-items:center;justify-content:center;gap:9px;
       transition:border-color .2s,background .2s;
     }
-    .btn-google:hover{border-color:#4285F4;background:rgba(66,133,244,.08);color:#e8e8e8}
+    .btn-google:hover{border-color:#ff8a80;background:rgba(66,133,244,.08);color:#e8e8e8}
   </style>
 </head>
 <body>
@@ -118,7 +118,7 @@
   <!-- Google Sign-In (works when GOOGLE_CLIENT_ID is configured in initGoogle()) -->
   <div id="g_id_onload" data-client_id="" data-callback="handleGoogle" data-auto_prompt="false"></div>
   <button class="btn-google" onclick="triggerGoogle()">
-    <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908C16.658 14.013 17.64 11.706 17.64 9.2z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+    <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#ff8a80" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908C16.658 14.013 17.64 11.706 17.64 9.2z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
     Sign in with Google
   </button>
 </div>
@@ -207,8 +207,8 @@ window.addEventListener('resize', resize);
 
 // Nozzles — positions set by measureAndBuild() before first tick
 const nozzles = [
-  {x:-80, y:0, color:'#0099ff', sparks:[]},
-  {x:W+80, y:0, color:'#ff6b35', sparks:[]},
+  {x:-80, y:0, color:'#e02020', sparks:[]},
+  {x:W+80, y:0, color:'#ff5555', sparks:[]},
 ];
 
 // Completed legs (full lines that stay drawn)
@@ -229,7 +229,7 @@ function measureAndBuild() {
     '#pIn button[type="submit"]',
     '.btn-google',
   ];
-  const colors = ['#0099ff', '#0099ff', '#ff6b35', '#4285F4'];
+  const colors = ['#e02020', '#e02020', '#ff5555', '#ff8a80'];
 
   const rects = selectors.map(sel => {
     const el = document.querySelector(sel);
@@ -247,12 +247,12 @@ function measureAndBuild() {
   nozzles[1].x = W + 80; nozzles[1].y = entryY;
 
   // Entry rail sweep to center
-  legQ[0].push({x1:-80,   y1:entryY, x2:CX,    y2:entryY, color:'#0099ff', draw:true, speed:9});
-  legQ[1].push({x1:W+80,  y1:entryY, x2:CX,    y2:entryY, color:'#ff6b35', draw:true, speed:9});
+  legQ[0].push({x1:-80,   y1:entryY, x2:CX,    y2:entryY, color:'#e02020', draw:true, speed:9});
+  legQ[1].push({x1:W+80,  y1:entryY, x2:CX,    y2:entryY, color:'#ff5555', draw:true, speed:9});
 
   for (let i = 0; i < rects.length; i++) {
     const rc = rects[i];
-    const color = colors[i] || '#0099ff';
+    const color = colors[i] || '#e02020';
     const prevY = i === 0 ? entryY : rects[i-1].b;
 
     // Transit down to top-center of this element (invisible move)
@@ -274,8 +274,8 @@ function measureAndBuild() {
 
   // Park off-screen
   const lastB = rects[rects.length-1].b;
-  legQ[0].push({x1:CX, y1:lastB, x2:-80,   y2:lastB+50, color:'#0099ff', draw:false, speed:12});
-  legQ[1].push({x1:CX, y1:lastB, x2:W+80,  y2:lastB+50, color:'#ff6b35', draw:false, speed:12});
+  legQ[0].push({x1:CX, y1:lastB, x2:-80,   y2:lastB+50, color:'#e02020', draw:false, speed:12});
+  legQ[1].push({x1:CX, y1:lastB, x2:W+80,  y2:lastB+50, color:'#ff5555', draw:false, speed:12});
 
   curLeg[0] = legQ[0].shift();
   curLeg[1] = legQ[1].shift();
