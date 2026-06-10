@@ -725,29 +725,18 @@ async function runBambuPrint(item) {
   const tmpPath = path.join(os.tmpdir(), 'printara_bambu_' + filename);
   fs.copyFileSync(item.filePath, tmpPath);
 
-  const ftpClient = new ftp.Client();
-  ftpClient.ftp.verbose = false;
+  let uploadDir = '/sdcard';
   try {
-    await ftpClient.access({
-      host: wifi.ip, port: 990,
-      user: 'bblp', password: wifi.accessCode,
-      secure: 'implicit',
-      secureOptions: { rejectUnauthorized: false },
-    });
-    // Bambu returns 0.0.0.0 in PASV — override the data address with the real printer IP
-    ftpClient.ftp.dataAddress = wifi.ip;
-    await ftpClient.cd('/sdcard');
-    await ftpClient.uploadFrom(tmpPath, filename);
+    uploadDir = await bambuFtpUpload(wifi.ip, wifi.accessCode, filename, tmpPath);
   } finally {
-    ftpClient.close();
     try { fs.unlinkSync(tmpPath); } catch (_) {}
   }
 
-  // Send MQTT print command — file URL uses file:///sdcard/ format
+  // Send MQTT print command — file URL reflects where FTP actually landed
   emit('printer:printProgress', { progress: 0, currentLine: 0, totalLines: 0, gcode: 'Starting print…' });
   await bambuPublish({
     command:      'project_file',
-    url:          `file:///sdcard/${filename}`,
+    url:          `file://${uploadDir}/${filename}`,
     param:        filename,
     subtask_name: path.basename(filename, path.extname(filename)),
     task_id:      '0',
@@ -879,9 +868,7 @@ ipcMain.handle('mqtt:disconnect', (_ev, printerId) => {
 });
 
 // ── Bambu Lab FTP upload (implicit TLS, port 990) ────────────────────────────────
-ipcMain.handle('ftp:upload', async (_ev, ip, pin, filename, bufferData) => {
-  const tmpPath = path.join(os.tmpdir(), 'printara_' + filename);
-  fs.writeFileSync(tmpPath, Buffer.from(bufferData));
+async function bambuFtpUpload(ip, pin, filename, localPath) {
   const client = new ftp.Client();
   client.ftp.verbose = false;
   try {
@@ -889,12 +876,27 @@ ipcMain.handle('ftp:upload', async (_ev, ip, pin, filename, bufferData) => {
       host: ip, port: 990, user: 'bblp', password: pin,
       secure: 'implicit', secureOptions: { rejectUnauthorized: false },
     });
+    // Override PASV IP — Bambu returns 0.0.0.0 which breaks data connections
     client.ftp.dataAddress = ip;
-    await client.cd('/sdcard');
-    await client.uploadFrom(tmpPath, filename);
-    return { ok: true };
+    // Try known Bambu upload dirs; fall back to root if none exist
+    let uploadDir = '/';
+    for (const dir of ['/sdcard', '/usb']) {
+      try { await client.cd(dir); uploadDir = dir; break; } catch (_) {}
+    }
+    await client.uploadFrom(localPath, filename);
+    return uploadDir;
   } finally {
     client.close();
+  }
+}
+
+ipcMain.handle('ftp:upload', async (_ev, ip, pin, filename, bufferData) => {
+  const tmpPath = path.join(os.tmpdir(), 'printara_' + filename);
+  fs.writeFileSync(tmpPath, Buffer.from(bufferData));
+  try {
+    const dir = await bambuFtpUpload(ip, pin, filename, tmpPath);
+    return { ok: true, dir };
+  } finally {
     try { fs.unlinkSync(tmpPath); } catch (_) {}
   }
 });
