@@ -720,7 +720,7 @@ async function runWifiPrint(item) {
 async function runBambuPrint(item) {
   const filename = path.basename(item.filePath);
 
-  // FTP upload to /model/ on the printer
+  // FTP upload to /sdcard/ (Bambu Lab uses implicit FTPS on port 990, uploads to /sdcard/)
   emit('printer:printProgress', { progress: 0, currentLine: 0, totalLines: 0, gcode: 'Uploading via FTP…' });
   const tmpPath = path.join(os.tmpdir(), 'printara_bambu_' + filename);
   fs.copyFileSync(item.filePath, tmpPath);
@@ -731,21 +731,23 @@ async function runBambuPrint(item) {
     await ftpClient.access({
       host: wifi.ip, port: 990,
       user: 'bblp', password: wifi.accessCode,
-      secure: 'implicit', secureOptions: { rejectUnauthorized: false },
+      secure: 'implicit',
+      secureOptions: { rejectUnauthorized: false },
     });
-    // Bambu firmware exposes files at the root — try /model first, fall back to root
-    try { await ftpClient.cd('/model'); } catch (_) { /* root is fine */ }
+    // Bambu returns 0.0.0.0 in PASV — override the data address with the real printer IP
+    ftpClient.ftp.dataAddress = wifi.ip;
+    await ftpClient.cd('/sdcard');
     await ftpClient.uploadFrom(tmpPath, filename);
   } finally {
     ftpClient.close();
     try { fs.unlinkSync(tmpPath); } catch (_) {}
   }
 
-  // Send MQTT print command
+  // Send MQTT print command — file URL uses file:///sdcard/ format
   emit('printer:printProgress', { progress: 0, currentLine: 0, totalLines: 0, gcode: 'Starting print…' });
   await bambuPublish({
     command:      'project_file',
-    url:          `ftp:///model/${filename}`,
+    url:          `file:///sdcard/${filename}`,
     param:        filename,
     subtask_name: path.basename(filename, path.extname(filename)),
     task_id:      '0',
@@ -887,7 +889,8 @@ ipcMain.handle('ftp:upload', async (_ev, ip, pin, filename, bufferData) => {
       host: ip, port: 990, user: 'bblp', password: pin,
       secure: 'implicit', secureOptions: { rejectUnauthorized: false },
     });
-    try { await client.cd('/model'); } catch (_) { /* root is fine */ }
+    client.ftp.dataAddress = ip;
+    await client.cd('/sdcard');
     await client.uploadFrom(tmpPath, filename);
     return { ok: true };
   } finally {
