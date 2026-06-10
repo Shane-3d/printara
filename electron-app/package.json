@@ -9,7 +9,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "dist": "electron-builder --win nsis"
+    "dist": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg"
   },
   "build": {
     "appId": "com.printara.app",
@@ -31,6 +32,13 @@
       "target": "nsis",
       "icon": "logo.ico"
     },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    },
+    "dmg": {
+      "title": "Printara ${version}"
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
@@ -38,7 +46,12 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Printara"
     },
-    "artifactName": "PrintaraSetup.exe"
+    "artifactName": "${productName}Setup.exe",
+    "publish": {
+      "provider": "github",
+      "owner": "Shane-3d",
+      "repo": "printara"
+    }
   },
   "keywords": [
     "3d-printing",
@@ -53,6 +66,7 @@
   "dependencies": {
     "@serialport/parser-readline": "^12.0.0",
     "basic-ftp": "^6.0.1",
+    "electron-updater": "^6.8.9",
     "mqtt": "^5.15.1",
     "serialport": "^12.0.0"
   },
