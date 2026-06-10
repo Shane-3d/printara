@@ -733,7 +733,8 @@ async function runBambuPrint(item) {
       user: 'bblp', password: wifi.accessCode,
       secure: 'implicit', secureOptions: { rejectUnauthorized: false },
     });
-    await ftpClient.cd('/model');
+    // Bambu firmware exposes files at the root — try /model first, fall back to root
+    try { await ftpClient.cd('/model'); } catch (_) { /* root is fine */ }
     await ftpClient.uploadFrom(tmpPath, filename);
   } finally {
     ftpClient.close();
@@ -886,7 +887,7 @@ ipcMain.handle('ftp:upload', async (_ev, ip, pin, filename, bufferData) => {
       host: ip, port: 990, user: 'bblp', password: pin,
       secure: 'implicit', secureOptions: { rejectUnauthorized: false },
     });
-    await client.cd('/model');
+    try { await client.cd('/model'); } catch (_) { /* root is fine */ }
     await client.uploadFrom(tmpPath, filename);
     return { ok: true };
   } finally {
