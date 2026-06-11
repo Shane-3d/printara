@@ -90,14 +90,12 @@ a:hover { color: var(--accent2); }
   width: auto;
   max-width: 120px;
   object-fit: contain;
-  border-radius: 8px;
 }
 .logo-img--login {
   height: 90px;
   width: auto;
   max-width: 200px;
   object-fit: contain;
-  border-radius: 10px;
 }
 .nav { display: flex; gap: 8px; margin-left: auto; }
 .nav-link {
