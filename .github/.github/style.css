@@ -232,22 +232,22 @@ a:hover { color: var(--accent2); }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: transparent;
-  color: #e02020;
-  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), #b01010);
+  color: #fff;
+  font-weight: 600;
   font-size: 15px;
-  padding: 11px 26px;
-  border-radius: 999px;
-  border: 1.5px solid #e02020;
+  padding: 13px 28px;
+  border-radius: 12px;
+  border: none;
   cursor: pointer;
-  transition: background .15s, transform .15s;
+  transition: all .25s;
   text-decoration: none;
-  box-shadow: none;
+  box-shadow: 0 4px 24px rgba(224,32,32,0.4);
 }
 .btn-primary:hover {
-  background: rgba(224,32,32,0.1);
-  transform: translateY(-1px);
-  color: #e02020;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(224,32,32,0.5);
+  color: #fff;
 }
 .btn-full { width: 100%; justify-content: center; }
 .btn-secondary {
@@ -255,19 +255,18 @@ a:hover { color: var(--accent2); }
   align-items: center;
   gap: 8px;
   background: transparent;
-  color: #e02020;
-  font-weight: 700;
+  color: var(--text2);
+  font-weight: 600;
   font-size: 15px;
-  padding: 11px 26px;
-  border-radius: 999px;
-  border: 1.5px solid #e02020;
+  padding: 13px 28px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
   cursor: pointer;
-  transition: background .15s, transform .15s;
+  transition: all .25s;
 }
 .btn-secondary:hover {
-  background: rgba(224,32,32,0.1);
-  color: #e02020;
-  transform: translateY(-1px);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ===== CUBE ===== */

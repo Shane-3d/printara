@@ -479,6 +479,22 @@
   }
   function getAccounts() { return JSON.parse(localStorage.getItem('profab_admin_accounts') || '[]'); }
   function saveAccounts(a) { localStorage.setItem('profab_admin_accounts', JSON.stringify(a)); }
+  // Cloud-backed accounts so login works from any device; localStorage is just an offline cache.
+  const ACCOUNTS_API = '/.netlify/functions/admin-accounts';
+  async function fetchCloudAccounts() {
+    const res = await fetch(ACCOUNTS_API);
+    if (!res.ok) throw new Error('Could not reach the account server');
+    const accts = await res.json();
+    saveAccounts(accts);            // refresh the local cache
+    return accts;
+  }
+  async function pushCloudAccount(a) {
+    const res = await fetch(ACCOUNTS_API, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id:a.id, username:a.username, salt:a.salt, hash:a.hash, role:a.role, permissions:a.permissions }),
+    });
+    if (!res.ok) { const d = await res.json().catch(()=>({})); throw new Error(d.error || 'Could not save account'); }
+  }
   function getSession() {
     const raw = sessionStorage.getItem('profab_admin_session');
     if (!raw) return null;
@@ -505,6 +521,7 @@
   }
 
   function handleHero() { getSession() ? location.href='tools.html' : openMod('loginModal'); }
+
   function goTool(tab) { getSession() ? location.href='tools.html#'+tab : openMod('loginModal'); }
 
   // -- Modals --
@@ -524,8 +541,10 @@
     const err = document.getElementById('siErr');
     const user = document.getElementById('siUser').value.trim().toLowerCase();
     const pwd  = document.getElementById('siPwd').value;
-    const accts = getAccounts();
-    if (!accts.length) { err.textContent='No accounts yet � sign up first!'; err.classList.add('on'); switchAuth('up'); return; }
+    let accts;
+    try { accts = await fetchCloudAccounts(); }
+    catch { accts = getAccounts(); }   // offline: fall back to cached accounts
+    if (!accts.length) { err.textContent='No accounts yet — sign up first!'; err.classList.add('on'); switchAuth('up'); return; }
     const acct = accts.find(a => a.username.toLowerCase()===user);
     if (acct && await hashPwd(acct.salt,pwd)===acct.hash) {
       startSession(acct); closeMod('loginModal'); updateHeader(); location.href='tools.html';
@@ -546,7 +565,9 @@
     if (pwd!==cfm)             { err.textContent='Passwords do not match.'; err.classList.add('on'); return; }
     if (pwd.length<6)          { err.textContent='Password must be 6+ characters.'; err.classList.add('on'); return; }
     if (!/^[a-z0-9_]+$/.test(user)) { err.textContent='Username: letters, numbers, _ only.'; err.classList.add('on'); return; }
-    const accts = getAccounts();
+    let accts;
+    try { accts = await fetchCloudAccounts(); }
+    catch { err.textContent='Cannot reach the account server. Check your connection and try again.'; err.classList.add('on'); return; }
     if (accts.find(a=>a.username.toLowerCase()===user)) { err.textContent='Username taken.'; err.classList.add('on'); return; }
     const isFirst = !accts.length;
     const salt = crypto.randomUUID(), hash = await hashPwd(salt,pwd);
@@ -554,6 +575,8 @@
       role: isFirst?'owner':'user',
       permissions: isFirst?['studio','statue','litho','map','users','clockin','settings']:['studio','statue','litho','map']
     };
+    try { await pushCloudAccount(acct); }
+    catch (e2) { err.textContent = e2.message || 'Could not create account.'; err.classList.add('on'); return; }
     accts.push(acct); saveAccounts(accts);
     startSession(acct); closeMod('loginModal'); updateHeader(); location.href='tools.html';
   }

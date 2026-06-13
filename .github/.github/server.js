@@ -20,9 +20,6 @@ const mqtt = require('mqtt');
 const ftp  = require('basic-ftp');
 const { WebSocketServer } = require('ws');
 
-// Load local secrets (STRIPE_SECRET_KEY, etc.) from a gitignored .env for `npm run dev`
-try { require('dotenv').config(); } catch (_) {}
-
 const PORT = process.env.PORT || 3000;
 
 const MIME = {
@@ -129,33 +126,6 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify({ error: e.message }));
     });
     req.pipe(proxyReq);
-    return;
-  }
-
-  // ── Netlify Functions bridge ───────────────────────────────────────────────
-  // Runs the same serverless functions locally so `npm run dev` can serve
-  // /.netlify/functions/<name> (e.g. Stripe checkout) without the Netlify CLI.
-  const fnMatch = url.pathname.match(/^\/\.netlify\/functions\/([\w-]+)$/);
-  if (fnMatch) {
-    const fnName = fnMatch[1];
-    try {
-      const chunks = [];
-      for await (const chunk of req) chunks.push(chunk);
-      const mod = require(`./netlify/functions/${fnName}.js`);
-      const event = {
-        httpMethod: req.method,
-        body: Buffer.concat(chunks).toString(),
-        headers: req.headers,
-        queryStringParameters: Object.fromEntries(url.searchParams),
-      };
-      const result = await mod.handler(event, {});
-      res.writeHead(result.statusCode || 200, result.headers || { 'Content-Type': 'application/json' });
-      res.end(result.body || '');
-    } catch (e) {
-      console.error('[fn]', fnName, e.message);
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: e.message }));
-    }
     return;
   }
 

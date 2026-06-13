@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Download Printara — 3D Print Queue Manager</title>
-  <link rel="icon" href="logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <style>
@@ -57,12 +56,9 @@
       text-decoration: none;
       color: var(--text);
     }
-    .nav-logo img {
-      filter: drop-shadow(0 0 7px rgba(220,40,40,.5));
-      transition: filter .25s, transform .25s;
-    }
-    .nav-logo:hover img { filter: drop-shadow(0 0 16px rgba(255,60,60,.85)); transform: scale(1.1); }
-    .nav-logo span { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: .04em; }
+
+    .nav-logo svg { color: var(--accent); }
+    .nav-logo span { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; }
 
     nav .spacer { flex: 1; }
 
@@ -557,7 +553,11 @@
 
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="logo.svg" alt="Printara" style="width:32px;height:32px;object-fit:contain;" />
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+      <line x1="12" y1="22" x2="12" y2="15.5"/>
+      <polyline points="22 8.5 12 15.5 2 8.5"/>
+    </svg>
     <span>Printara</span>
   </a>
   <div class="spacer"></div>
@@ -680,107 +680,61 @@
 <!-- ── Download ───────────────────────────────────────────────────────────────── -->
 <div id="download" style="max-width:680px;margin:0 auto 24px;padding:0 24px">
 
-  <!-- Subscription gate — shown to non-subscribers -->
-  <div id="sub-gate" style="display:none; max-width:560px; margin:0 auto 22px; background:linear-gradient(160deg,#1a0e0e,#111); border:1px solid #3a1f1f; border-radius:16px; padding:34px 28px; text-align:center">
-    <div style="font-size:36px; margin-bottom:6px">🔒</div>
-    <h2 style="margin:0 0 8px; font-size:22px; color:#fff">Subscribe to download Printara</h2>
-    <p style="color:#999; font-size:14px; margin:0 auto 22px; max-width:420px; line-height:1.6">The Printara desktop app is for subscribers. Get unlimited access for <strong style="color:#fff">$3.99/month</strong> — cancel anytime.</p>
-    <button onclick="dlSubscribe()" style="background:linear-gradient(135deg,#e02020,#ff6b35); border:none; color:#fff; font-weight:800; font-size:15px; padding:14px 28px; border-radius:10px; cursor:pointer; width:100%; max-width:320px">★ Subscribe $3.99/mo to unlock</button>
-    <p style="color:#555; font-size:11px; margin-top:14px">Test mode · card 4242 4242 4242 4242</p>
+  <!-- Why local -->
+  <div style="background:#111;border:1px solid #252525;border-radius:14px;padding:20px 24px;margin-bottom:20px;font-size:13px;color:#888;line-height:1.7">
+    <strong style="color:#e8e8e8;font-size:14px">Why run locally?</strong><br/>
+    Browsers block websites from reaching devices on your home network — that's why connecting from printara.netlify.app doesn't work without changing settings.
+    Running the queue on <em>your own computer</em> bypasses this completely. It opens in your browser just like a website, but talks directly to your printer.
   </div>
 
-  <!-- Downloads — shown only to subscribers -->
-  <div id="sub-downloads" style="display:none">
-    <!-- Why local -->
-    <div style="background:#111;border:1px solid #252525;border-radius:14px;padding:20px 24px;margin-bottom:20px;font-size:13px;color:#888;line-height:1.7">
-      <strong style="color:#e8e8e8;font-size:14px">Why run locally?</strong><br/>
-      Browsers block websites from reaching devices on your home network. Running the queue on <em>your own computer</em> bypasses this completely — it opens in your browser but talks directly to your printer.
-    </div>
-
-    <!-- Windows card -->
-    <div class="dl-card primary" style="margin-bottom:16px;display:block;padding:24px 28px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <span class="platform-icon" style="font-size:28px">🪟</span>
-        <div>
-          <h3 style="margin:0 0 2px">Windows</h3>
-          <div class="dl-meta">Windows 10 / 11 · .exe installer</div>
-        </div>
+  <!-- Windows card -->
+  <div class="dl-card primary" style="margin-bottom:16px;display:block;padding:24px 28px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <span class="platform-icon" style="font-size:28px">🪟</span>
+      <div>
+        <h3 style="margin:0 0 2px">Windows</h3>
+        <div class="dl-meta">Windows 10 / 11 · .exe installer</div>
       </div>
-      <p style="font-size:13px;color:#888;margin-bottom:20px">Download, run the installer, open Printara from your Start menu. Done.</p>
-      <a class="dl-btn" href="https://github.com/Shane-3d/printara/releases/latest/download/PrintaraSetup.exe" style="display:block;text-align:center;font-size:15px;padding:14px">
-        ↓ Download for Windows (.exe)
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:20px">Download, run the installer, open Printara from your Start menu. Done.</p>
+    <a class="dl-btn" href="https://github.com/shanevandekrol-dotcom/printara/releases/latest/download/PrintaraSetup.exe" style="display:block;text-align:center;font-size:15px;padding:14px">
+      ↓ Download for Windows (.exe)
+    </a>
+    <p style="font-size:11px;color:#555;margin-top:10px;text-align:center">If Windows shows a SmartScreen warning, click "More info" → "Run anyway"</p>
+  </div>
+
+  <!-- Mac / Linux card -->
+  <div class="dl-card" style="display:block;padding:24px 28px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <span class="platform-icon" style="font-size:28px">🍎🐧</span>
+      <div>
+        <h3 style="margin:0 0 2px">Mac &amp; Linux</h3>
+        <div class="dl-meta">.zip / .deb / .rpm</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <a class="dl-btn secondary" href="https://github.com/shanevandekrol-dotcom/printara/releases/latest/download/Printara-darwin-x64.zip" style="display:block;text-align:center">
+        ↓ Download for macOS (.zip)
       </a>
-      <p style="font-size:11px;color:#555;margin-top:10px;text-align:center">If Windows shows a SmartScreen warning, click "More info" → "Run anyway"</p>
-    </div>
-
-    <!-- Mac / Linux card -->
-    <div class="dl-card" style="display:block;padding:24px 28px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <span class="platform-icon" style="font-size:28px">🍎🐧</span>
-        <div>
-          <h3 style="margin:0 0 2px">Mac &amp; Linux</h3>
-          <div class="dl-meta">.zip / .deb / .rpm</div>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <a class="dl-btn secondary" href="https://github.com/Shane-3d/printara/releases/latest/download/Printara-darwin-x64.zip" style="display:block;text-align:center">
-          ↓ Download for macOS (.zip)
-        </a>
-        <a class="dl-btn secondary" href="https://github.com/Shane-3d/printara/releases/latest" style="display:block;text-align:center">
-          ↓ Download for Linux (.deb / .rpm)
-        </a>
-      </div>
+      <a class="dl-btn secondary" href="https://github.com/shanevandekrol-dotcom/printara/releases/latest" style="display:block;text-align:center">
+        ↓ Download for Linux (.deb / .rpm)
+      </a>
     </div>
   </div>
 </div>
 
 <p class="version-note">
-  <span id="ver-note">Always up to date</span> ·
-  <a href="https://github.com/Shane-3d/printara/releases">All releases</a> ·
-  <a href="https://github.com/Shane-3d/printara">GitHub</a>
+  <span id="ver-note">Always up to date</span> · Free &amp; open source ·
+  <a href="https://github.com/shanevandekrol-dotcom/printara/releases">All releases</a> ·
+  <a href="https://github.com/shanevandekrol-dotcom/printara">GitHub</a>
 </p>
-
 <script>
-  // ── Subscription gate for downloads (test mode) ────────────────────────────
-  (function () {
-    function subActive() {
-      try { return JSON.parse(localStorage.getItem('printara_sub') || '{}').active === true; }
-      catch (e) { return false; }
-    }
-    // Returning from a successful Stripe Checkout → unlock.
-    if (new URLSearchParams(location.search).get('sub') === 'success') {
-      localStorage.setItem('printara_sub', JSON.stringify({ active: true, since: Date.now() }));
-      history.replaceState(null, '', location.pathname);
-    }
-    var gate = document.getElementById('sub-gate');
-    var dls  = document.getElementById('sub-downloads');
-    if (subActive()) { if (dls) dls.style.display = 'block'; if (gate) gate.style.display = 'none'; }
-    else             { if (gate) gate.style.display = 'block'; if (dls) dls.style.display = 'none'; }
-
-    window.dlSubscribe = async function () {
-      try {
-        var res = await fetch('/.netlify/functions/create-checkout-session', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ origin: location.origin, successPath: '/download.html', cancelPath: '/download.html' }),
-        });
-        var data = await res.json().catch(function () { return {}; });
-        if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout');
-        location.href = data.url;
-      } catch (e) {
-        alert('Checkout error: ' + (e.message || e) + '\n\n(Make sure the API server is running: node api-server.js)');
-      }
-    };
-  })();
-</script>
-
-<script>
-  // Version badge
-  fetch('https://api.github.com/repos/Shane-3d/printara/releases/latest')
+  fetch('https://api.github.com/repos/shanevandekrol-dotcom/printara/releases/latest')
     .then(r => r.json())
     .then(d => {
       if (!d.name) return;
       document.getElementById('ver-badge').textContent = d.name.replace('Printara ', '');
-      document.getElementById('ver-note').textContent  = 'Latest: ' + d.name + ' � published ' + new Date(d.published_at).toLocaleDateString();
+      document.getElementById('ver-note').textContent  = 'Latest: ' + d.name + ' · published ' + new Date(d.published_at).toLocaleDateString();
     })
     .catch(() => {});
 </script>
@@ -792,37 +746,37 @@
 
   <div class="feature-grid">
     <div class="feature-card">
-      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
+      <div class="icon">🔌</div>
       <h4>Universal USB Connection</h4>
       <p>Auto-detects any serial port. Works with Marlin, Klipper (USB serial), and most 3D printer firmware out of the box.</p>
     </div>
 
     <div class="feature-card">
-      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+      <div class="icon">📋</div>
       <h4>Drag &amp; Drop Queue</h4>
       <p>Drop .gcode files onto the app to queue them instantly. Reorder, remove, or add files at any time — even mid-print.</p>
     </div>
 
     <div class="feature-card">
-      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div>
+      <div class="icon">⇥</div>
       <h4>Auto-Eject After Print</h4>
       <p>Configurable G-code sequence runs after every print — parks the head, moves the bed forward, and cools down automatically.</p>
     </div>
 
     <div class="feature-card">
-      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg></div>
+      <div class="icon">🌡</div>
       <h4>Live Temperature Display</h4>
       <p>Hotend and bed temperatures update in real time. No more wondering if your printer is at temp.</p>
     </div>
 
     <div class="feature-card">
-      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+      <div class="icon">📟</div>
       <h4>Built-in G-code Console</h4>
       <p>Type any G-code command directly into the console for manual control. Full response log included.</p>
     </div>
 
     <div class="feature-card">
-      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg></div>
+      <div class="icon">⏸</div>
       <h4>Pause, Resume &amp; Cancel</h4>
       <p>Full print control at your fingertips. Pause to check a layer, resume when ready, or cancel and move to the next job.</p>
     </div>
@@ -888,11 +842,10 @@
 <!-- ── Footer ─────────────────────────────────────────────────────────────────── -->
 <footer>
   <p>Printara Desktop App · Free &amp; open source ·
-    <a href="https://github.com/Shane-3d/printara">GitHub</a> ·
+    <a href="https://github.com/shanevandekrol-dotcom/printara">GitHub</a> ·
     <a href="index.html">Back to Printara</a>
   </p>
 </footer>
 
 </body>
 </html>
-

@@ -1,0 +1,83 @@
+{
+  "name": "printara",
+  "productName": "Printara",
+  "version": "1.3.0",
+  "description": "3D Print Queue Manager — connect any WiFi printer, queue jobs, auto-start next print",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "dist": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg"
+  },
+  "build": {
+    "appId": "com.printara.app",
+    "productName": "Printara",
+    "copyright": "Copyright © 2026 Printara",
+    "icon": "logo.ico",
+    "files": [
+      "**/*",
+      "!out/**",
+      "!node_modules/.cache/**"
+    ],
+    "extraResources": [
+      {
+        "from": "../logo.png",
+        "to": "logo.png"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "logo.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    },
+    "dmg": {
+      "title": "Printara ${version}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Printara"
+    },
+    "artifactName": "${productName}Setup.exe",
+    "publish": {
+      "provider": "github",
+      "owner": "Shane-3d",
+      "repo": "printara"
+    }
+  },
+  "keywords": [
+    "3d-printing",
+    "gcode",
+    "octoprint",
+    "moonraker",
+    "klipper",
+    "bambu"
+  ],
+  "author": "Printara",
+  "license": "MIT",
+  "dependencies": {
+    "@serialport/parser-readline": "^12.0.0",
+    "basic-ftp": "^6.0.1",
+    "electron-updater": "^6.8.9",
+    "mqtt": "^5.15.1",
+    "serialport": "^12.0.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "electron": "^31.0.0",
+    "electron-builder": "^26.15.2"
+  }
+}

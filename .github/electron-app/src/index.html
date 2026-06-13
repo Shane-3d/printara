@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Printara — 3D Print Queue Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;600&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Title bar ───────────────────────────────────────────────────────── -->
+  <header id="titlebar">
+    <div class="logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+        <line x1="12" y1="22" x2="12" y2="15.5"/>
+        <polyline points="22 8.5 12 15.5 2 8.5"/>
+      </svg>
+      <h1>Printara</h1>
+      <span class="tagline">Print Queue Manager</span>
+    </div>
+    <div class="spacer"></div>
+    <div id="reconnect-badge" class="reconnect-badge hidden">Reconnecting…</div>
+    <button class="btn-icon" id="history-btn" title="Print History" style="margin-right:8px">📋</button>
+    <div id="status-chip" class="status-chip">
+      <div class="dot"></div>
+      <span id="status-text">Disconnected</span>
+    </div>
+  </header>
+
+  <!-- ── Update banner ─────────────────────────────────────────────────── -->
+  <div id="update-banner" class="update-banner hidden">
+    <span id="update-msg">A new version is available.</span>
+    <button class="btn-primary" id="update-install-btn" style="margin-left:12px;padding:4px 14px;font-size:12px">Restart & Install</button>
+    <button class="btn-icon" id="update-dismiss-btn" style="margin-left:6px" title="Dismiss">✕</button>
+  </div>
+
+  <!-- ── Left sidebar ────────────────────────────────────────────────────── -->
+  <aside id="sidebar-left">
+
+    <!-- Connection mode tabs -->
+    <div class="panel" style="padding-bottom:0">
+      <div class="panel-title">Connection</div>
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="wifi">WiFi</button>
+        <button class="mode-tab" data-mode="usb">USB</button>
+        <button class="mode-tab" data-mode="multi">Multi</button>
+      </div>
+    </div>
+
+    <!-- WiFi panel -->
+    <div id="wifi-panel" class="panel">
+      <div class="field">
+        <label>Printer Type</label>
+        <select id="wifi-type">
+          <option value="octoprint">OctoPrint (most printers)</option>
+          <option value="moonraker">Moonraker / Klipper</option>
+          <option value="bambu">Bambu Lab</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Printer IP Address</label>
+        <input type="text" id="wifi-ip" placeholder="192.168.1.100" spellcheck="false" />
+      </div>
+      <div class="field" id="apikey-field">
+        <label>OctoPrint API Key</label>
+        <input type="text" id="wifi-apikey" placeholder="Paste API key…" spellcheck="false" />
+      </div>
+      <div class="field hidden" id="bambu-serial-field">
+        <label>Serial Number</label>
+        <input type="text" id="bambu-serial" placeholder="e.g. 01P00A…" spellcheck="false" />
+      </div>
+      <div class="field hidden" id="bambu-code-field">
+        <label>Access Code</label>
+        <input type="text" id="bambu-code" placeholder="8-digit code on printer" spellcheck="false" />
+      </div>
+      <div class="btn-row mt8">
+        <button class="btn-primary" id="wifi-connect-btn">Connect</button>
+        <button class="btn-secondary hidden" id="wifi-disconnect-btn">Disconnect</button>
+      </div>
+    </div>
+
+    <!-- Multi-printer panel -->
+    <div id="multi-panel" class="panel hidden">
+      <div id="printers-list"></div>
+      <button class="btn-secondary" id="add-printer-btn" style="width:100%;margin-top:4px">+ Add Printer</button>
+    </div>
+
+    <!-- USB panel -->
+    <div id="usb-panel" class="panel hidden">
+      <div class="field">
+        <label>Port</label>
+        <div class="flex-gap8">
+          <select id="port-select" style="flex:1"><option value="">Select port…</option></select>
+          <button class="btn-icon" id="refresh-ports" title="Refresh">⟳</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Baud Rate</label>
+        <select id="baud-select">
+          <option value="115200" selected>115200 (most printers)</option>
+          <option value="250000">250000 (Marlin)</option>
+          <option value="230400">230400</option>
+          <option value="57600">57600</option>
+          <option value="9600">9600</option>
+        </select>
+      </div>
+      <div class="btn-row mt8">
+        <button class="btn-primary" id="usb-connect-btn">Connect</button>
+        <button class="btn-secondary hidden" id="usb-disconnect-btn">Disconnect</button>
+      </div>
+    </div>
+
+    <!-- Temperature -->
+    <div class="panel">
+      <div class="panel-title">Temperature</div>
+      <div class="temp-grid">
+        <div class="temp-card">
+          <div class="label">Hotend</div>
+          <div class="value" id="temp-hotend">—</div>
+          <div class="target" id="temp-hotend-target"></div>
+        </div>
+        <div class="temp-card">
+          <div class="label">Bed</div>
+          <div class="value" id="temp-bed">—</div>
+          <div class="target" id="temp-bed-target"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto-eject (USB only) -->
+    <div class="panel" id="eject-panel">
+      <div class="panel-title">Auto-Eject <span style="font-size:10px;color:var(--text-muted)">(USB)</span></div>
+      <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;">G-code that runs after each print to park the head and present the bed.</p>
+      <button class="btn-secondary" id="edit-eject-btn" style="width:100%">Edit Eject Sequence</button>
+    </div>
+
+    <!-- Quick jog -->
+    <div class="panel">
+      <div class="panel-title">Quick Commands</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button class="btn-secondary" onclick="sendCmd('G28')">Home All</button>
+        <button class="btn-secondary" onclick="sendCmd('G28 X Y')">Home XY</button>
+        <button class="btn-secondary" onclick="sendCmd('G28 Z')">Home Z</button>
+        <button class="btn-secondary" onclick="sendCmd('M84')">Motors Off</button>
+        <button class="btn-secondary" onclick="sendCmd('M104 S0\nM140 S0')">Cooldown</button>
+        <button class="btn-secondary" onclick="sendCmd('M105')">Get Temp</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── Main area: Queue ───────────────────────────────────────────────── -->
+  <main id="main">
+    <div id="queue-header">
+      <h2>Print Queue</h2>
+      <span id="queue-count">0 items</span>
+      <button class="btn-secondary" id="add-files-btn">+ Add Files</button>
+      <button class="btn-secondary" id="clear-queue-btn">Clear Done</button>
+      <button class="btn-primary" id="start-queue-btn" disabled>▶ Start Queue</button>
+    </div>
+
+    <div id="drop-zone">
+      <div id="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+        <p>No files in the queue</p>
+        <p class="hint">Click "Add Files" or drag &amp; drop .gcode files here</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Right sidebar: Console + Webcam ──────────────────────────────── -->
+  <aside id="sidebar-right">
+    <!-- Webcam panel -->
+    <div id="webcam-panel" class="webcam-panel hidden">
+      <div class="webcam-header">
+        <span>Camera</span>
+        <button class="btn-icon" id="webcam-toggle-btn" title="Hide camera">▾</button>
+      </div>
+      <div id="webcam-viewport">
+        <img id="webcam-img" alt="Webcam feed" />
+        <div id="webcam-placeholder">No camera connected</div>
+      </div>
+    </div>
+
+    <div id="console-header">
+      <h3>Console</h3>
+      <button class="btn-icon" id="clear-console-btn" title="Clear">✕</button>
+    </div>
+    <div id="console-output"></div>
+    <div id="console-input-row">
+      <input type="text" id="console-input" placeholder="Send G-code…" autocomplete="off" spellcheck="false" />
+      <button id="console-send">Send</button>
+    </div>
+  </aside>
+
+  <!-- ── Bottom bar: Progress ───────────────────────────────────────────── -->
+  <footer id="bottom-bar">
+    <div id="progress-info">
+      <div id="current-file" class="idle">No active print</div>
+      <div id="print-controls">
+        <button class="btn-secondary" id="pause-btn" disabled>⏸ Pause</button>
+        <button class="btn-secondary hidden" id="resume-btn" disabled>▶ Resume</button>
+        <button class="btn-danger" id="cancel-btn" disabled>✕ Cancel</button>
+      </div>
+      <div id="progress-pct">—</div>
+    </div>
+    <div id="progress-track"><div id="progress-fill"></div></div>
+    <div id="gcode-line">Waiting…</div>
+  </footer>
+
+</div>
+
+<!-- ── Eject modal ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="eject-modal">
+  <div class="modal">
+    <h2>Auto-Eject G-code</h2>
+    <p>Runs after every USB print. One command per line.</p>
+    <textarea id="eject-gcode-input" spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="eject-cancel-btn">Cancel</button>
+      <button class="btn-primary" id="eject-save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Add printer modal ──────────────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="add-printer-modal">
+  <div class="modal">
+    <h2>Add Printer</h2>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="ap-name" placeholder="e.g. Ender 3" />
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="ap-type">
+        <option value="octoprint">OctoPrint</option>
+        <option value="moonraker">Moonraker / Klipper</option>
+        <option value="bambu">Bambu Lab</option>
+        <option value="usb">USB Serial</option>
+      </select>
+    </div>
+    <div class="field" id="ap-ip-field">
+      <label>IP Address</label>
+      <input type="text" id="ap-ip" placeholder="192.168.1.100" spellcheck="false" />
+    </div>
+    <div class="field" id="ap-apikey-field">
+      <label>API Key</label>
+      <input type="text" id="ap-apikey" placeholder="OctoPrint API key" spellcheck="false" />
+    </div>
+    <div class="field hidden" id="ap-serial-field">
+      <label>Serial Number</label>
+      <input type="text" id="ap-serial" placeholder="e.g. 01P00A…" spellcheck="false" />
+    </div>
+    <div class="field hidden" id="ap-code-field">
+      <label>Access Code</label>
+      <input type="text" id="ap-code" placeholder="8-digit code" spellcheck="false" />
+    </div>
+    <div class="field hidden" id="ap-port-field">
+      <label>Port</label>
+      <select id="ap-port"><option value="">Select port…</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="ap-cancel-btn">Cancel</button>
+      <button class="btn-primary" id="ap-add-btn">Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── History modal ───────────────────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="history-modal">
+  <div class="modal" style="width:620px;max-width:95vw">
+    <h2>Print History</h2>
+    <div id="history-list" style="max-height:400px;overflow-y:auto;margin:12px 0"></div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="history-clear-btn">Clear History</button>
+      <button class="btn-secondary" id="history-close-btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="app.js"></script>
+</body>
+</html>

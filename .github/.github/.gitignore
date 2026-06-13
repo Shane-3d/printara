@@ -1,0 +1,6 @@
+# Environment variables — never commit secrets
+.env
+.env.local
+
+# Dependencies
+node_modules/
