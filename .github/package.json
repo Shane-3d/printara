@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "printara",
   "version": "1.0.0",
   "private": true,
@@ -6,6 +7,11 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
+=======
+  "name": "pro-fab-3d",
+  "version": "1.0.0",
+  "private": true,
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   "dependencies": {
     "basic-ftp": "^5.3.1",
     "dotenv": "^16.4.0",

@@ -37,7 +37,11 @@ html, body {
 #app {
   display: grid;
   grid-template-columns: 260px 1fr 280px;
+<<<<<<< HEAD
   grid-template-rows: 48px auto 1fr 160px;
+=======
+  grid-template-rows: 48px 1fr 160px;
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   height: 100vh;
   gap: 0;
 }
@@ -109,7 +113,11 @@ html, body {
 
 /* ── Left sidebar — Connection ────────────────────────────────────────────── */
 #sidebar-left {
+<<<<<<< HEAD
   grid-row: 3;
+=======
+  grid-row: 2;
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   grid-column: 1;
   background: var(--surface);
   border-right: 1px solid var(--border);
@@ -264,7 +272,11 @@ button {
 
 /* ── Main area — Queue ────────────────────────────────────────────────────── */
 #main {
+<<<<<<< HEAD
   grid-row: 3;
+=======
+  grid-row: 2;
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   grid-column: 2;
   display: flex;
   flex-direction: column;
@@ -400,6 +412,7 @@ button {
 .status-cancelled{ background: rgba(239,68,68,0.1); color: var(--red); }
 .status-error    { background: rgba(239,68,68,0.1); color: var(--red); }
 
+<<<<<<< HEAD
 .item-thumb {
   width: 44px;
   height: 44px;
@@ -410,12 +423,15 @@ button {
   background: var(--surface3);
 }
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 .queue-item .item-actions {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
 }
 
+<<<<<<< HEAD
 /* ── Webcam panel ─────────────────────────────────────────────────────────── */
 .webcam-panel {
   border-bottom: 1px solid var(--border);
@@ -464,6 +480,11 @@ button {
 /* ── Right sidebar — Console ──────────────────────────────────────────────── */
 #sidebar-right {
   grid-row: 3;
+=======
+/* ── Right sidebar — Console ──────────────────────────────────────────────── */
+#sidebar-right {
+  grid-row: 2;
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   grid-column: 3;
   background: var(--surface);
   border-left: 1px solid var(--border);
@@ -532,7 +553,10 @@ button {
 
 /* ── Bottom bar — Progress ────────────────────────────────────────────────── */
 #bottom-bar {
+<<<<<<< HEAD
   grid-row: 4;
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   grid-column: 1 / -1;
   background: var(--surface);
   border-top: 1px solid var(--border);
@@ -681,6 +705,7 @@ button {
   to   { transform: translateX(0);    opacity: 1; }
 }
 
+<<<<<<< HEAD
 /* ── Printer slots (multi-printer panel) ─────────────────────────────────── */
 .printer-slot {
   display: flex;
@@ -726,6 +751,8 @@ button {
 
 @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 /* ── Scrollbar ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

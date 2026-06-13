@@ -20,6 +20,7 @@ const wifiPanel      = $('wifi-panel');
 const usbPanel       = $('usb-panel');
 
 // WiFi
+<<<<<<< HEAD
 const wifiType          = $('wifi-type');
 const wifiIp            = $('wifi-ip');
 const wifiApikey        = $('wifi-apikey');
@@ -30,6 +31,14 @@ const bambuSerial       = $('bambu-serial');
 const bambuCode         = $('bambu-code');
 const wifiConnectBtn    = $('wifi-connect-btn');
 const wifiDiscBtn       = $('wifi-disconnect-btn');
+=======
+const wifiType       = $('wifi-type');
+const wifiIp         = $('wifi-ip');
+const wifiApikey     = $('wifi-apikey');
+const apikeyField    = $('apikey-field');
+const wifiConnectBtn = $('wifi-connect-btn');
+const wifiDiscBtn    = $('wifi-disconnect-btn');
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 
 // USB
 const portSelect     = $('port-select');
@@ -68,6 +77,7 @@ const ejectInput     = $('eject-gcode-input');
 const ejectSaveBtn   = $('eject-save-btn');
 const ejectCancelBtn = $('eject-cancel-btn');
 
+<<<<<<< HEAD
 // Update banner
 const updateBanner      = $('update-banner');
 const updateMsg         = $('update-msg');
@@ -111,6 +121,8 @@ const historyList       = $('history-list');
 const historyClearBtn   = $('history-clear-btn');
 const historyCloseBtn   = $('history-close-btn');
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 // ── Init ───────────────────────────────────────────────────────────────────────
 (async () => {
   await refreshPorts();
@@ -122,6 +134,7 @@ const historyCloseBtn   = $('history-close-btn');
 // ── Mode tabs ──────────────────────────────────────────────────────────────────
 modeTabs.forEach(tab => {
   tab.addEventListener('click', () => {
+<<<<<<< HEAD
     const m = tab.dataset.mode;
     if (m !== 'multi' && state.connected) { toast('Disconnect first', 'error'); return; }
     modeTabs.forEach(t => t.classList.remove('active'));
@@ -138,6 +151,20 @@ wifiType.addEventListener('change', () => {
   apikeyField.classList.toggle('hidden',      v !== 'octoprint');
   bambuSerialField.classList.toggle('hidden', v !== 'bambu');
   bambuCodeField.classList.toggle('hidden',   v !== 'bambu');
+=======
+    if (state.connected) { toast('Disconnect first', 'error'); return; }
+    modeTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const m = tab.dataset.mode;
+    wifiPanel.classList.toggle('hidden', m !== 'wifi');
+    usbPanel.classList.toggle('hidden',  m !== 'usb');
+  });
+});
+
+// Show/hide API key field based on wifi type
+wifiType.addEventListener('change', () => {
+  apikeyField.classList.toggle('hidden', wifiType.value !== 'octoprint');
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 });
 
 // ── WiFi connect ───────────────────────────────────────────────────────────────
@@ -154,23 +181,33 @@ wifiConnectBtn.addEventListener('click', async () => {
     const apiKey = wifiApikey.value.trim();
     if (!apiKey) { toast('Enter your OctoPrint API key', 'error'); wifiConnectBtn.disabled = false; wifiConnectBtn.textContent = 'Connect'; return; }
     res = await window.printer.connectOctoPrint({ ip, apiKey });
+<<<<<<< HEAD
   } else if (wifiType.value === 'bambu') {
     const serial = bambuSerial.value.trim();
     const accessCode = bambuCode.value.trim();
     if (!serial)     { toast('Enter the Bambu serial number', 'error'); wifiConnectBtn.disabled = false; wifiConnectBtn.textContent = 'Connect'; return; }
     if (!accessCode) { toast('Enter the Bambu access code', 'error');   wifiConnectBtn.disabled = false; wifiConnectBtn.textContent = 'Connect'; return; }
     res = await window.printer.connectBambu({ ip, serial, accessCode });
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   } else {
     res = await window.printer.connectMoonraker({ ip });
   }
 
   if (res.success) {
+<<<<<<< HEAD
     state.mode = wifiType.value;
     setConnected(true);
     const label = state.mode === 'octoprint' ? 'OctoPrint' : state.mode === 'bambu' ? 'Bambu Lab' : 'Moonraker';
     logLine(`Connected via ${label}${res.version ? ' v' + res.version : ''}`, 'info');
     toast('Connected to ' + ip, 'success');
     startWebcam();
+=======
+    state.mode = wifiType.value === 'octoprint' ? 'octoprint' : 'moonraker';
+    setConnected(true);
+    logLine(`Connected via ${state.mode === 'octoprint' ? 'OctoPrint' : 'Moonraker'}${res.version ? ' v' + res.version : ''}`, 'info');
+    toast('Connected to ' + ip, 'success');
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   } else {
     wifiConnectBtn.disabled = false;
     wifiConnectBtn.textContent = 'Connect';
@@ -181,7 +218,10 @@ wifiConnectBtn.addEventListener('click', async () => {
 
 wifiDiscBtn.addEventListener('click', async () => {
   await window.printer.disconnectWifi();
+<<<<<<< HEAD
   stopWebcam();
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   setConnected(false);
   logLine('Disconnected', 'info');
   toast('Disconnected', 'info');
@@ -233,16 +273,23 @@ function setConnected(connected) {
   if (!connected) { state.mode = null; state.printing = false; state.paused = false; }
 
   // WiFi buttons
+<<<<<<< HEAD
   const isWifi = state.mode === 'octoprint' || state.mode === 'moonraker' || state.mode === 'bambu';
   wifiConnectBtn.classList.toggle('hidden', connected && isWifi);
+=======
+  wifiConnectBtn.classList.toggle('hidden', connected && (state.mode === 'octoprint' || state.mode === 'moonraker'));
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   wifiDiscBtn.classList.toggle('hidden',    !connected || state.mode === 'usb');
   wifiConnectBtn.disabled = false;
   wifiConnectBtn.textContent = 'Connect';
   wifiIp.disabled = connected;
   wifiType.disabled = connected;
   wifiApikey.disabled = connected;
+<<<<<<< HEAD
   bambuSerial.disabled = connected;
   bambuCode.disabled = connected;
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 
   // USB buttons
   usbConnectBtn.classList.toggle('hidden', connected && state.mode === 'usb');
@@ -298,6 +345,7 @@ function renderQueue() {
 
     const statusLabel = { queued: 'Queued', printing: 'Printing…', done: 'Done', cancelled: 'Cancelled', error: 'Error' }[item.status] || item.status;
     const icon = item.status === 'done' ? '✓' : item.status === 'printing' ? '⚙' : '📄';
+<<<<<<< HEAD
     const thumbHtml = item.thumbnail
       ? `<img class="item-thumb" src="${item.thumbnail}" alt="" />`
       : `<div class="item-icon">${icon}</div>`;
@@ -307,6 +355,14 @@ function renderQueue() {
       <div class="item-info">
         <div class="item-name" title="${item.filePath}">${item.name}</div>
         <div class="item-meta">${item.totalLines?.toLocaleString() || '?'} lines${item.filamentMm ? ' · ' + formatFilament(item.filamentMm) : ''} · ${formatTime(item.addedAt)}</div>
+=======
+
+    div.innerHTML = `
+      <div class="item-icon">${icon}</div>
+      <div class="item-info">
+        <div class="item-name" title="${item.filePath}">${item.name}</div>
+        <div class="item-meta">${item.totalLines?.toLocaleString() || '?'} lines · ${formatTime(item.addedAt)}</div>
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
       </div>
       <div class="item-status status-${item.status}">${statusLabel}</div>
       <div class="item-actions">
@@ -327,20 +383,28 @@ function formatTime(iso) {
   return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+<<<<<<< HEAD
 function formatFilament(mm) {
   if (mm == null) return '';
   if (mm >= 1000) return (mm / 1000).toFixed(2) + 'm';
   return Math.round(mm) + 'mm';
 }
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 // Drag & drop
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop', async e => {
   e.preventDefault(); dropZone.classList.remove('dragover');
   const paths = Array.from(e.dataTransfer.files)
+<<<<<<< HEAD
     .filter(f => /\.(gcode|g|gc|gco|ngc|3mf)$/i.test(f.name)).map(f => f.path);
   if (!paths.length) { toast('Drop .gcode or .3mf files only', 'error'); return; }
+=======
+    .filter(f => /\.(gcode|g|gc|gco|ngc)$/i.test(f.name)).map(f => f.path);
+  if (!paths.length) { toast('Drop .gcode files only', 'error'); return; }
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   const res = await window.printer.addFilesToQueue(paths);
   if (res.success) { state.queue.push(...res.items); renderQueue(); toast(`Added ${res.items.length} file(s)`, 'success'); }
 });
@@ -421,6 +485,15 @@ window.printer.onResponse(line => {
   if (!line.startsWith('ok') && !line.startsWith('wait')) logLine(line, 'recv');
 });
 
+<<<<<<< HEAD
+=======
+window.printer.onDisconnected(() => {
+  setConnected(false);
+  logLine('Printer disconnected', 'error');
+  toast('Printer disconnected', 'error');
+  resetProgress();
+});
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 
 window.printer.onTemperature(({ extruder, bed }) => {
   if (extruder) {
@@ -524,7 +597,11 @@ function updateStatusChip() {
   if (state.ejecting)         { statusChip.classList.add('ejecting');  statusText.textContent = 'Ejecting'; return; }
   if (state.printing && state.paused) { statusChip.classList.add('connected'); statusText.textContent = 'Paused'; return; }
   if (state.printing)         { statusChip.classList.add('printing');  statusText.textContent = 'Printing'; return; }
+<<<<<<< HEAD
   const label = state.mode === 'octoprint' ? 'OctoPrint' : state.mode === 'moonraker' ? 'Moonraker' : state.mode === 'bambu' ? 'Bambu Lab' : 'USB';
+=======
+  const label = state.mode === 'octoprint' ? 'OctoPrint' : state.mode === 'moonraker' ? 'Moonraker' : 'USB';
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   statusChip.classList.add('connected');
   statusText.textContent = `Ready · ${label}`;
 }
@@ -537,6 +614,7 @@ function toast(msg, type = 'info') {
   setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 3500);
 }
 
+<<<<<<< HEAD
 // ── Webcam ─────────────────────────────────────────────────────────────────────
 async function startWebcam() {
   const url = await window.printer.getWebcamUrl();
@@ -735,9 +813,15 @@ function formatDuration(ms) {
   return `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;
 }
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 // ── Keyboard shortcuts ─────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'o') { e.preventDefault(); addFilesBtn.click(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { if (!startQueueBtn.disabled) startQueueBtn.click(); }
+<<<<<<< HEAD
   if (e.key === 'Escape') { ejectModal.classList.add('hidden'); historyModal.classList.add('hidden'); }
+=======
+  if (e.key === 'Escape') ejectModal.classList.add('hidden');
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 });

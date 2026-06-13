@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head><title>Download Logo PNG</title></head>
+<body>
+<script>
+  const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </linearGradient>
+    <linearGradient id="rd" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF4444"/>
+      <stop offset="100%" stop-color="#BB0000"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="url(#bg)"/>
+  <rect x="1.25" y="1.25" width="45.5" height="45.5" rx="9.75" stroke="url(#rd)" stroke-width="1.5"/>
+  <rect x="11" y="7" width="8" height="24" rx="1" fill="white"/>
+  <path d="M19 7 Q36 7 36 17 Q36 27 19 27 Z" fill="white"/>
+  <path d="M21 11 Q32 11 32 17 Q32 23 21 23 Z" fill="url(#bg)"/>
+  <polygon points="11,31 19,31 15,42" fill="url(#rd)"/>
+  <circle cx="15" cy="45.5" r="1.8" fill="#CC0000"/>
+</svg>`;
+
+  const scale = 8; // 384x384 output
+  const size = 48 * scale;
+
+  const img = new Image();
+  const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+
+  img.onload = function () {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, size, size);
+    URL.revokeObjectURL(url);
+
+    const a = document.createElement('a');
+    a.download = 'printara-logo.png';
+    a.href = canvas.toDataURL('image/png');
+    document.body.appendChild(a);
+    a.click();
+    document.body.innerHTML = '<p style="font-family:sans-serif">Download started! You can close this tab.</p>';
+  };
+
+  img.src = url;
+</script>
+</body>
+</html>

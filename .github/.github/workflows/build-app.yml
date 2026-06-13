@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Build & Release Electron App
 
 on:
@@ -6,12 +7,21 @@ on:
       - 'v*'
   release:
     types: [created]
+=======
+name: Build & Release Printara
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 
 permissions:
   contents: write
 
 jobs:
   build-windows:
+<<<<<<< HEAD
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,12 +62,55 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-mac:
+=======
+    name: Windows (.exe)
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set version
+        id: ver
+        shell: bash
+        run: echo "version=1.2.${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: electron-app
+        run: npm ci
+
+      - name: Set app version
+        working-directory: electron-app
+        shell: bash
+        run: npm version --no-git-tag-version "1.2.${{ github.run_number }}"
+
+      - name: Build installer
+        working-directory: electron-app
+        run: npx electron-forge make
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: printara-windows
+          path: electron-app/out/make/**/*.exe
+
+  build-mac:
+    name: macOS (.zip)
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
+<<<<<<< HEAD
           node-version: 20
 
       - name: Sync version from tag
@@ -87,5 +140,112 @@ jobs:
           files: |
             electron-app/dist/*.dmg
             electron-app/dist/latest-mac.yml
+=======
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: electron-app
+        run: npm ci
+
+      - name: Set app version
+        working-directory: electron-app
+        run: npm version --no-git-tag-version "1.2.${{ github.run_number }}"
+
+      - name: Build app
+        working-directory: electron-app
+        run: npx electron-forge make
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: printara-mac
+          path: electron-app/out/make/**/*.zip
+
+  build-linux:
+    name: Linux (.deb)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-app/package-lock.json
+
+      - name: Install system deps
+        run: sudo apt-get install -y rpm fakeroot
+
+      - name: Install dependencies
+        working-directory: electron-app
+        run: npm ci
+
+      - name: Set app version
+        working-directory: electron-app
+        run: npm version --no-git-tag-version "1.2.${{ github.run_number }}"
+
+      - name: Build app
+        working-directory: electron-app
+        run: npx electron-forge make
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: printara-linux
+          path: |
+            electron-app/out/make/**/*.deb
+            electron-app/out/make/**/*.rpm
+
+  release:
+    name: Publish Release
+    needs: [build-windows, build-mac, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Delete existing latest release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --repo ${{ github.repository }} --yes 2>/dev/null || true
+          git -c "url.https://${{ secrets.GITHUB_TOKEN }}@github.com/.insteadOf=https://github.com/" \
+            ls-remote --tags origin latest | grep -q . && \
+            gh api -X DELETE /repos/${{ github.repository }}/git/refs/tags/latest 2>/dev/null || true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Printara v1.2.${{ github.run_number }}"
+          body: |
+            ## Printara v1.2.${{ github.run_number }}
+
+            Multi-printer dashboard with USB, WiFi, and camera support.
+
+            ### What's included
+            - Dashboard: all printers in a card grid
+            - USB connection via Web Serial (Chrome/Edge)
+            - OctoPrint, Moonraker/Klipper, Bambu Lab support
+            - Live camera feeds (auto-detected)
+            - Per-printer print queue and console
+
+            ### Downloads
+            | Platform | File |
+            |----------|------|
+            | Windows  | `PrintaraSetup.exe` |
+            | macOS    | `Printara-darwin-x64.zip` |
+            | Linux    | `printara_*.deb` / `printara-*.rpm` |
+
+            Built from commit ${{ github.sha }}
+          files: release-assets/**/*
+          draft: false
+          prerelease: false
+          make_latest: true
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

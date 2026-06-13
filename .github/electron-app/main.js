@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use strict';
 
 const { app, BrowserWindow, shell, ipcMain, dialog, Notification } = require('electron');
@@ -856,14 +857,35 @@ async function pollUntilDone() {
 }
 
 // ── Bambu Lab MQTT (native TLS, mqtts://ip:8883) ─────────────────────────────────
+=======
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
+const path = require('path');
+const os   = require('os');
+const fs   = require('fs');
+const { SerialPort } = require('serialport');
+const { ReadlineParser } = require('@serialport/parser-readline');
+const mqtt = require('mqtt');
+const ftp  = require('basic-ftp');
+
+let mainWindow = null;
+let activePort = null;
+
+// ── Bambu Lab MQTT (native TLS, mqtts://ip:8883) ───────────────────────────────
+// Map of printerId → mqtt.Client so multiple printers work independently.
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 const mqttClients = new Map();
 
 ipcMain.handle('mqtt:connect', (_ev, printerId, ip, pin) => {
   return new Promise((resolve, reject) => {
+<<<<<<< HEAD
+=======
+    // Clean up any existing client for this printer
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     if (mqttClients.has(printerId)) {
       try { mqttClients.get(printerId).end(true); } catch (_) {}
       mqttClients.delete(printerId);
     }
+<<<<<<< HEAD
     const client = mqtt.connect(`mqtts://${ip}:8883`, {
       clientId: 'printara_' + Math.random().toString(36).slice(2, 10),
       username: 'bblp', password: pin,
@@ -871,22 +893,53 @@ ipcMain.handle('mqtt:connect', (_ev, printerId, ip, pin) => {
       connectTimeout: 8000, reconnectPeriod: 0, clean: true,
     });
     let settled = false;
+=======
+
+    const client = mqtt.connect(`mqtts://${ip}:8883`, {
+      clientId: 'printara_' + Math.random().toString(36).slice(2, 10),
+      username: 'bblp',
+      password: pin,
+      rejectUnauthorized: false, // Bambu uses a self-signed cert
+      connectTimeout: 8000,
+      reconnectPeriod: 0,
+      clean: true,
+    });
+
+    let settled = false;
+
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     client.on('connect', () => {
       client.subscribe('device/+/report', () => {
         if (!settled) { settled = true; mqttClients.set(printerId, client); resolve({ ok: true }); }
       });
     });
+<<<<<<< HEAD
     client.on('message', (topic, payload) => {
       if (mainWindow) mainWindow.webContents.send('mqtt:message', { printerId, topic, payload: payload.toString() });
     });
+=======
+
+    client.on('message', (topic, payload) => {
+      if (mainWindow) mainWindow.webContents.send('mqtt:message', { printerId, topic, payload: payload.toString() });
+    });
+
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     client.on('error', err => {
       if (!settled) { settled = true; reject(err); }
       else if (mainWindow) mainWindow.webContents.send('mqtt:error', { printerId, message: err.message });
     });
+<<<<<<< HEAD
+=======
+
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     client.on('close', () => {
       if (!settled) { settled = true; reject(new Error('Connection closed')); }
       else if (mainWindow) mainWindow.webContents.send('mqtt:closed', { printerId });
     });
+<<<<<<< HEAD
+=======
+
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     setTimeout(() => {
       if (!settled) { settled = true; client.end(true); reject(new Error('Connection timed out')); }
     }, 9000);
@@ -904,12 +957,22 @@ ipcMain.handle('mqtt:disconnect', (_ev, printerId) => {
   if (client) { try { client.end(true); } catch (_) {} mqttClients.delete(printerId); }
 });
 
+<<<<<<< HEAD
 // ── Bambu Lab FTP upload (implicit TLS, port 990) ────────────────────────────────
 async function bambuFtpUpload(ip, pin, filename, localPath) {
+=======
+// ── Bambu Lab FTP upload (implicit TLS, port 990) ──────────────────────────────
+// Writes the file to a temp path, FTPs to /model/ on the printer, then cleans up.
+ipcMain.handle('ftp:upload', async (_ev, ip, pin, filename, bufferData) => {
+  const tmpPath = path.join(os.tmpdir(), 'printara_' + filename);
+  fs.writeFileSync(tmpPath, Buffer.from(bufferData));
+
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   const client = new ftp.Client();
   client.ftp.verbose = false;
   try {
     await client.access({
+<<<<<<< HEAD
       host: ip, port: 990, user: 'bblp', password: pin,
       secure: 'implicit', secureOptions: { rejectUnauthorized: false },
     });
@@ -934,10 +997,23 @@ ipcMain.handle('ftp:upload', async (_ev, ip, pin, filename, bufferData) => {
     const dir = await bambuFtpUpload(ip, pin, filename, tmpPath);
     return { ok: true, dir };
   } finally {
+=======
+      host: ip, port: 990,
+      user: 'bblp', password: pin,
+      secure: 'implicit',
+      secureOptions: { rejectUnauthorized: false },
+    });
+    await client.cd('/model');
+    await client.uploadFrom(tmpPath, filename);
+    return { ok: true };
+  } finally {
+    client.close();
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     try { fs.unlinkSync(tmpPath); } catch (_) {}
   }
 });
 
+<<<<<<< HEAD
 // ── Legacy serial IPC (used by web queue.html) ────────────────────────────────────
 ipcMain.handle('serial:list',       async ()          => (await SerialPort.list()).sort((a, b) => a.path.localeCompare(b.path)));
 ipcMain.handle('serial:send',       async (_ev, data) => {
@@ -958,12 +1034,73 @@ function getPreloadPath() { return path.join(__dirname, 'preload.js'); }
 function getIconPath()    { return path.join(__dirname, 'logo.ico'); }
 function getQueueUI()     { return path.join(__dirname, 'src', 'index.html'); }
 
+=======
+function getQueuePath() {
+  if (app.isPackaged) return path.join(process.resourcesPath, 'queue.html');
+  return path.join(__dirname, '..', 'queue.html');
+}
+
+function getLoginPath() {
+  if (app.isPackaged) return path.join(process.resourcesPath, 'login.html');
+  return path.join(__dirname, '..', 'login.html');
+}
+
+function getPreloadPath() {
+  return path.join(__dirname, 'preload.js');
+}
+
+// ── Serial IPC ─────────────────────────────────────────────────────────────────
+ipcMain.handle('serial:list', async () => {
+  const ports = await SerialPort.list();
+  // Filter to likely printer ports and sort by path
+  return ports.sort((a, b) => a.path.localeCompare(b.path));
+});
+
+ipcMain.handle('serial:connect', async (_ev, portPath, baudRate) => {
+  if (activePort && activePort.isOpen) {
+    await new Promise(r => activePort.close(r));
+    activePort = null;
+  }
+  activePort = new SerialPort({ path: portPath, baudRate: parseInt(baudRate) || 115200, autoOpen: false });
+  const parser = activePort.pipe(new ReadlineParser({ delimiter: '\n' }));
+
+  parser.on('data', line => {
+    if (mainWindow) mainWindow.webContents.send('serial:data', line.trim());
+  });
+  activePort.on('error', err => {
+    if (mainWindow) mainWindow.webContents.send('serial:error', err.message);
+  });
+  activePort.on('close', () => {
+    if (mainWindow) mainWindow.webContents.send('serial:closed');
+  });
+
+  await new Promise((res, rej) => activePort.open(err => err ? rej(err) : res()));
+  return { ok: true };
+});
+
+ipcMain.handle('serial:send', async (_ev, data) => {
+  if (!activePort || !activePort.isOpen) throw new Error('Not connected');
+  await new Promise((res, rej) => activePort.write(data, err => err ? rej(err) : res()));
+});
+
+ipcMain.handle('serial:disconnect', async () => {
+  if (activePort && activePort.isOpen) {
+    await new Promise(r => activePort.close(r));
+  }
+  activePort = null;
+});
+
+// ── Window ─────────────────────────────────────────────────────────────────────
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1300, height: 860, minWidth: 960, minHeight: 640,
     title: 'Printara — Print Queue',
     backgroundColor: '#0a0a0a',
+<<<<<<< HEAD
     icon: getIconPath(),
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     webPreferences: {
       webSecurity: false,
       nodeIntegration: false,
@@ -972,6 +1109,7 @@ function createWindow() {
     },
   });
 
+<<<<<<< HEAD
   mainWindow.webContents.session.setPermissionCheckHandler((_wc, perm) => perm === 'serial' ? true : null);
   mainWindow.webContents.session.setDevicePermissionHandler(d => d.deviceType === 'serial');
   mainWindow.loadFile(getQueueUI());
@@ -999,5 +1137,21 @@ app.whenReady().then(() => {
   if (app.isPackaged) setTimeout(() => autoUpdater.checkForUpdates(), 5000);
 });
 
+=======
+  // Still support Web Serial API as fallback
+  mainWindow.webContents.session.setPermissionCheckHandler((_wc, permission) => permission === 'serial' ? true : null);
+  mainWindow.webContents.session.setDevicePermissionHandler(d => d.deviceType === 'serial');
+
+  mainWindow.loadFile(getLoginPath());
+  mainWindow.setMenuBarVisibility(false);
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+}
+
+app.whenReady().then(createWindow);
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });

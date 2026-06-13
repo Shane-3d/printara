@@ -4,6 +4,7 @@
 
 # Dependencies
 node_modules/
+<<<<<<< HEAD
 
 # Electron build outputs — never commit, exceed GitHub's 100MB limit
 electron-app/dist/
@@ -12,3 +13,5 @@ electron-app/out/
 *.nupkg
 *.blockmap
 *.asar
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58

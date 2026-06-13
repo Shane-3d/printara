@@ -4,8 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3D Tools — Printara</title>
+<<<<<<< HEAD
   <link rel="icon" href="logo.svg" />
   <link rel="apple-touch-icon" href="logo.svg" />
+=======
+  <link rel="icon" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   <meta name="apple-mobile-web-app-title" content="Printara" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -27,14 +32,22 @@
       <div id="prDot" style="width:10px;height:10px;border-radius:50%;background:#555;flex-shrink:0;"></div>
       <span id="prStatusText" style="font-size:13px;font-weight:600;color:var(--clr-text,#e8e8f0);">Not connected</span>
       <div style="flex:1;"></div>
+<<<<<<< HEAD
       <button id="prConnectBtn" onclick="printerConnect()" style="padding:9px 16px;border-radius:999px;border:1.5px solid #e02020;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#e02020;font-family:inherit;">Connect</button>
+=======
+      <button id="prConnectBtn" onclick="printerConnect()" style="padding:9px 16px;border-radius:9px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:#0099ff;color:#fff;font-family:inherit;">Connect</button>
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     </div>
     <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:#666;letter-spacing:.06em;">TERMINAL</div>
     <div id="prTerminal" style="background:#07070f;border:1px solid var(--clr-border,#2a2a3d);border-radius:10px;padding:10px 12px;height:160px;overflow-y:auto;font-family:monospace;font-size:12px;color:#aef;margin-bottom:12px;white-space:pre-wrap;word-break:break-all;">// Connect a printer to send G-code commands
 </div>
     <div style="display:flex;gap:8px;">
       <input id="prGcodeInput" placeholder="G28 ; home all axes" onkeydown="if(event.key==='Enter')prSend()" disabled style="flex:1;padding:10px 12px;font-size:13px;font-family:monospace;background:var(--clr-bg,#0d0d14);border:1px solid var(--clr-border,#2a2a3d);border-radius:10px;color:var(--clr-text,#e8e8f0);" />
+<<<<<<< HEAD
       <button id="prSendBtn" onclick="prSend()" disabled style="padding:10px 16px;border-radius:999px;border:1.5px solid #e02020;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#e02020;font-family:inherit;">Send</button>
+=======
+      <button id="prSendBtn" onclick="prSend()" disabled style="padding:10px 16px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:#0099ff;color:#fff;font-family:inherit;">Send</button>
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     </div>
     <div style="margin-top:10px;font-size:11px;color:#555;">Common: <code>G28</code> home · <code>G1 Z10 F300</code> move · <code>M104 S200</code> heat nozzle · <code>M109 S200</code> wait · <code>M106 S255</code> fan on</div>
   </div>
@@ -42,9 +55,15 @@
 
   <header class="header admin-content unlocked">
     <div class="header-inner">
+<<<<<<< HEAD
       <a href="index.html" class="logo"><img src="logo.svg" alt="Printara" class="logo-img" /></a>
       <nav class="nav"><a href="index.html" class="nav-link">← Home</a></nav>
       <span id="toolsUserBadge" style="margin-left:auto;background:rgba(224,32,32,0.15);border:1px solid rgba(224,32,32,0.4);color:#e02020;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;"></span>
+=======
+      <a href="index.html" class="logo"><img src="logo.png" alt="Printara" class="logo-img" /></a>
+      <nav class="nav"><a href="index.html" class="nav-link">← Home</a></nav>
+      <span id="toolsUserBadge" style="margin-left:auto;background:rgba(0,150,255,0.15);border:1px solid rgba(0,150,255,0.4);color:#0099ff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;"></span>
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
       <button id="prHeaderBtn" onclick="document.getElementById('printerModal').style.display='flex'" title="Connect 3D Printer" style="display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:13px;border-radius:10px;border:1px solid var(--clr-border,#2a2a3d);background:var(--clr-surface,#13131e);color:var(--clr-text,#e8e8f0);cursor:pointer;font-family:inherit;font-weight:600;transition:border-color .15s;">🖨️ <span id="prHeaderLabel">Connect Printer</span></button>
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
     </div>
@@ -2866,9 +2885,15 @@ $fn = 32;
         dot.style.cssText  = 'width:10px;height:10px;border-radius:50%;background:#555;flex-shrink:0;';
         stat.textContent   = 'Not connected';
         btn.textContent    = 'Connect';
+<<<<<<< HEAD
         btn.style.background = 'transparent';
         btn.style.color      = '#e02020';
         btn.style.border     = '1.5px solid #e02020';
+=======
+        btn.style.background = '#0099ff';
+        btn.style.color      = '#fff';
+        btn.style.border     = 'none';
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
         btn.onclick          = printerConnect;
         inp.disabled = true; send.disabled = true;
         if (hBtn) { hBtn.style.borderColor=''; hBtn.style.color=''; }
@@ -2940,4 +2965,8 @@ $fn = 32;
     });
   </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58

@@ -23,14 +23,18 @@
       <span class="tagline">Print Queue Manager</span>
     </div>
     <div class="spacer"></div>
+<<<<<<< HEAD
     <div id="reconnect-badge" class="reconnect-badge hidden">Reconnecting…</div>
     <button class="btn-icon" id="history-btn" title="Print History" style="margin-right:8px">📋</button>
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     <div id="status-chip" class="status-chip">
       <div class="dot"></div>
       <span id="status-text">Disconnected</span>
     </div>
   </header>
 
+<<<<<<< HEAD
   <!-- ── Update banner ─────────────────────────────────────────────────── -->
   <div id="update-banner" class="update-banner hidden">
     <span id="update-msg">A new version is available.</span>
@@ -38,6 +42,8 @@
     <button class="btn-icon" id="update-dismiss-btn" style="margin-left:6px" title="Dismiss">✕</button>
   </div>
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
   <!-- ── Left sidebar ────────────────────────────────────────────────────── -->
   <aside id="sidebar-left">
 
@@ -45,9 +51,14 @@
     <div class="panel" style="padding-bottom:0">
       <div class="panel-title">Connection</div>
       <div class="mode-tabs">
+<<<<<<< HEAD
         <button class="mode-tab active" data-mode="wifi">WiFi</button>
         <button class="mode-tab" data-mode="usb">USB</button>
         <button class="mode-tab" data-mode="multi">Multi</button>
+=======
+        <button class="mode-tab active" data-mode="wifi">📶 WiFi</button>
+        <button class="mode-tab" data-mode="usb">🔌 USB</button>
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
       </div>
     </div>
 
@@ -58,7 +69,10 @@
         <select id="wifi-type">
           <option value="octoprint">OctoPrint (most printers)</option>
           <option value="moonraker">Moonraker / Klipper</option>
+<<<<<<< HEAD
           <option value="bambu">Bambu Lab</option>
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
         </select>
       </div>
       <div class="field">
@@ -69,6 +83,7 @@
         <label>OctoPrint API Key</label>
         <input type="text" id="wifi-apikey" placeholder="Paste API key…" spellcheck="false" />
       </div>
+<<<<<<< HEAD
       <div class="field hidden" id="bambu-serial-field">
         <label>Serial Number</label>
         <input type="text" id="bambu-serial" placeholder="e.g. 01P00A…" spellcheck="false" />
@@ -77,18 +92,23 @@
         <label>Access Code</label>
         <input type="text" id="bambu-code" placeholder="8-digit code on printer" spellcheck="false" />
       </div>
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
       <div class="btn-row mt8">
         <button class="btn-primary" id="wifi-connect-btn">Connect</button>
         <button class="btn-secondary hidden" id="wifi-disconnect-btn">Disconnect</button>
       </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Multi-printer panel -->
     <div id="multi-panel" class="panel hidden">
       <div id="printers-list"></div>
       <button class="btn-secondary" id="add-printer-btn" style="width:100%;margin-top:4px">+ Add Printer</button>
     </div>
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     <!-- USB panel -->
     <div id="usb-panel" class="panel hidden">
       <div class="field">
@@ -177,6 +197,7 @@
     </div>
   </main>
 
+<<<<<<< HEAD
   <!-- ── Right sidebar: Console + Webcam ──────────────────────────────── -->
   <aside id="sidebar-right">
     <!-- Webcam panel -->
@@ -191,6 +212,10 @@
       </div>
     </div>
 
+=======
+  <!-- ── Right sidebar: Console ─────────────────────────────────────────── -->
+  <aside id="sidebar-right">
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
     <div id="console-header">
       <h3>Console</h3>
       <button class="btn-icon" id="clear-console-btn" title="Clear">✕</button>
@@ -232,6 +257,7 @@
   </div>
 </div>
 
+<<<<<<< HEAD
 <!-- ── Add printer modal ──────────────────────────────────────────────── -->
 <div class="modal-overlay hidden" id="add-printer-modal">
   <div class="modal">
@@ -288,6 +314,8 @@
   </div>
 </div>
 
+=======
+>>>>>>> a5299237bde313d03f5fd06de95b7e1d33fe5e58
 <div id="toast-container"></div>
 <script src="app.js"></script>
 </body>
